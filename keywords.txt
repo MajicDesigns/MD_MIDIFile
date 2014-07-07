@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MD_MIDIFile	KEYWORD1
+MD_MFTrack	KEYWORD1
+midi_event	KEYWORD1
+sysex_event	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+getLength	KEYWORD2
+getEndOfTrack	KEYWORD2
+syncTime	KEYWORD2
+load	KEYWORD2
+close	KEYWORD2
+getNextEvent	KEYWORD2
+dump	KEYWORD2
+restart	KEYWORD2
+pause	KEYWORD2
+
+######################################
+# Constants (LITERAL1)
+#######################################
+MIDI_MAX_TRACKS	LITERAL1
