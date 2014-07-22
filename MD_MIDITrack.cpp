@@ -23,17 +23,16 @@
 #include "MD_MIDIFile.h"
 #include "MD_MIDIHelper.h"
 
-////////////////////////////////////////
-// MFTrack Class code
-//
+/**
+ * \file
+ * \brief Main file for the MFTrack class implementation
+ */
 
 void MD_MFTrack::reset(void)
 {
 	_length = 0;        // length of track in bytes
-    _startOffset = 0;   // start of the track in bytes from start of file
-	_currOffset = 0;
-	_endOfTrack = false;
-	_elapsedTimeTotal = 0;
+  _startOffset = 0;   // start of the track in bytes from start of file
+  restart();
 	_trackId = 255;
 }
 
@@ -72,6 +71,8 @@ void MD_MFTrack::restart(void)
 // Start playing the track from the beginning again
 {
 	_currOffset = 0;
+  _endOfTrack = false;
+  _elapsedTimeTotal = 0;
 }
 
 bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime)
@@ -102,11 +103,9 @@ bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime)
 	// giving positive biased errors every time.
 	_elapsedTimeTotal -= (deltaT * mf->getMicrosecondDelta());
 
-	DUMPS("\ndT: ");
-	DUMP(deltaT);
-	DUMP("\tET: ");
-	DUMP(elapsedTicks);
-	DUMP('\t');
+	DUMP("\ndT: ", deltaT);
+	DUMP("\tET: ", elapsedTicks);
+	DUMPS("\t");
 
 	parseEvent(mf);
 
@@ -142,14 +141,10 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 		_mev.data[0] = _mev.data[0] & 0xf0;	// just the command byte
 		_mev.data[1] = mf->_fd.read();
 		_mev.data[2] = mf->_fd.read();
-		DUMPS("[MID2] Ch: ");
-		DUMP(_mev.channel);
-		DUMPS(" Data: ");
-		DUMPX(_mev.data[0]);
-		DUMP(' ');
-		DUMPX(_mev.data[1]);
-		DUMP(' ');
-		DUMPX(_mev.data[2]);
+		DUMP("[MID2] Ch: ", _mev.channel);
+		DUMPX(" Data: ", _mev.data[0]);
+		DUMPX(" ", _mev.data[1]);
+		DUMPX(" ", _mev.data[2]);
 #if !DUMP_DATA
 		if (mf->_midiHandler != NULL)
 			(mf->_midiHandler)(&_mev);
@@ -162,12 +157,9 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 		_mev.channel = _mev.data[0] & 0xf;	// mask off the channel
 		_mev.data[0] = _mev.data[0] & 0xf0;	// just the command byte
 		_mev.data[1] = mf->_fd.read();
-		DUMPS("[MID1] Ch: ");
-		DUMP(_mev.channel);
-		DUMPS(" Data: ");
-		DUMPX(_mev.data[0]);
-		DUMP(' ');
-		DUMPX(_mev.data[1]);
+		DUMP("[MID1] Ch: ", _mev.channel);
+		DUMPX(" Data: ", _mev.data[0]);
+		DUMPX(" ", _mev.data[1]);
 
 #if !DUMP_DATA
 		if (mf->_midiHandler != NULL)
@@ -189,21 +181,19 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 	  _mev.data[1] = eType;
 	  for (uint8_t i = 2; i < _mev.size; i++)
 	  {
-		_mev.data[i] = mf->_fd.read();	// next byte
+		  _mev.data[i] = mf->_fd.read();	// next byte
 	  }	
 
-	  DUMPS("[MID+] Ch: ");
-	  DUMP(_mev.channel);
-	  DUMPS(" Data: ");
+	  DUMP("[MID+] Ch: ", _mev.channel);
+	  DUMPS(" Data:");
 	  for (uint8_t i = 0; i<_mev.size; i++)
 	  {
-  		DUMPX(_mev.data[i]);
-		DUMP(' ');
+  		DUMPX(" ", _mev.data[i]);
 	  }
 
 #if !DUMP_DATA
 	  if (mf->_midiHandler != NULL)
-		(mf->_midiHandler)(&_mev);
+		  (mf->_midiHandler)(&_mev);
 #endif
 	}
 	break;
@@ -238,11 +228,10 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 			sev.data[sev.size] = 0xf7;		// terminate properly - data is probably nuked anyway
 		}
 
-		DUMPS("[SYSX] Data: ");
+		DUMPS("[SYSX] Data:");
 		for (uint8_t i = 0; i<sev.size; i++)
 		{
-  			DUMPX(sev.data[i]);
-			DUMP(' ');
+  			DUMPX(" ", sev.data[i]);
 		}
 
 #if !DUMP_DATA
@@ -257,11 +246,9 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 	case 0xff:		// meta_event = 0xFF + <meta_type:1> + <length:v> + <event_data_bytes>
 	  eType = mf->_fd.read();
 	  mLen =  readVarLen(&mf->_fd);
-	  DUMPS("[META] Type: 0x");
-	  DUMPX(eType);
-	  DUMPS("\tLen: ");
-	  DUMP(mLen);
-	  DUMP('\t');
+	  DUMPX("[META] Type: 0x", eType);
+	  DUMP("\tLen: ", mLen);
+	  DUMPS("\t");
 
 	  switch (eType)
 	  {
@@ -272,111 +259,101 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 
 	  case 0x51:	// set Tempo - really the microseconds per tick
 		mf->setMicrosecondPerQuarterNote(readMultiByte(&mf->_fd, MB_TRYTE));
-		DUMPS("SET TEMPO to ");
-		DUMP(mf->getMicrosecondDelta());
-		DUMPS(" us/tick or ");
-		DUMP(mf->getTempo());
+		DUMP("SET TEMPO to ", mf->getMicrosecondDelta());
+		DUMP(" us/tick or ", mf->getTempo());
 		DUMPS(" beats/min");
 	  break;
 
 	  case 0x58:	// time signature
 		mf->setTimeSignature(mf->_fd.read(), (2 << mf->_fd.read()));	// denominator is 2^n
 		mf->_fd.seekCur(mLen-2);
-		DUMPS("SET TIME SIGNATURE to ");
-		DUMP(mf->getTimeSignature()>>8);
-		DUMP('/');
-		DUMP(mf->getTimeSignature()&0xf);
+		DUMP("SET TIME SIGNATURE to ", mf->getTimeSignature()>>8);
+		DUMP("/", mf->getTimeSignature()&0xf);
 	  break;
 
 #if SHOW_UNUSED_META
 	  case 0x0:	// Sequence Number
-		DUMPS("SEQUENCE NUMBER ");
-		DUMP(readMultiByte(&mf->_fd, MB_WORD));
+		DUMP("SEQUENCE NUMBER ", readMultiByte(&mf->_fd, MB_WORD));
 	  break;
 
 	  case 0x1:	// Text
 		DUMPS("TEXT ");
 		for (int i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x2:	// Copyright Notice
 		DUMPS("COPYRIGHT ");
 		for (uint8_t i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x3:	// Sequence or Track Name
 		DUMPS("SEQ/TRK NAME ");
 		for (uint8_t i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x4:	// Instrumenmt Name
 		DUMPS("INSTRUMENT ");
 		for (uint8_t i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x5:	// Lyric
 		DUMPS("LYRIC ");
 		for (uint8_t i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x6:	// Marker
 		DUMPS("MARKER ");
 		for (uint8_t i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x7:	// Cue Point
 		DUMPS("CUE POINT ");
 		for (uint8_t i=0; i<mLen; i++)
-			DUMP((char)mf->_fd.read());
+			DUMP("", (char)mf->_fd.read());
 	  break;
 
 	  case 0x20:// Channel Prefix
-		DUMPS("CHANNEL PREFIX ");
-		DUMP(readMultiByte(&mf->_fd, MB_BYTE));
+		DUMP("CHANNEL PREFIX ", readMultiByte(&mf->_fd, MB_BYTE));
 	  break;
 
 	  case 0x21:// Port Prefix
-		DUMPS("PORT PREFIX ");
-		DUMP(readMultiByte(&mf->_fd, MB_BYTE));
+		DUMP("PORT PREFIX ", readMultiByte(&mf->_fd, MB_BYTE));
 	  break;
 
 	  case 0x54:// SMPTE Offset
-		DUMPS("SMPTE OFFSET ");
+		DUMPS("SMPTE OFFSET");
 		for (uint8_t i=0; i<mLen; i++)
 		{
-			DUMP(mf->_fd.read());
-			DUMP(' ');
+			DUMP(" ", mf->_fd.read());
 		}
 	  break;
 
 	  case 0x59:// Key Signature
-		DUMPS("KEY SIGNATURE ");
+		DUMPS("KEY SIGNATURE");
 		for (uint8_t i=0; i<mLen; i++)
 		{
-			DUMP(mf->_fd.read());
-			DUMP(' ');
+			DUMP(" ", mf->_fd.read());
 		}
 	  break;
 
 	  case 0x7F:	// Sequencer Specific Metadata
-		DUMPS("SEQ SPECIFIC ");
+		DUMPS("SEQ SPECIFIC");
 		for (uint8_t i=0; i<mLen; i++)
 		{
-			DUMPX(mf->_fd.read());
-			DUMP(' ');
+			DUMPX(" ", mf->_fd.read());
 		}
 	  break;
 #endif // SHOW_UNUSED_META
 
 	  default:
-		mf->_fd.seekCur(mLen);
-		DUMPS("IGNORED");
+		  mf->_fd.seekCur(mLen);
+		  DUMPS("IGNORED");
 	  }
 	  break;
 
@@ -385,8 +362,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 	default:
 		// stop playing this track as we cannot identify the eType
 		_endOfTrack = true;	
-		DUMPS("[UKNOWN 0x");
-		DUMPX(eType);
+		DUMPX("[UKNOWN 0x", eType);
 		DUMPS("] Track aborted");
 	}
 }
@@ -431,17 +407,12 @@ int MD_MFTrack::load(uint8_t trackId, MD_MIDIFile *mf)
 #if DUMP_DATA
 void MD_MFTrack::dump(void)
 {
-	DUMPS("\n[Track ");
-	DUMP(_trackId);
+	DUMP("\n[Track ", _trackId);
 	DUMPS(" Header]");
-	DUMPS("\nLength:\t\t\t");
-	DUMP(_length);
-	DUMPS("\nFile Location:\t\t");
-    DUMP(_startOffset);
-	DUMPS("\nEnd of Track:\t\t");
-	DUMP(_endOfTrack);
-	DUMPS("\nCurrent buffer offset:\t");
-	DUMP(_currOffset);
+	DUMP("\nLength:\t\t\t", _length);
+	DUMP("\nFile Location:\t\t", _startOffset);
+	DUMP("\nEnd of Track:\t\t", _endOfTrack);
+	DUMP("\nCurrent buffer offset:\t", _currOffset);
 }
 #endif // DUMP_DATA
 

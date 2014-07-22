@@ -24,16 +24,19 @@
 #include "MD_MIDIFile.h"
 #include "MD_MIDIHelper.h"
 
-////////////////////////////////////////
-// MIDIFile Class
-//
+/**
+ * \file
+ * \brief Main file for the MD_MIDIFile class implementation
+ */
 
-// Events may be processed in 2 different ways. One way is to give priority to all 
-// events on one track before moving on to the next TRACK (TRACK_PRIORITY) or to process 
-// one event from each track and cycling through all tracks roound robin fashion until 
-// no events are left to be processed (EVENT_PRIORITY). The define below allows changing 
-// the mode of operation implemented in getNextEvent().
-//
+/**
+ \def TRACK_PRIORITY
+ Events may be processed in 2 different ways. One way is to give priority to all 
+ events on one track before moving on to the next TRACK (TRACK_PRIORITY) or to process 
+ one event from each track and cycling through all tracks round robin fashion until 
+ no events are left to be processed (EVENT_PRIORITY). This #define allows changing 
+ the mode of operation implemented in getNextEvent().
+ */
 #define	TRACK_PRIORITY	1
 
 void MD_MIDIFile::initialise(void)
@@ -42,7 +45,7 @@ void MD_MIDIFile::initialise(void)
   _format = 0;
   _lastEventCheckTime = 0;
   _syncAtStart = false;
-  _paused = false;
+  _paused =_looping = false;
   
   setMidiHandler(NULL);
   setSysexHandler(NULL);
@@ -196,11 +199,22 @@ void MD_MIDIFile::setSysexHandler(void (*sh)(sysex_event *pev))
 
 bool MD_MIDIFile::isEOF(void)
 {
-	for (uint8_t i=0; i<_trackCount; i++)
-	 {
-		 if (! _track[i].getEndOfTrack()) return false;  // breaks at first false
-	 }
-	 return true;
+  bool bEof = true;
+  
+  // check if each track has finished
+	for (uint8_t i=0; i<_trackCount && bEof; i++)
+	{
+		 bEof = (_track[i].getEndOfTrack() && bEof);  // breaks at first false
+	}
+   
+   // if looping and all tracks done, reset to the start
+   if (bEof && _looping)
+   {
+     restart();
+     bEof = false;
+   }
+   
+	 return(bEof);
 }
 
 void MD_MIDIFile::pause(bool bMode)
@@ -208,17 +222,25 @@ void MD_MIDIFile::pause(bool bMode)
 {
 	_paused = bMode;
 
-	if (!_paused)				// restarting so ..
+	if (!_paused)				    // restarting so ..
 		_syncAtStart = false;	// .. force a time resynch when next processing events
 }
 
 void MD_MIDIFile::restart(void)
 // Reset the file to the start of all tracks
 {
-	for (uint8_t i=0; i<_trackCount; i++)
+  // track 0 contains information that does not need to be reloaded every time, 
+  // so if we are looping, ignore restarting that track. The file may have one 
+  // track only and in this case always sync from track 0.
+	for (uint8_t i=(_looping && _trackCount>1 ? 1 : 0); i<_trackCount; i++)
 		_track[i].restart();
 
 	_syncAtStart = false;		// force a time resych
+}
+
+void MD_MIDIFile::looping(bool bMode)
+{
+  _looping = bMode;
 }
 
 boolean MD_MIDIFile::getNextEvent(void)
@@ -248,7 +270,7 @@ boolean MD_MIDIFile::getNextEvent(void)
 	// process all events from each track first - TRACK PRIORITY
 	for (uint8_t i = 0; i < _trackCount; i++)
 	{
-		if (_format != 0) DUMPX(i);
+		if (_format != 0) DUMPX("", i);
 		// Limit n to be a sensible number of events in the loop counter
 		// When there are no more events, just break out
 		// Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
@@ -274,12 +296,12 @@ boolean MD_MIDIFile::getNextEvent(void)
 		{
 			bool	b;
 
-			if (_format != 0) DUMPX(i);
+			if (_format != 0) DUMPX("", i);
 			// Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
 			b = _track[i].getNextEvent(this, (n==0 ? elapsedTime : 0));
 			if (b && (_format != 0))
 				DUMPS("\n-- TRK "); 
-			doneEvents ||= b;
+			doneEvents = (doneEvents || b);
 		}
 
 		// When there are no more events, just break out
@@ -314,17 +336,17 @@ int MD_MIDIFile::load()
     h[HDR_SIZE] = '\0';
     
     if (strcmp(h, "MThd") != 0)
-	{
-	  _fd.close();
+	  {
+	    _fd.close();
       return(3);
-	}
+	  }
   }
   
   // read header size
   dat32 = readMultiByte(&_fd, MB_LONG);
   if (dat32 != 6)   // must be 6 for this header
   {
-	_fd.close();
+	  _fd.close();
     return(4);
   }
   
@@ -332,7 +354,7 @@ int MD_MIDIFile::load()
   dat16 = readMultiByte(&_fd, MB_WORD);
   if ((dat16 != 0) && (dat16 != 1))
   {
-	_fd.close();
+	  _fd.close();
     return(5);
   }
   _format = dat16;
@@ -387,29 +409,21 @@ int MD_MIDIFile::load()
 
 void MD_MIDIFile::dump(void)
 {
-  DUMPS("\nFile Name:\t");
-  DUMP(getFilename());
-  DUMPS("\nFile format:\t");
-  DUMP(getFormat());
-  DUMPS("\nTracks:\t\t");
-  DUMP(getTrackCount());
-  DUMPS("\nTime division:\t");
-  DUMP(getTicksPerQuarterNote());
-  DUMPS("\nTempo:\t\t");
-  DUMP(getTempo());
-  DUMPS("\nMicrosec/tick:\t");
-  DUMP(getMicrosecondDelta());
-  DUMPS("\nTime Signature:\t");
-  DUMP(getTimeSignature()>>8);
-  DUMP('/');
-  DUMP(getTimeSignature()&0xf);
-  DUMP('\n');
+  DUMP("\nFile Name:\t", getFilename());
+  DUMP("\nFile format:\t", getFormat());
+  DUMP("\nTracks:\t\t", getTrackCount());
+  DUMP("\nTime division:\t", getTicksPerQuarterNote());
+  DUMP("\nTempo:\t\t", getTempo());
+  DUMP("\nMicrosec/tick:\t", getMicrosecondDelta());
+  DUMP("\nTime Signature:\t", getTimeSignature()>>8);
+  DUMP("/", getTimeSignature() & 0xf);
+  DUMPS("\n");
  
 #if DUMP_DATA
   for (uint8_t i=0; i<_trackCount; i++)
   {
 	  _track[i].dump();
-	  DUMP('\n');
+	  DUMPS("\n");
   } 
 #endif // DUMP_DATA
 }

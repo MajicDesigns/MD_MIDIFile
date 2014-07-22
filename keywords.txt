@@ -23,6 +23,7 @@ getNextEvent	KEYWORD2
 dump	KEYWORD2
 restart	KEYWORD2
 pause	KEYWORD2
+looping keyword2
 
 ######################################
 # Constants (LITERAL1)

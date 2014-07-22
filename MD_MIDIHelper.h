@@ -23,6 +23,11 @@
 #ifndef _MDMIDIHELPER_H
 #define	_MDMIDIHELPER_H
 
+/**
+ * \file
+ * \brief Header file for helper functions definitions
+ */
+
 // readMultiByte parameter
 #define MB_LONG 4
 #define	MB_TRYTE 3

@@ -23,6 +23,11 @@
 #include <MD_MIDIFile.h>
 #include "MD_MIDIHelper.h"
 
+/**
+ * \file
+ * \brief Main file for helper functions implementation
+ */
+
 uint32_t readMultiByte(SdFile *f, uint8_t nLen)
 // read a multi byte value with MSB from the input stream
 {
@@ -81,11 +86,13 @@ void dumpBuffer(uint8_t *p, int len)
   for (int i=0; i<len; i++, p++)
   {
     if ((i!=0) && ((i & 0x0f) == 0)) // every 16 characters
-		DUMP('\n');
-    DUMP(' ');
-    if (*p<=0xf) 
-		DUMP('0');
-    DUMPX(*p);
+		  DUMPS("\n");
+      
+    DUMPS(" ");
+    if (*p<=0xf)
+      DUMPX("0", *p)
+    else
+      DUMPX("", *p);
   }
 }
 #endif
