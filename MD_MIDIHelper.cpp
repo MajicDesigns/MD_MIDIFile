@@ -29,7 +29,7 @@
  */
 
 uint32_t readMultiByte(SdFile *f, uint8_t nLen)
-// read a multi byte value with MSB from the input stream
+// read fixed length parameter from input
 {
   uint32_t  value = 0L;
   
@@ -42,7 +42,7 @@ uint32_t readMultiByte(SdFile *f, uint8_t nLen)
 }
 
 uint32_t readVarLen(SdFile *f)
-// read a variable length parameter from the input stream
+// read variable length parameter from input
 {
   uint32_t  value = 0;
   char      c;
@@ -56,32 +56,9 @@ uint32_t readVarLen(SdFile *f)
   return(value);
 }
 
-/*
-// this is the old code proposed by the MIDI organisation
-// new code is probably more efficient
-
-uint32_t readVarLen(SdFile *f)
-// read a variable length parameter from the input stream
-{
-  uint32_t  value;
-  char      c;
-  
-  if ((value = f->read()) & 0x80)
-  {
-    value &= 0x7f;
-    do
-    {
-      c = f->read();
-      value = (value << 7) + (c & 0x7f);
-    } while (c & 0x80);
-  }
-  
-  return(value);
-}
-*/
-
 #if DUMP_DATA
 void dumpBuffer(uint8_t *p, int len)
+// Formatted dump of a buffer of data
 {
   for (int i=0; i<len; i++, p++)
   {

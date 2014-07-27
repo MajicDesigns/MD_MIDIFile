@@ -29,19 +29,9 @@
  * \brief Main file for the MD_MIDIFile class implementation
  */
 
-/**
- \def TRACK_PRIORITY
- Events may be processed in 2 different ways. One way is to give priority to all 
- events on one track before moving on to the next TRACK (TRACK_PRIORITY) or to process 
- one event from each track and cycling through all tracks round robin fashion until 
- no events are left to be processed (EVENT_PRIORITY). This #define allows changing 
- the mode of operation implemented in getNextEvent().
- */
-#define	TRACK_PRIORITY	1
-
 void MD_MIDIFile::initialise(void)
 {
-  _trackCount = 0;            // # of tracks in file
+  _trackCount = 0;            // number of tracks in file
   _format = 0;
   _lastEventCheckTime = 0;
   _syncAtStart = false;
@@ -55,8 +45,9 @@ void MD_MIDIFile::initialise(void)
   _sd = NULL;
 
   // Set MIDI defaults
-  setTicksPerQuarterNote(48);	  // 48 ticks per quarter note
-  setTempo(120);				  // 120 beats per minute
+  setTicksPerQuarterNote(48); // 48 ticks per quarter note
+  setTempo(120);				      // 120 beats per minute
+  setMicrosecondPerQuarterNote(500000);  // 500,000 microseconds per quarter note
   setTimeSignature(4, 4);		  // 4/4 time
 }
 
@@ -165,7 +156,7 @@ void MD_MIDIFile::calcMicrosecondDelta(void)
 // If the MIDI time division is 60 ticks per beat and if the microseconds per beat 
 // is 500,000, then 1 tick = 500,000 / 60 = 8333.33 microseconds.
 {
-    if ((_tempo != 0) && (_ticksPerQuarterNote != 0))
+  if ((_tempo != 0) && (_ticksPerQuarterNote != 0))
 	{
 		_microsecondDelta = (60 * 1000000L) / _tempo;	// microseconds per beat
 		_microsecondDelta = _microsecondDelta / _ticksPerQuarterNote;	// microseconds per tick
@@ -178,11 +169,11 @@ void MD_MIDIFile::setMicrosecondPerQuarterNote(uint32_t m)
 	_microsecondDelta = m / _ticksPerQuarterNote;
 
 	// work out the tempo from the delta by reversing the calcs in calcMicrosecondsDelta
-	// m is alreay per quarter note
+	// m is already per quarter note
 	_tempo = (60 * 1000000L) / m;
 }
 
-uint32_t MD_MIDIFile::getMicrosecondDelta(void) 
+uint32_t MD_MIDIFile::getTickTime(void) 
 {
 	return _microsecondDelta;
 }
@@ -329,13 +320,12 @@ int MD_MIDIFile::load()
   // Read the MIDI header
   // header chunk = "MThd" + <header_length:4> + <format:2> + <num_tracks:2> + <time_division:2>
   {
-    #define HDR_SIZE  4
-    char    h[HDR_SIZE+1]; // Header characters + nul
+    char    h[MTHD_HDR_SIZE+1]; // Header characters + nul
   
-    _fd.fgets(h, HDR_SIZE+1);
-    h[HDR_SIZE] = '\0';
+    _fd.fgets(h, MTHD_HDR_SIZE+1);
+    h[MTHD_HDR_SIZE] = '\0';
     
-    if (strcmp(h, "MThd") != 0)
+    if (strcmp(h, MTHD_HDR) != 0)
 	  {
 	    _fd.close();
       return(3);
@@ -407,6 +397,7 @@ int MD_MIDIFile::load()
   return(-1);
 }
 
+#if DUMP_DATA
 void MD_MIDIFile::dump(void)
 {
   DUMP("\nFile Name:\t", getFilename());
@@ -419,12 +410,11 @@ void MD_MIDIFile::dump(void)
   DUMP("/", getTimeSignature() & 0xf);
   DUMPS("\n");
  
-#if DUMP_DATA
   for (uint8_t i=0; i<_trackCount; i++)
   {
 	  _track[i].dump();
 	  DUMPS("\n");
   } 
-#endif // DUMP_DATA
 }
+#endif // DUMP_DATA
 

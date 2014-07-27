@@ -89,7 +89,7 @@ bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime)
 
 	// work out new total elapsed time
 	_elapsedTimeTotal += elapsedTime;
-	elapsedTicks = _elapsedTimeTotal / mf->getMicrosecondDelta();
+	elapsedTicks = _elapsedTimeTotal / mf->getTickTime();
 
 	// Get the DeltaT from the file in order to see if enough ticks have
 	// passed for the event to be active. If not, just return without
@@ -101,7 +101,7 @@ bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime)
 	// Adjust the total elapsed time. Note use of actual DeltaT to avoid 
 	// accumulation of errors as we only check for elaspedTime being >= ticks,
 	// giving positive biased errors every time.
-	_elapsedTimeTotal -= (deltaT * mf->getMicrosecondDelta());
+	_elapsedTimeTotal -= (deltaT * mf->getTickTime());
 
 	DUMP("\ndT: ", deltaT);
 	DUMP("\tET: ", elapsedTicks);
@@ -212,8 +212,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 		sev.size = mf->_fd.read();
 		// The length parameter includes the 0xF7 but not the start boundary. 
 		// However, it may be bigger than our buffer will allow us to store.
-		#define	BUF_SIZE	(sizeof(sev.data)/sizeof(sev.data[0]))	
-		sev.size = (sev.size > BUF_SIZE - 2 ? BUF_SIZE-2 : sev.size + 1);
+		sev.size = (sev.size > BUF_SIZE(sev.data) - 2 ? BUF_SIZE(sev.data) - 2 : sev.size + 1);
 		for (i = 1; (i < sev.size) && (c != 0xf7); i++)
 		{
 			c = mf->_fd.read();	// next char
@@ -378,13 +377,12 @@ int MD_MFTrack::load(uint8_t trackId, MD_MIDIFile *mf)
   // Read the Track header
   // track_chunk = "MTrk" + <length:4> + <track_event> [+ <track_event> ...]
   {
-    #define HDR_SIZE  4
-    char    h[HDR_SIZE+1]; // Header characters + nul
+    char    h[MTRK_HDR_SIZE+1]; // Header characters + nul
   
-	mf->_fd.fgets(h, HDR_SIZE+1);
-    h[HDR_SIZE] = '\0';
+	  mf->_fd.fgets(h, MTRK_HDR_SIZE+1);
+    h[MTRK_HDR_SIZE] = '\0';
 
-    if (strcmp(h, "MTrk") != 0)
+    if (strcmp(h, MTRK_HDR) != 0)
       return(0);
   }
 
