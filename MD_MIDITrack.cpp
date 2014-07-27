@@ -32,6 +32,7 @@ void MD_MFTrack::reset(void)
 {
 	_length = 0;        // length of track in bytes
   _startOffset = 0;   // start of the track in bytes from start of file
+  _elapsedTicks = 0;
   restart();
 	_trackId = 255;
 }
@@ -64,7 +65,7 @@ bool MD_MFTrack::getEndOfTrack(void)
 
 void MD_MFTrack::syncTime(void)
 {
-	_elapsedTimeTotal = 0;
+	_elapsedTicks = 0;
 }
 
 void MD_MFTrack::restart(void)
@@ -72,13 +73,13 @@ void MD_MFTrack::restart(void)
 {
 	_currOffset = 0;
   _endOfTrack = false;
-  _elapsedTimeTotal = 0;
+  _elapsedTicks = 0;
 }
 
-bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime)
+bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint16_t tickCount)
 // track_event = <time:v> + [<midi_event> | <meta_event> | <sysex_event>]
 {
-	uint32_t deltaT, elapsedTicks;
+	uint32_t deltaT;
 
 	// is there anything to process?
 	if (_endOfTrack)
@@ -88,23 +89,22 @@ bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime)
 	mf->_fd.seekSet(_startOffset+_currOffset);
 
 	// work out new total elapsed time
-	_elapsedTimeTotal += elapsedTime;
-	elapsedTicks = _elapsedTimeTotal / mf->getTickTime();
+	_elapsedTicks += tickCount;
 
 	// Get the DeltaT from the file in order to see if enough ticks have
 	// passed for the event to be active. If not, just return without
 	// saving the file pointer and we will go back to the same spot next time.
 	deltaT = readVarLen(&mf->_fd);
-	if (elapsedTicks < deltaT)
+	if (_elapsedTicks < deltaT)
 		return(false);
 
 	// Adjust the total elapsed time. Note use of actual DeltaT to avoid 
 	// accumulation of errors as we only check for elaspedTime being >= ticks,
 	// giving positive biased errors every time.
-	_elapsedTimeTotal -= (deltaT * mf->getTickTime());
+	_elapsedTicks -= deltaT;
 
 	DUMP("\ndT: ", deltaT);
-	DUMP("\tET: ", elapsedTicks);
+	DUMP("\tET: ", _elapsedTicks);
 	DUMPS("\t");
 
 	parseEvent(mf);
@@ -258,7 +258,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 
 	  case 0x51:	// set Tempo - really the microseconds per tick
 		mf->setMicrosecondPerQuarterNote(readMultiByte(&mf->_fd, MB_TRYTE));
-		DUMP("SET TEMPO to ", mf->getMicrosecondDelta());
+		DUMP("SET TEMPO to ", mf->getTickTime());
 		DUMP(" us/tick or ", mf->getTempo());
 		DUMPS(" beats/min");
 	  break;

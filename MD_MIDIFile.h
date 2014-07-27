@@ -31,6 +31,7 @@ Revision History
 - Revised debug output macros.
 - Fixed some minor errors in code.
 - Added looping() method.
+- Changed timebase to be 'tick' based.
 
 ##20 January 2013 - version 1.2##
 - Cleaned up examples and added additional comments.
@@ -133,7 +134,7 @@ These contain additional information which would not be in the MIDI data stream 
 TimeSig, KeySig, Tempo, TrackName, Text, Marker, Special, EOT (End of Track) are the most
 common such events being some of the most common.
 
-Relevant META events are processed by the library code, but thid id only a subset of all
+Relevant META events are processed by the library code, but this is only a subset of all
 the available events.
 
 Note that the status bytes associated with System Common messages (0xF1 to 0xF6 inclusive)
@@ -231,10 +232,10 @@ The number of microseconds per quarter note is given in the _Set tempo_ meta eve
 
      microseconds per tick = microseconds per quarter note / ticks per quarter note
      
-Delta times are cumulative, and the next event’s delta time needs to be added onto this one after it has 
+Delta times are cumulative, and the next event's delta time needs to be added onto this one after it has 
 been calculated. If the MIDI time division is 60 ticks per beat and if the microseconds per beat
 is 500,000, then 1 tick = 500,000 / 60 = 8333.33 microseconds. The fractional number of microseconds must 
-be properly accounted for or the MIDI playback will drift away from the correctly synchronisaed time.
+be properly accounted for or the MIDI playback will drift away from the correctly synchronized time.
 
 ____
 
@@ -449,10 +450,10 @@ public:
    * processed.
    * 
    * \param mf          pointer to the MIDI file object calling this track.
-   * \param elapsedTime the time in milliseconds since this method was last called for this track.
+   * \param tickCount   the number of ticks since this method was last called for this track.
    * \return true if an event was found and processed.
    */
-	bool getNextEvent(MD_MIDIFile *mf, uint32_t elapsedTime);
+	bool getNextEvent(MD_MIDIFile *mf, uint16_t tickCount);
   
   /** 
    * Load the definition of a track
@@ -514,7 +515,7 @@ protected:
   uint32_t	_startOffset;     ///< start of the track in bytes from start of file
 	uint32_t	_currOffset;	    ///< offset from start of the track for the next read of SD data
 	bool		  _endOfTrack;	    ///< true when we have reached end of track or we have encountered an undefined event
-	uint32_t	_elapsedTimeTotal;///< the total time elapsed in microseconds since events were checked
+	uint16_t  _elapsedTicks;    ///< the total number of elapsed ticks since last event
 	midi_event  _mev;			      ///< data for MIDI callback function - persists between calls for run-on messages
 };
 
@@ -876,6 +877,7 @@ protected:
   void    calcMicrosecondDelta(void);	///< called internally to update the time per tick
 	void	  initialise(void);						///< initialize class variables all in one place
 	void	  synchTracks(void);					///< synchronize the start of all tracks
+  uint8_t TickClock(void);            ///< work out the number of ticks since the last event check
 
 	void	  (*_midiHandler)(midi_event *pev);		///< callback into user code to process MIDI stream
 	void	  (*_sysexHandler)(sysex_event *pev);	///< callback into user code to process SYSEX stream
@@ -886,8 +888,10 @@ protected:
   uint8_t   _trackCount;          ///< number of tracks in file
  
 	uint16_t  _ticksPerQuarterNote; ///< time base of file
-	uint32_t  _microsecondDelta;	  ///< calculated per tick based on other data for MIDI file
-	uint32_t  _lastEventCheckTime;	///< the last time an event check was performed
+	uint32_t  _tickTime;        	  ///< calculated per tick based on other data for MIDI file
+  uint16_t  _lastTickError;       ///< error brought forward from last tick check
+	uint32_t  _lastTickCheckTime;	  ///< the last time (microsec) an tick check was performed
+  
 	bool	  _syncAtStart;			      ///< sync up at the start of all tracks
 	bool	  _paused;				        ///< if true we are currently paused
   bool    _looping;               ///< if true we are currently looping
