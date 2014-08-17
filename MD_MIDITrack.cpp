@@ -32,7 +32,6 @@ void MD_MFTrack::reset(void)
 {
 	_length = 0;        // length of track in bytes
   _startOffset = 0;   // start of the track in bytes from start of file
-  _elapsedTicks = 0;
   restart();
 	_trackId = 255;
 }
@@ -88,29 +87,36 @@ bool MD_MFTrack::getNextEvent(MD_MIDIFile *mf, uint16_t tickCount)
 	// move the file pointer to where we left off
 	mf->_fd.seekSet(_startOffset+_currOffset);
 
-	// work out new total elapsed time
+	// Work out new total elapsed ticks - include the overshoot from
+	// last event.
 	_elapsedTicks += tickCount;
 
 	// Get the DeltaT from the file in order to see if enough ticks have
-	// passed for the event to be active. If not, just return without
-	// saving the file pointer and we will go back to the same spot next time.
+	// passed for the event to be active.
 	deltaT = readVarLen(&mf->_fd);
-	if (_elapsedTicks < deltaT)
+
+  // If not enough ticks, just return without saving the file pointer and 
+  // we will go back to the same spot next time.	
+  if (_elapsedTicks < deltaT)
 		return(false);
 
-	// Adjust the total elapsed time. Note use of actual DeltaT to avoid 
-	// accumulation of errors as we only check for elaspedTime being >= ticks,
+	// Adjust the total elapsed time to the error against actual DeltaT to avoid 
+	// accumulation of errors, as we only check for _elapsedTicks being >= ticks,
 	// giving positive biased errors every time.
 	_elapsedTicks -= deltaT;
 
 	DUMP("\ndT: ", deltaT);
-	DUMP("\tET: ", _elapsedTicks);
+	DUMP(" + ", _elapsedTicks);
 	DUMPS("\t");
 
 	parseEvent(mf);
 
 	// remember the offset for next time
 	_currOffset = mf->_fd.curPosition() - _startOffset;
+
+  // catch end of track when there is no META event  
+  _endOfTrack = _endOfTrack || (_currOffset >= _length);
+  if (_endOfTrack) DUMPS(" - OUT OF TRACK");
 
 	return(true);
 }
@@ -253,7 +259,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 	  {
 	  case 0x2f:	// End of track
 		_endOfTrack = true;
-	    DUMPS("END OF TRACK");
+	  DUMPS("END OF TRACK");
 	  break;
 
 	  case 0x51:	// set Tempo - really the microseconds per tick
@@ -293,7 +299,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 			DUMP("", (char)mf->_fd.read());
 	  break;
 
-	  case 0x4:	// Instrumenmt Name
+	  case 0x4:	// Instrument Name
 		DUMPS("INSTRUMENT ");
 		for (uint8_t i=0; i<mLen; i++)
 			DUMP("", (char)mf->_fd.read());

@@ -124,7 +124,7 @@ uint16_t MD_MIDIFile::getTempo(void)
 void MD_MIDIFile::setTempo(uint16_t t)
 {
   _tempo = t;
-  calcMicrosecondDelta();
+  calcTickTime();
 }
 
 uint16_t MD_MIDIFile::getTimeSignature(void)
@@ -136,13 +136,13 @@ void MD_MIDIFile::setTimeSignature(uint8_t n, uint8_t d)
 {
   _timeSignature[0] = n;
   _timeSignature[1] = d;
-  calcMicrosecondDelta();
+  calcTickTime();
 }
 
 void MD_MIDIFile::setTicksPerQuarterNote(uint16_t ticks) 
 {
   _ticksPerQuarterNote = ticks;
-  calcMicrosecondDelta();
+  calcTickTime();
 }
 
 uint16_t MD_MIDIFile::getTicksPerQuarterNote(void) 
@@ -150,7 +150,7 @@ uint16_t MD_MIDIFile::getTicksPerQuarterNote(void)
   return _ticksPerQuarterNote;
 }
 
-void MD_MIDIFile::calcMicrosecondDelta(void) 
+void MD_MIDIFile::calcTickTime(void) 
 // 1 tick = microseconds per beat / ticks per Q note
 // The variable "microseconds per beat" is specified by a MIDI event carrying 
 // the set tempo meta message. If it is not specified then it is 500,000 microseconds 
@@ -199,13 +199,15 @@ bool MD_MIDIFile::isEOF(void)
 	{
 		 bEof = (_track[i].getEndOfTrack() && bEof);  // breaks at first false
 	}
+  
+  if (bEof) DUMPS("\n! EOF");
    
-   // if looping and all tracks done, reset to the start
-   if (bEof && _looping)
-   {
-     restart();
-     bEof = false;
-   }
+  // if looping and all tracks done, reset to the start
+  if (bEof && _looping)
+  {
+    restart();
+    bEof = false;
+  }
    
 	 return(bEof);
 }
@@ -237,7 +239,7 @@ void MD_MIDIFile::looping(bool bMode)
 }
 
 uint8_t MD_MIDIFile::TickClock(void)
-// check if enough time has passed for a MIDI tick and qwork out how many!
+// check if enough time has passed for a MIDI tick and work out how many!
 {
 	uint32_t	elapsedTime;
   uint8_t   ticks = 0;
@@ -258,7 +260,8 @@ boolean MD_MIDIFile::getNextEvent(void)
 	uint8_t		n, ticks;
 
 	// if we are paused we are paused!
-	if (_paused) return false;
+	if (_paused) 
+    return false;
 
 	// sync start all the tracks if we need to
 	if (!_syncAtStart)
@@ -271,7 +274,11 @@ boolean MD_MIDIFile::getNextEvent(void)
   if ((ticks = TickClock()) == 0)
 		return false;	
 
-	if (_format != 0) DUMPS("\n-- TRK "); 
+	if (_format != 0) 
+  {
+    DUMP("\n-- [", ticks); 
+    DUMPS("] TRK "); 
+  }    
 
 #if TRACK_PRIORITY
 	// process all events from each track first - TRACK PRIORITY
@@ -304,6 +311,7 @@ boolean MD_MIDIFile::getNextEvent(void)
 			bool	b;
 
 			if (_format != 0) DUMPX("", i);
+
 			// Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
 			b = _track[i].getNextEvent(this, (n==0 ? ticks : 0));
 			if (b && (_format != 0))
@@ -396,7 +404,7 @@ int MD_MIDIFile::load()
       dat16 = framespersecond * resolution;
    } 
    _ticksPerQuarterNote = dat16;
-   calcMicrosecondDelta();	// we may have changed from default, so recalculate
+   calcTickTime();	// we may have changed from default, so recalculate
 
    // load all tracks
    for (uint8_t i = 0; i<_trackCount; i++)

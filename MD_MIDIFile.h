@@ -303,18 +303,20 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 /**
  \def DUMP_DATA
  Set to 1 to to dump the file data instead of processing callback.
- Neither of DUMP_DATA or SHOW_UNUSED_META should be 1 when MIDI messages are being 
- transmitted as the Serial.print() functions are called to print information.
+  Neither SHOW_UUSED_DATA or DUMP_DATA should not be set to 1 when MIDI messages 
+  are being transmitted throught he serial port as the Serial.print() functions 
+  are called to print information to the serial monitor.
  */
-#define	DUMP_DATA			    0
+#define	DUMP_DATA 0
 
 /**
  \def SHOW_UNUSED_META
- Set to 1 to display unused META messages. DUMP_DATA must also be enabled.
- Neither of DUMP_DATA or SHOW_UNUSED_META should be 1 when MIDI messages are being 
- transmitted as the Serial.print() functions are called to print information.
+ Set to 1 to display unused META messages. DUMP_DATA must also be enabled for this 
+ to have an effect. Neither SHOW_UUSED_DATA or DUMP_DATA should not be set to 1 when 
+ MIDI messages are being transmitted throught he serial port as the Serial.print() 
+ functions are called to print information to the serial monitor.
  */
-#define	SHOW_UNUSED_META	0
+#define	SHOW_UNUSED_META  0
 
 /**
  \def MIDI_MAX_TRACKS
@@ -515,7 +517,7 @@ protected:
   uint32_t	_startOffset;     ///< start of the track in bytes from start of file
 	uint32_t	_currOffset;	    ///< offset from start of the track for the next read of SD data
 	bool		  _endOfTrack;	    ///< true when we have reached end of track or we have encountered an undefined event
-	uint16_t  _elapsedTicks;    ///< the total number of elapsed ticks since last event
+	uint32_t  _elapsedTicks;    ///< the total number of elapsed ticks since last event
 	midi_event  _mev;			      ///< data for MIDI callback function - persists between calls for run-on messages
 };
 
@@ -874,7 +876,7 @@ public:
   /** @} */
 
 protected:
-  void    calcMicrosecondDelta(void);	///< called internally to update the time per tick
+  void    calcTickTime(void);       	///< called internally to update the tick time when parameters change
 	void	  initialise(void);						///< initialize class variables all in one place
 	void	  synchTracks(void);					///< synchronize the start of all tracks
   uint8_t TickClock(void);            ///< work out the number of ticks since the last event check
