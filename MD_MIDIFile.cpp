@@ -48,6 +48,7 @@ void MD_MIDIFile::initialise(void)
   // Set MIDI defaults
   setTicksPerQuarterNote(48); // 48 ticks per quarter note
   setTempo(120);				      // 120 beats per minute
+  setTempoAdjust(0);          // 0 beats per minute
   setMicrosecondPerQuarterNote(500000);  // 500,000 microseconds per quarter note
   setTimeSignature(4, 4);		  // 4/4 time
 }
@@ -116,14 +117,25 @@ uint8_t MD_MIDIFile::getFormat(void)
   return _format;
 }
 
+int16_t MD_MIDIFile::getTempoAdjust(void)
+{
+  return _tempoDelta;
+}
+
 uint16_t MD_MIDIFile::getTempo(void)
 {
   return _tempo;
 }
 
+void MD_MIDIFile::setTempoAdjust(int16_t t)
+{
+  if ((t + _tempo) > 0) _tempoDelta = t;
+  calcTickTime();
+}
+
 void MD_MIDIFile::setTempo(uint16_t t)
 {
-  _tempo = t;
+  if ((_tempoDelta + t) > 0) _tempo = t;
   calcTickTime();
 }
 
@@ -150,6 +162,15 @@ uint16_t MD_MIDIFile::getTicksPerQuarterNote(void)
   return _ticksPerQuarterNote;
 }
 
+void MD_MIDIFile::setMicrosecondPerQuarterNote(uint32_t m)
+// This is the value given in the META message setting tempo
+{
+  // work out the tempo from the delta by reversing the calcs in
+  // calctickTime - m is already per quarter note
+  _tempo = (60 * 1000000L) / m;
+  calcTickTime();
+}
+
 void MD_MIDIFile::calcTickTime(void) 
 // 1 tick = microseconds per beat / ticks per Q note
 // The variable "microseconds per beat" is specified by a MIDI event carrying 
@@ -158,21 +179,11 @@ void MD_MIDIFile::calcTickTime(void)
 // If the MIDI time division is 60 ticks per beat and if the microseconds per beat 
 // is 500,000, then 1 tick = 500,000 / 60 = 8333.33 microseconds.
 {
-  if ((_tempo != 0) && (_ticksPerQuarterNote != 0))
+  if ((_tempo + _tempoDelta != 0) && (_ticksPerQuarterNote != 0))
 	{
-		_tickTime = (60 * 1000000L) / _tempo;	        // microseconds per beat
-		_tickTime = _tickTime / _ticksPerQuarterNote;	// microseconds per tick
+		_tickTime = (60 * 1000000L) / (_tempo + _tempoDelta); // microseconds per beat
+		_tickTime = (_tickTime * 4) / (_timeSignature[1] * _ticksPerQuarterNote);	// microseconds per tick
 	}
-}
-
-void MD_MIDIFile::setMicrosecondPerQuarterNote(uint32_t m)
-// This is the value given in the META message setting tempo
-{
-	_tickTime = m / _ticksPerQuarterNote;
-
-	// work out the tempo from the delta by reversing the calcs in 
-  // calcMicrosecondsDelta - m is already per quarter note
-	_tempo = (60 * 1000000L) / m;
 }
 
 uint32_t MD_MIDIFile::getTickTime(void) 
@@ -238,11 +249,11 @@ void MD_MIDIFile::looping(bool bMode)
   _looping = bMode;
 }
 
-uint8_t MD_MIDIFile::TickClock(void)
+uint16_t MD_MIDIFile::tickClock(void)
 // check if enough time has passed for a MIDI tick and work out how many!
 {
 	uint32_t	elapsedTime;
-  uint8_t   ticks = 0;
+  uint16_t   ticks = 0;
   
 	elapsedTime = _lastTickError + micros() - _lastTickCheckTime;
 	if (elapsedTime >= _tickTime)
@@ -257,7 +268,7 @@ uint8_t MD_MIDIFile::TickClock(void)
 
 boolean MD_MIDIFile::getNextEvent(void)
 {
-	uint8_t		n, ticks;
+	uint16_t		ticks;
 
 	// if we are paused we are paused!
 	if (_paused) 
@@ -271,8 +282,17 @@ boolean MD_MIDIFile::getNextEvent(void)
 	}
 
 	// check if enough time has passed for a MIDI tick
-  if ((ticks = TickClock()) == 0)
+  if ((ticks = tickClock()) == 0)
 		return false;	
+
+  processEvents(ticks);
+  
+  return(true);
+}
+
+void MD_MIDIFile::processEvents(uint16_t ticks)
+{
+	uint8_t		n;
 
 	if (_format != 0) 
   {
@@ -324,8 +344,6 @@ boolean MD_MIDIFile::getNextEvent(void)
 			break;
 	} 
 #endif // EVENT/TRACK_PRIORITY
-
-	return true;
 }
 
 int MD_MIDIFile::load() 

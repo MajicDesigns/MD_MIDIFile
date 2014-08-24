@@ -333,7 +333,17 @@ seq_state midiFSM(seq_state curSS)
 	case MSProcess:
 		// Play the MIDI file
 		if (!SMF.isEOF())
-			SMF.getNextEvent();
+    {
+			if (SMF.getNextEvent())
+      {
+        char  sBuf[10];
+        
+        sprintf(sBuf, "%3d", SMF.getTempo());
+        LCDMessage(0, LCD_COLS-strlen(sBuf), sBuf, true);
+        sprintf(sBuf, "%d/%d", SMF.getTimeSignature()>>8, SMF.getTimeSignature() & 0xf);
+        LCDMessage(1, LCD_COLS-strlen(sBuf), sBuf, true);
+      };
+    }    
 		else
 			s = MSClose;
 

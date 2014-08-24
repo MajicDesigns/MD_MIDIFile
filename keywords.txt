@@ -14,16 +14,32 @@ sysex_event	KEYWORD1
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-getLength	KEYWORD2
-getEndOfTrack	KEYWORD2
-syncTime	KEYWORD2
-load	KEYWORD2
+begin	KEYWORD2
+getTickTime	KEYWORD2
+getTempo	KEYWORD2
+getTempoAdjust	KEYWORD2
+getTicksPerQuarterNote	KEYWORD2
+getTimeSignature	KEYWORD2
+setMicrosecondPerQuarterNote	KEYWORD2
+setTempo	KEYWORD2
+setTempoAdjust	KEYWORD2
+setTicksPerQuarterNote	KEYWORD2
+setTimeSignature	KEYWORD2
 close	KEYWORD2
-getNextEvent	KEYWORD2
-dump	KEYWORD2
-restart	KEYWORD2
+isEOF KEYWORD2
+getFileName	KEYWORD2
+setFileName	KEYWORD2
+load	KEYWORD2
+getFormat	KEYWORD2
+getTrackCount	KEYWORD2
+looping	KEYWORD2
 pause	KEYWORD2
-looping keyword2
+restart	KEYWORD2
+getNextEvent	KEYWORD2
+processEvents	KEYWORD2
+setMidiHandler	KEYWORD2
+setSysexHandler	KEYWORD2
+dump	KEYWORD2
 
 ######################################
 # Constants (LITERAL1)

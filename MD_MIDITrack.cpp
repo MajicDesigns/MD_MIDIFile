@@ -270,7 +270,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 	  break;
 
 	  case 0x58:	// time signature
-		mf->setTimeSignature(mf->_fd.read(), (2 << mf->_fd.read()));	// denominator is 2^n
+		mf->setTimeSignature(mf->_fd.read(), (1 << mf->_fd.read()));	// denominator is 2^n
 		mf->_fd.seekCur(mLen-2);
 		DUMP("SET TIME SIGNATURE to ", mf->getTimeSignature()>>8);
 		DUMP("/", mf->getTimeSignature()&0xf);
