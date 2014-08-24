@@ -17,7 +17,7 @@
 
 // Set to 1 to generate the MIDI ticks in this application
 // Set to 0 to allow library to generate clock based on Tempo
-#define GENERATE_TICKS  1
+#define GENERATE_TICKS  0
 
 // Set to 1 to use the MIDI interface (ie, not debugging to serial port)
 #define	USE_MIDI	1

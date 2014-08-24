@@ -28,7 +28,7 @@ Topics
 
 Revision History
 ----------------
-##xx xxxx 2014 - version 2.0##
+##24 August 2014 - version 2.0##
 - Renamed MD_MIDIFile Library for consistency with other MajicDesigns libraries.
 - Documentation extensively revised and now in Doxygen format.
 - Revised debug output macros.
