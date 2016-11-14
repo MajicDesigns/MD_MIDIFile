@@ -48,8 +48,9 @@
 // list will be opened (skips errors).
 char *tuneList[] = 
 {
-
-	"LOOPDEMO.MID",  // simplest and shortest file
+  "1.MID",
+/*	"LOOPDEMO.MID",  // simplest and shortest file
+  "ELISE.MID",
 	"TWINKLE.MID",
 	"GANGNAM.MID",
 	"FUGUEGM.MID",
@@ -67,7 +68,7 @@ char *tuneList[] =
 	"PROWLER.MID",
 	"IPANEMA.MID",
 	"JZBUMBLE.MID",
-};
+*/};
 
 // These don't play as they need more than 16 tracks but will run if MIDIFile.h is changed
 //#define MIDI_FILE  "SYMPH9.MID"		// 29 tracks
@@ -91,7 +92,9 @@ void midiCallback(midi_event *pev)
 	else
 		Serial.write(pev->data, pev->size);
 #endif
-  DEBUG("\nM T");
+  DEBUG("\n");
+  DEBUG(millis());
+  DEBUG("\tM T");
   DEBUG(pev->track);
   DEBUG(":  Ch ");
   DEBUG(pev->channel+1);
