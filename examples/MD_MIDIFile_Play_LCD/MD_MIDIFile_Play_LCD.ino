@@ -6,7 +6,7 @@
 //	SD card interface - change SD_SELECT for SPI comms.
 //	LCD interface - assumed to be 2 rows 16 chars. Change LCD 
 //	  pin definitions for hardware setup. Uses the MD_AButton library 
-//    (found at http://arduinocode.codeplex.com/releases) to read and manage 
+//    (found at https://github.com/MajicDesigns/Abutton) to read and manage 
 //    the LCD display buttons.
 //
 
