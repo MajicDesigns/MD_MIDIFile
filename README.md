@@ -13,4 +13,4 @@ External dependencies:
 * *SdFat* library found [here](https://github.com/greiman?tab=repositories) used by the library to read SMF from the the SD card.
 * *MIDI interface hardware* as described in the library documentation or similar, a USB interface with converter or a MIDI shield.
 
-[Library Documentation](https://majicdesigns.github.io/MIDIFile/)
+[Library Documentation](https://majicdesigns.github.io/MD_MIDIFile/)
