@@ -184,7 +184,7 @@ uint16_t createPlaylistFile(void)
   SD.vwd()->rewind();
   while (mFile.openNext(SD.vwd(), O_READ))
 	{
-    mFile.getFilename(fname);
+    mFile.getName(fname, FNAME_SIZE);
 
     DEBUG("\nFile ");
     DEBUG(count);
