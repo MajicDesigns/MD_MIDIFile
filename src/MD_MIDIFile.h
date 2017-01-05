@@ -27,7 +27,7 @@ Topics
 
 Revision History
 ----------------
-## 24 December 2015 - version 2.01##
+## 24 December 2015 - version 2.1##
 - Bug fix - SdFat changed behaviour, needed change TIME SIGNATURE handling case.
 
 ##24 August 2014 - version 2.0##
