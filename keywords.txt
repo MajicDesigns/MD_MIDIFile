@@ -26,7 +26,7 @@ setTempoAdjust	KEYWORD2
 setTicksPerQuarterNote	KEYWORD2
 setTimeSignature	KEYWORD2
 close	KEYWORD2
-isEOF KEYWORD2
+isEOF	KEYWORD2
 getFileName	KEYWORD2
 setFileName	KEYWORD2
 load	KEYWORD2
