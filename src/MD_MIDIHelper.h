@@ -21,7 +21,7 @@
 */
 
 #ifndef _MDMIDIHELPER_H
-#define	_MDMIDIHELPER_H
+#define _MDMIDIHELPER_H
 
 /**
  * \file

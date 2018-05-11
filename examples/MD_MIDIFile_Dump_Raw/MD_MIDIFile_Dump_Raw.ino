@@ -29,7 +29,7 @@ int ReadHeaderType(SdFile *f)
 {
   #define  HDR_SIZE  4
   char    c[HDR_SIZE+1];
-  
+
   f->fgets(c, HDR_SIZE+1);
   c[HDR_SIZE] = '\0';
   
@@ -58,21 +58,21 @@ void dumpBuffer(SdFile *f, int len)
     }
 
     // hex dump  
-	{
-		int i;
+  {
+    int i;
 
-		for (i=0; i<lcount; i++)
-		{
-		  Serial.write(' ');
-		  if (data[i]<=0xf) 
-			  Serial.write('0');
-		  Serial.print(data[i], HEX);
-		}
-		for (; i<CHARPERLINE; i++)
-		{
-			Serial.print("   ");
-		}
-	}
+    for (i=0; i<lcount; i++)
+    {
+      Serial.write(' ');
+      if (data[i]<=0xf) 
+        Serial.write('0');
+      Serial.print(data[i], HEX);
+    }
+    for (; i<CHARPERLINE; i++)
+    {
+      Serial.print("   ");
+    }
+  }
     Serial.print("\t");
     
     // ASCII dump
@@ -146,92 +146,92 @@ void setup(void)
   Serial.println("[MIDI File Raw Dump]");
   
   if (!sd.begin(SD_SELECT, SPI_HALF_SPEED)) 
-	  sd.initErrorHalt();
+    sd.initErrorHalt();
 }
 
 void loop(void)
 {
-	static fsm_state state = STATE_BEGIN;
-	static char	fname[20];
+  static fsm_state state = STATE_BEGIN;
+  static char	fname[20];
 
-	switch (state)
-	{
-	case STATE_BEGIN:
-		Serial.println("\nFile list from SD card:\n");
-		sd.ls(Serial);
-		state = STATE_PROMPT;
-		break;
+  switch (state)
+  {
+  case STATE_BEGIN:
+    Serial.println("\nFile list from SD card:\n");
+    sd.ls(Serial);
+    state = STATE_PROMPT;
+    break;
 
-	case STATE_PROMPT:
-		Serial.print("\nEnter file name: ");
-		state = STATE_READ_FNAME;
-		break;
+  case STATE_PROMPT:
+    Serial.print("\nEnter file name: ");
+    state = STATE_READ_FNAME;
+    break;
 
-	case STATE_READ_FNAME:
-		{
-			uint8_t	len = 0;
-			char c; 
+  case STATE_READ_FNAME:
+    {
+      uint8_t	len = 0;
+      char c; 
 
-			// read until end of line
-			do
-			{
-				while (!Serial.available())
-					;  // wait for the next character
-				c = Serial.read();
-				fname[len++] = c;
-			} while (c != '\n');
+      // read until end of line
+      do
+      {
+        while (!Serial.available())
+          ;  // wait for the next character
+        c = Serial.read();
+        fname[len++] = c;
+      } while (c != '\n');
 
-			// properly terminate
-			--len;
-			fname[len++] = '\0';
+      // properly terminate
+      --len;
+      fname[len++] = '\0';
 
-			Serial.println(fname);
-			state = STATE_OPEN;
-		}
-		break;
+      Serial.println(fname);
+      state = STATE_OPEN;
+    }
+    break;
 
-	case STATE_OPEN:
-		// open the file for reading:
-		if (!myFile.open(fname, O_READ)) 
-		{
-			Serial.println("Opening file read failed");
-			state = STATE_PROMPT;
-		}
-		state = STATE_DUMP;
-		break;
+  case STATE_OPEN:
+    // open the file for reading:
+    if (!myFile.open(fname, O_READ)) 
+    {
+      Serial.println("Opening file read failed");
+      state = STATE_PROMPT;
+    }
+    state = STATE_DUMP;
+    break;
 
-	case STATE_DUMP:
-		while (myFile.peek() != -1)
-		{
-			switch (ReadHeaderType(&myFile))
-			{
-				case HDR_MTHD:
-					Serial.println("MThd ->");
-					ProcessMTHD(&myFile); 
-					Serial.println();
-					break;
+  case STATE_DUMP:
+    while (myFile.peek() != -1)
+    {
+      switch (ReadHeaderType(&myFile))
+      {
+        case HDR_MTHD:
+          Serial.println("MThd ->");
+          ProcessMTHD(&myFile); 
+          Serial.println();
+          break;
       
-				case HDR_MTRK: 
-					Serial.println("MTrk ->");
-					ProcessMTRK(&myFile); 
-					Serial.println();
-					break;
+        case HDR_MTRK: 
+          Serial.println("MTrk ->");
+          ProcessMTRK(&myFile); 
+          Serial.println();
+          break;
       
-				case HDR_ERR:  
-					Serial.println("Not a valid header file"); 
-					myFile.seekEnd();
-					break;
-			}  
-		}
-		state = STATE_CLOSE;
-		break;
+        case HDR_ERR:  
+          Serial.println("Not a valid header file"); 
+          myFile.seekEnd();
+          break;
+      }  
+    }
+    state = STATE_CLOSE;
+    break;
 
-	case STATE_CLOSE:
-		myFile.close();
-		state = STATE_BEGIN;
-		break;
+  case STATE_CLOSE:
+    myFile.close();
+    state = STATE_BEGIN;
+    break;
 
-	default:
-		state = STATE_PROMPT;	// reset in case things go awry
-	}
+  default:
+    state = STATE_PROMPT;	// reset in case things go awry
+  }
 }

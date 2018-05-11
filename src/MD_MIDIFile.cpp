@@ -47,23 +47,23 @@ void MD_MIDIFile::initialise(void)
 
   // Set MIDI defaults
   setTicksPerQuarterNote(48); // 48 ticks per quarter note
-  setTempo(120);				      // 120 beats per minute
+  setTempo(120);              // 120 beats per minute
   setTempoAdjust(0);          // 0 beats per minute adjustment
   setMicrosecondPerQuarterNote(500000);  // 500,000 microseconds per quarter note
-  setTimeSignature(4, 4);		  // 4/4 time
+  setTimeSignature(4, 4);     // 4/4 time
 }
 
 void MD_MIDIFile::synchTracks(void)
 {
-	for (uint8_t i=0; i<_trackCount; i++)
-		_track[i].syncTime();
-    
-	_lastTickCheckTime = micros();
+  for (uint8_t i=0; i<_trackCount; i++)
+    _track[i].syncTime();
+
+  _lastTickCheckTime = micros();
 }
 
 MD_MIDIFile::MD_MIDIFile(void) 
 { 
-	initialise();
+  initialise();
 }
 
 MD_MIDIFile::~MD_MIDIFile() 
@@ -73,7 +73,7 @@ MD_MIDIFile::~MD_MIDIFile()
 
 void MD_MIDIFile::begin(SdFat *psd)
 {
-	_sd = psd;
+  _sd = psd;
 }
 
 void MD_MIDIFile::close()
@@ -81,7 +81,7 @@ void MD_MIDIFile::close()
 {
   for (uint8_t i = 0; i<_trackCount; i++)
   {
-	  _track[i].close();
+    _track[i].close();
   }
   _trackCount = 0;
   _syncAtStart = false;
@@ -95,8 +95,8 @@ void MD_MIDIFile::setFilename(const char* aname)
 // sets the filename of the MIDI file.
 // expects it to be in 8.3 format.
 {
-	if (aname != NULL)
-		strcpy(_fileName, aname);
+  if (aname != NULL)
+    strcpy(_fileName, aname);
 }
 
 const char* MD_MIDIFile::getFilename(void) 
@@ -180,56 +180,56 @@ void MD_MIDIFile::calcTickTime(void)
 // is 500,000, then 1 tick = 500,000 / 60 = 8333.33 microseconds.
 {
   if ((_tempo + _tempoDelta != 0) && _ticksPerQuarterNote != 0 && _timeSignature[1] != 0)
-	{
-		_tickTime = (60 * 1000000L) / (_tempo + _tempoDelta); // microseconds per beat
-		_tickTime = (_tickTime * 4) / (_timeSignature[1] * _ticksPerQuarterNote);	// microseconds per tick
-	}
+  {
+    _tickTime = (60 * 1000000L) / (_tempo + _tempoDelta); // microseconds per beat
+    _tickTime = (_tickTime * 4) / (_timeSignature[1] * _ticksPerQuarterNote); // microseconds per tick
+  }
 }
 
 uint32_t MD_MIDIFile::getTickTime(void) 
 {
-	return _tickTime;
+  return _tickTime;
 }
 
 void MD_MIDIFile::setMidiHandler(void (*mh)(midi_event *pev))
 {
-	_midiHandler = mh;
+  _midiHandler = mh;
 }
 
 void MD_MIDIFile::setSysexHandler(void (*sh)(sysex_event *pev))
 {
-	_sysexHandler = sh;
+  _sysexHandler = sh;
 }
 
 bool MD_MIDIFile::isEOF(void)
 {
   bool bEof = true;
-  
+
   // check if each track has finished
-	for (uint8_t i=0; i<_trackCount && bEof; i++)
-	{
-		 bEof = (_track[i].getEndOfTrack() && bEof);  // breaks at first false
-	}
+  for (uint8_t i=0; i<_trackCount && bEof; i++)
+  {
+    bEof = (_track[i].getEndOfTrack() && bEof);  // breaks at first false
+  }
   
   if (bEof) DUMPS("\n! EOF");
-   
+
   // if looping and all tracks done, reset to the start
   if (bEof && _looping)
   {
     restart();
     bEof = false;
   }
-   
-	 return(bEof);
+
+  return(bEof);
 }
 
 void MD_MIDIFile::pause(bool bMode)
 // Start pause when true and restart when false
 {
-	_paused = bMode;
+  _paused = bMode;
 
-	if (!_paused)				    // restarting so ..
-		_syncAtStart = false;	// .. force a time resynch when next processing events
+  if (!_paused)           // restarting so ..
+    _syncAtStart = false; // .. force a time resynch when next processing events
 }
 
 void MD_MIDIFile::restart(void)
@@ -238,10 +238,10 @@ void MD_MIDIFile::restart(void)
   // track 0 contains information that does not need to be reloaded every time, 
   // so if we are looping, ignore restarting that track. The file may have one 
   // track only and in this case always sync from track 0.
-	for (uint8_t i=(_looping && _trackCount>1 ? 1 : 0); i<_trackCount; i++)
-		_track[i].restart();
+  for (uint8_t i=(_looping && _trackCount>1 ? 1 : 0); i<_trackCount; i++)
+    _track[i].restart();
 
-	_syncAtStart = false;		// force a time resych
+  _syncAtStart = false;   // force a time resych
 }
 
 void MD_MIDIFile::looping(bool bMode)
@@ -252,105 +252,105 @@ void MD_MIDIFile::looping(bool bMode)
 uint16_t MD_MIDIFile::tickClock(void)
 // check if enough time has passed for a MIDI tick and work out how many!
 {
-	uint32_t	elapsedTime;
-  uint16_t   ticks = 0;
-  
-	elapsedTime = _lastTickError + micros() - _lastTickCheckTime;
-	if (elapsedTime >= _tickTime)
+  uint32_t  elapsedTime;
+  uint16_t  ticks = 0;
+
+  elapsedTime = _lastTickError + micros() - _lastTickCheckTime;
+  if (elapsedTime >= _tickTime)
   {
     ticks = elapsedTime/_tickTime;
     _lastTickError = elapsedTime - (_tickTime * ticks);
-		_lastTickCheckTime = micros();			// save for next round of checks
-  }  
- 
+    _lastTickCheckTime = micros();    // save for next round of checks
+  }
+
   return(ticks);
 }
 
 boolean MD_MIDIFile::getNextEvent(void)
 {
-	uint16_t		ticks;
+  uint16_t  ticks;
 
-	// if we are paused we are paused!
-	if (_paused) 
+  // if we are paused we are paused!
+  if (_paused) 
     return false;
 
-	// sync start all the tracks if we need to
-	if (!_syncAtStart)
-	{
-		synchTracks();
-		_syncAtStart = true;
-	}
+  // sync start all the tracks if we need to
+  if (!_syncAtStart)
+  {
+    synchTracks();
+    _syncAtStart = true;
+  }
 
-	// check if enough time has passed for a MIDI tick
+  // check if enough time has passed for a MIDI tick
   if ((ticks = tickClock()) == 0)
-		return false;	
+    return false;	
 
   processEvents(ticks);
-  
+
   return(true);
 }
 
 void MD_MIDIFile::processEvents(uint16_t ticks)
 {
-	uint8_t		n;
+  uint8_t n;
 
-	if (_format != 0) 
+  if (_format != 0) 
   {
     DUMP("\n-- [", ticks); 
     DUMPS("] TRK "); 
-  }    
+  }
 
 #if TRACK_PRIORITY
-	// process all events from each track first - TRACK PRIORITY
-	for (uint8_t i = 0; i < _trackCount; i++)
-	{
-		if (_format != 0) DUMPX("", i);
-		// Limit n to be a sensible number of events in the loop counter
-		// When there are no more events, just break out
-		// Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
-		for (n=0; n < 100; n++)
-		{
-			if (!_track[i].getNextEvent(this, (n==0 ? ticks : 0)))
-				break;
-		}
+  // process all events from each track first - TRACK PRIORITY
+  for (uint8_t i = 0; i < _trackCount; i++)
+  {
+    if (_format != 0) DUMPX("", i);
+    // Limit n to be a sensible number of events in the loop counter
+    // When there are no more events, just break out
+    // Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
+    for (n=0; n < 100; n++)
+    {
+      if (!_track[i].getNextEvent(this, (n==0 ? ticks : 0)))
+        break;
+    }
 
-		if ((n > 0) && (_format != 0))
-			DUMPS("\n-- TRK "); 
-	}
+    if ((n > 0) && (_format != 0))
+      DUMPS("\n-- TRK "); 
+  }
 #else // EVENT_PRIORITY
-	// process one event from each track round-robin style - EVENT PRIORITY
-	bool doneEvents;
+  // process one event from each track round-robin style - EVENT PRIORITY
+  bool doneEvents;
 
-	// Limit n to be a sensible number of events in the loop counter
-	for (n = 0; (n < 100) && (!doneEvents); n++)
-	{
-		doneEvents = false;
+  // Limit n to be a sensible number of events in the loop counter
+  for (n = 0; (n < 100) && (!doneEvents); n++)
+  {
+    doneEvents = false;
 
-		for (uint8_t i = 0; i < _trackCount; i++)	// cycle through all
-		{
-			bool	b;
+    for (uint8_t i = 0; i < _trackCount; i++)	// cycle through all
+    {
+      bool b;
 
-			if (_format != 0) DUMPX("", i);
+      if (_format != 0) DUMPX("", i);
 
-			// Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
-			b = _track[i].getNextEvent(this, (n==0 ? ticks : 0));
-			if (b && (_format != 0))
-				DUMPS("\n-- TRK "); 
-			doneEvents = (doneEvents || b);
-		}
+      // Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
+      b = _track[i].getNextEvent(this, (n==0 ? ticks : 0));
+      if (b && (_format != 0))
+        DUMPS("\n-- TRK "); 
+      doneEvents = (doneEvents || b);
+    }
 
-		// When there are no more events, just break out
-		if (!doneEvents)
-			break;
-	} 
+    // When there are no more events, just break out
+    if (!doneEvents)
+      break;
+  } 
 #endif // EVENT/TRACK_PRIORITY
 }
 
 int MD_MIDIFile::load() 
 // Load the MIDI file into memory ready for processing
 {
-  uint32_t  dat32;
-  uint16_t  dat16;
+  uint32_t dat32;
+  uint16_t dat16;
   
   if (_fileName[0] == '\0')  
     return(0);
@@ -363,22 +363,22 @@ int MD_MIDIFile::load()
   // header chunk = "MThd" + <header_length:4> + <format:2> + <num_tracks:2> + <time_division:2>
   {
     char    h[MTHD_HDR_SIZE+1]; // Header characters + nul
-  
+
     _fd.fgets(h, MTHD_HDR_SIZE+1);
     h[MTHD_HDR_SIZE] = '\0';
-    
+
     if (strcmp(h, MTHD_HDR) != 0)
-	  {
-	    _fd.close();
+    {
+      _fd.close();
       return(3);
-	  }
+    }
   }
-  
+
   // read header size
   dat32 = readMultiByte(&_fd, MB_LONG);
   if (dat32 != 6)   // must be 6 for this header
   {
-	  _fd.close();
+    _fd.close();
     return(4);
   }
   
@@ -386,7 +386,7 @@ int MD_MIDIFile::load()
   dat16 = readMultiByte(&_fd, MB_WORD);
   if ((dat16 != 0) && (dat16 != 1))
   {
-	  _fd.close();
+    _fd.close();
     return(5);
   }
   _format = dat16;
@@ -395,13 +395,13 @@ int MD_MIDIFile::load()
   dat16 = readMultiByte(&_fd, MB_WORD);
   if ((_format == 0) && (dat16 != 1)) 
   {
-	_fd.close();
+    _fd.close();
     return(6);
   }
   if (dat16 > MIDI_MAX_TRACKS)
   {
-	_fd.close();
-	return(7);
+    _fd.close();
+    return(7);
   }
   _trackCount = dat16;
 
@@ -409,31 +409,32 @@ int MD_MIDIFile::load()
   dat16 = readMultiByte(&_fd, MB_WORD);
   if (dat16 & 0x8000) // top bit set is SMTE format
   {
-      int framespersecond = (dat16 >> 8) & 0x00ff;
-      int resolution      = dat16 & 0x00ff;
+    int framespersecond = (dat16 >> 8) & 0x00ff;
+    int resolution      = dat16 & 0x00ff;
 
-      switch (framespersecond) {
-        case 232:  framespersecond = 24; break;
-        case 231:  framespersecond = 25; break;
-        case 227:  framespersecond = 29; break;
-        case 226:  framespersecond = 30; break;
-        default:   _fd.close();	return(7);
-      }
-      dat16 = framespersecond * resolution;
-   } 
-   _ticksPerQuarterNote = dat16;
-   calcTickTime();	// we may have changed from default, so recalculate
+    switch (framespersecond) 
+    {
+      case 232:  framespersecond = 24; break;
+      case 231:  framespersecond = 25; break;
+      case 227:  framespersecond = 29; break;
+      case 226:  framespersecond = 30; break;
+      default:   _fd.close();	return(7);
+    }
+    dat16 = framespersecond * resolution;
+  } 
+  _ticksPerQuarterNote = dat16;
+  calcTickTime();  // we may have changed from default, so recalculate
 
-   // load all tracks
-   for (uint8_t i = 0; i<_trackCount; i++)
-   {
-	   int err;
-	   
-	   if ((err = _track[i].load(i, this)) != -1)
-	   {
-		   _fd.close();
-		   return((10*(i+1))+err);
-	   }
+  // load all tracks
+  for (uint8_t i = 0; i<_trackCount; i++)
+  {
+    int err;
+
+    if ((err = _track[i].load(i, this)) != -1)
+    {
+      _fd.close();
+      return((10*(i+1))+err);
+    }
    }
 
   return(-1);
@@ -454,9 +455,8 @@ void MD_MIDIFile::dump(void)
  
   for (uint8_t i=0; i<_trackCount; i++)
   {
-	  _track[i].dump();
-	  DUMPS("\n");
-  } 
+    _track[i].dump();
+    DUMPS("\n");
+  }
 }
 #endif // DUMP_DATA
-

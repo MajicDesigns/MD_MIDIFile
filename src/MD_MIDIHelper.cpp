@@ -63,8 +63,8 @@ void dumpBuffer(uint8_t *p, int len)
   for (int i=0; i<len; i++, p++)
   {
     if ((i!=0) && ((i & 0x0f) == 0)) // every 16 characters
-		  DUMPS("\n");
-      
+      DUMPS("\n");
+
     DUMPS(" ");
     if (*p<=0xf)
       DUMPX("0", *p)

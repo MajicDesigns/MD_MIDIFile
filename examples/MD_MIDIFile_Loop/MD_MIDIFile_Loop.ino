@@ -2,12 +2,12 @@
 // Example program to demonstrate the use of the MIDFile library
 //
 // Hardware required:
-//	SD card interface - change SD_SELECT for SPI comms
+//  SD card interface - change SD_SELECT for SPI comms
 
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define	USE_MIDI	1
+#define USE_MIDI  1
 
 #if USE_MIDI // set up for direct MIDI serial output
 
@@ -19,9 +19,9 @@
 #else // don't use MIDI to allow printing debug statements
 
 #define DEBUGS(s)     Serial.print(s)
-#define	DEBUG(s, x)	  { Serial.print(F(s)); Serial.print(x); }
-#define	DEBUGX(s, x)	{ Serial.print(F(s)); Serial.print(x, HEX); }
-#define	SERIAL_RATE	57600
+#define DEBUG(s, x)   { Serial.print(F(s)); Serial.print(x); }
+#define DEBUGX(s, x)  { Serial.print(F(s)); Serial.print(x, HEX); }
+#define SERIAL_RATE 57600
 
 #endif // USE_MIDI
 
@@ -32,7 +32,7 @@
 // Other hardware will be different as documented for that hardware.
 #define  SD_SELECT  10
 
-#define	ARRAY_SIZE(a)	(sizeof(a)/sizeof(a[0]))
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 
@@ -48,20 +48,20 @@ void midiCallback(midi_event *pev)
 // This callback is set up in the setup() function.
 {
 #if USE_MIDI
-	if ((pev->data[0] >= 0x80) && (pev->data[0] <= 0xe0))
-	{
-		Serial.write(pev->data[0] | pev->channel);
-		Serial.write(&pev->data[1], pev->size-1);
-	}
-	else
-		Serial.write(pev->data, pev->size);
+  if ((pev->data[0] >= 0x80) && (pev->data[0] <= 0xe0))
+  {
+    Serial.write(pev->data[0] | pev->channel);
+    Serial.write(&pev->data[1], pev->size-1);
+  }
+  else
+    Serial.write(pev->data, pev->size);
 #endif
   DEBUG("\nM T", pev->track);
   DEBUG(":  Ch ", pev->channel+1);
   DEBUGS(" Data");
   for (uint8_t i=0; i<pev->size; i++)
   {
-	  DEBUGX(" ", pev->data[i]);
+    DEBUGX(" ", pev->data[i]);
   }
 }
 
@@ -98,9 +98,9 @@ void setup(void)
 
 void loop(void)
 {
-	// play the file
-	if (!SMF.isEOF())
-	{
-		SMF.getNextEvent();
-	}
+  // play the file
+  if (!SMF.isEOF())
+  {
+    SMF.getNextEvent();
+  }
 }

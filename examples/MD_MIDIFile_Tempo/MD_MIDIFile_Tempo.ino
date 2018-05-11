@@ -5,7 +5,7 @@
 // Example program to demonstrate the use of the MIDFile library
 //
 // Hardware required:
-//	SD card interface - change SD_SELECT for SPI comms
+//  SD card interface - change SD_SELECT for SPI comms
 //  LCD 1602 shield - change pins for LCD control
 //  Key switches on the LCD shield - connected to an analog pin
 // 
@@ -20,21 +20,21 @@
 #define GENERATE_TICKS  0
 
 // Set to 1 to use the MIDI interface (ie, not debugging to serial port)
-#define	USE_MIDI	1
+#define USE_MIDI  1
 
 #if USE_MIDI // set up for direct MIDI serial output
 
 #define DEBUGS(s)
-#define	DEBUG(s, x)
-#define	DEBUGX(s, x)
-#define	SERIAL_RATE	31250
+#define DEBUG(s, x)
+#define DEBUGX(s, x)
+#define SERIAL_RATE 31250
 
 #else // don't use MIDI to allow printing debug statements
 
 #define DEBUGS(s)     Serial.print(s)
-#define	DEBUG(s, x)	  { Serial.print(F(s)); Serial.print(x); }
-#define	DEBUGX(s, x)	{ Serial.print(F(s)); Serial.print(x, HEX); }
-#define	SERIAL_RATE	57600
+#define DEBUG(s, x)   { Serial.print(F(s)); Serial.print(x); }
+#define DEBUGX(s, x)  { Serial.print(F(s)); Serial.print(x, HEX); }
+#define SERIAL_RATE 57600
 
 #endif // USE_MIDI
 
@@ -61,11 +61,11 @@
 
 // Library objects -------------
 LiquidCrystal LCD(LCD_RS, LCD_ENA, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-SdFat	SD;
+SdFat SD;
 MD_MIDIFile SMF;
 MD_AButton  LCDKey(LCD_KEYS);
 
-#define	ARRAY_SIZE(a)	(sizeof(a)/sizeof(a[0]))
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 // The in the tune list should be located on the SD card 
 // or an error will occur opening the file.
@@ -80,20 +80,20 @@ void midiCallback(midi_event *pev)
 // This callback is set up in the setup() function.
 {
 #if USE_MIDI
-	if ((pev->data[0] >= 0x80) && (pev->data[0] <= 0xe0))
-	{
-		Serial.write(pev->data[0] | pev->channel);
-		Serial.write(&pev->data[1], pev->size-1);
-	}
-	else
-		Serial.write(pev->data, pev->size);
+  if ((pev->data[0] >= 0x80) && (pev->data[0] <= 0xe0))
+  {
+    Serial.write(pev->data[0] | pev->channel);
+    Serial.write(&pev->data[1], pev->size-1);
+  }
+  else
+    Serial.write(pev->data, pev->size);
 #endif
   DEBUG("\nM T", pev->track);
   DEBUG(":  Ch ", pev->channel+1);
   DEBUGS(" Data");
   for (uint8_t i=0; i<pev->size; i++)
   {
-	  DEBUGX(" ", pev->data[i]);
+    DEBUGX(" ", pev->data[i]);
   }
 }
 
@@ -116,7 +116,7 @@ void LCDErrMessage(const char *msg)
 {
   LCDMessage(1, 0, msg, true);
   DEBUG("\nLCDErr: ", msg);
-  while (true);		// stop here
+  while (true);   // stop here
 }
 
 void LCDBeat(bool bOn)
@@ -135,7 +135,7 @@ void LCDbpm(void)
   sprintf(sBuf, "BPM:%d", lclBPM, 10);
 #else
   sprintf(sBuf, "BPM:%d%s%d", 
-      SMF.getTempo(), (SMF.getTempoAdjust() >= 0 ? "+" : ""), SMF.getTempoAdjust());
+  SMF.getTempo(), (SMF.getTempoAdjust() >= 0 ? "+" : ""), SMF.getTempoAdjust());
 #endif
   LCDMessage(1, 0, sBuf, true);
   sprintf(sBuf, "%d/%d", SMF.getTimeSignature() >> 8, SMF.getTimeSignature() & 0xf);
@@ -148,24 +148,24 @@ void CheckUI(void)
 #if GENERATE_TICKS
   switch (LCDKey.getKey())
   {
-    case 'S':	lclBPM = 120;  break;	// set to default
+    case 'S': lclBPM = 120;  break; // set to default
     
-    case 'R':	if (lclBPM <= 245) lclBPM += 10; break;	// Increase Tempo by 10
-    case 'L':	if (lclBPM >= 11)  lclBPM -= 10; break;	// Decrease Tempo by 10
+    case 'R': if (lclBPM <= 245) lclBPM += 10; break; // Increase Tempo by 10
+    case 'L': if (lclBPM >= 11)  lclBPM -= 10; break; // Decrease Tempo by 10
 
-    case 'U':	if (lclBPM <= 254) lclBPM++; break;	// Increase Tempo by 1
-    case 'D':	if (lclBPM >= 2)   lclBPM--; break;	// Decrease Tempo by 1
+    case 'U': if (lclBPM <= 254) lclBPM++; break; // Increase Tempo by 1
+    case 'D': if (lclBPM >= 2)   lclBPM--; break; // Decrease Tempo by 1
   }
 #else
   switch (LCDKey.getKey())
   {
-    case 'S':	SMF.setTempoAdjust(0);  break;	// set to default
+    case 'S': SMF.setTempoAdjust(0);  break;  // set to default
     
-    case 'R':	SMF.setTempoAdjust(SMF.getTempoAdjust()+10); break;	// Increase Tempo by 10
-    case 'L':	SMF.setTempoAdjust(SMF.getTempoAdjust()-10); break;	// Decrease Tempo by 10
+    case 'R': SMF.setTempoAdjust(SMF.getTempoAdjust()+10); break; // Increase Tempo by 10
+    case 'L': SMF.setTempoAdjust(SMF.getTempoAdjust()-10); break; // Decrease Tempo by 10
 
-    case 'U':	SMF.setTempoAdjust(SMF.getTempoAdjust()+1); break;	// Increase Tempo by 1
-    case 'D':	SMF.setTempoAdjust(SMF.getTempoAdjust()-1); break;	// Decrease Tempo by 1
+    case 'U': SMF.setTempoAdjust(SMF.getTempoAdjust()+1); break;  // Increase Tempo by 1
+    case 'D': SMF.setTempoAdjust(SMF.getTempoAdjust()-1); break;  // Decrease Tempo by 1
   }
 #endif
 }
@@ -178,16 +178,16 @@ uint16_t tickClock(void)
   uint8_t   ticks = 0;
 
   uint32_t elapsedTime = lastTickError + micros() - lastTickCheckTime;
-  uint32_t tickTime = (60 * 1000000L) / (lclBPM * SMF.getTicksPerQuarterNote());	// microseconds per tick
+  uint32_t tickTime = (60 * 1000000L) / (lclBPM * SMF.getTicksPerQuarterNote());  // microseconds per tick
   tickTime = (tickTime * 4) / (SMF.getTimeSignature() & 0xf); // Adjusted for time signature
 
   if (elapsedTime >= tickTime)
   {
     ticks = elapsedTime/tickTime;
     lastTickError = elapsedTime - (tickTime * ticks);
-    lastTickCheckTime = micros();			// save for next round of checks
+    lastTickCheckTime = micros();   // save for next round of checks
   }
-  
+
   return(ticks);
 }
 #endif
@@ -200,17 +200,17 @@ void setup(void)
 
   DEBUGS("\n[MidiFile Tempo]");
 
-	// initialise LCD display
-	LCD.begin(LCD_COLS, LCD_ROWS);
-	LCD.clear();
-	LCD.noCursor();
-	LCDMessage(0, 0, loopfile, false);
-	
- 	pinMode(LCD_KEYS, INPUT);
+  // initialise LCD display
+  LCD.begin(LCD_COLS, LCD_ROWS);
+  LCD.clear();
+  LCD.noCursor();
+  LCDMessage(0, 0, loopfile, false);
+  
+  pinMode(LCD_KEYS, INPUT);
 
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
-		LCDErrMessage("SD init fail!");
+    LCDErrMessage("SD init fail!");
 
   // Initialize MIDIFile
   SMF.begin(&SD);
@@ -235,7 +235,7 @@ void loop(void)
   // check the user interface keys
   CheckUI();
   
-	// play the file
+  // play the file
 #if GENERATE_TICKS
   static bool fBeat = false;
   static uint16_t sumTicks = 0;
@@ -245,7 +245,7 @@ void loop(void)
   {
     LCDBeat(fBeat);
     SMF.processEvents(ticks);  
-	  SMF.isEOF();  // side effect to cause restart at EOF if looping
+    SMF.isEOF();  // side effect to cause restart at EOF if looping
     LCDbpm();
     
     sumTicks += ticks;
@@ -256,10 +256,10 @@ void loop(void)
     }    
   }  
 #else
-	if (!SMF.isEOF()) 
+  if (!SMF.isEOF()) 
   {
     if (SMF.getNextEvent())
       LCDbpm();
-  }  
+  }
 #endif
 }
