@@ -27,6 +27,9 @@ Topics
 
 Revision History
 ----------------
+## 30 Jun 2018 - version 2.2.0 ##
+- Added handling of meta events through callback (R. Foschini contribution)
+
 ## 11 May 2018 - version 2.1.1 ##
 - Changed SHOW_UNUSED_META to 0 as it should have been all along. Causing music to stop.
 
@@ -411,10 +414,28 @@ typedef struct
  */
 typedef struct
 {
-  uint8_t	track;    ///< the track this was on
-  uint8_t	size;     ///< the number of data bytes
-  uint8_t	data[50]; ///< the data. Only 'size' bytes are valid
+  uint8_t track;    ///< the track this was on
+  uint8_t size;     ///< the number of data bytes
+  uint8_t data[50]; ///< the data. Only 'size' bytes are valid
 } sysex_event;
+
+/**
+ * META event definition structure
+ *
+ * Structure defining a META event and its related data.
+ * A pointer to this structure type is passed the the related callback function.
+ */
+typedef struct
+{
+  uint8_t track;    ///< the track this was on
+  uint8_t size;     ///< the number of data bytes
+  uint8_t type;     ///< meta event type
+  union 
+  {
+    uint8_t data[50]; ///< byte data. Only 'size' bytes are valid
+    char chars[50];   ///< string data. Only 'size' bytes are valid
+  };
+} meta_event;
 
 
 class MD_MIDIFile;
@@ -620,7 +641,7 @@ public:
    * 
    * \return the tick time in microseconds
    */
-  uint32_t getTickTime(void);
+  inline uint32_t getTickTime(void) { return (_tickTime); }
 
   /** 
    * Get the overall tempo
@@ -630,7 +651,7 @@ public:
    * 
    * \return the tempo.
    */
-  uint16_t getTempo(void);
+  inline uint16_t getTempo(void) { return(_tempo); }
 
   /** 
    * Get the tempo adjust offset
@@ -640,7 +661,7 @@ public:
    * 
    * \return the tempo.
    */
-  int16_t getTempoAdjust(void);
+  inline int16_t getTempoAdjust(void) { return(_tempoDelta); }
 
   /** 
    * Get the number of ticks per quarter note
@@ -650,7 +671,7 @@ public:
    * 
    * \return the number of TPQN.
    */
-  uint16_t getTicksPerQuarterNote(void);
+  inline uint16_t getTicksPerQuarterNote(void) { return(_ticksPerQuarterNote); }
 
   /** 
    * Get the Time Signature
@@ -660,7 +681,7 @@ public:
    * 
    * \return the time signature (numerator in the top byte and the denominator in the lower byte).
    */
-  uint16_t getTimeSignature(void);
+  inline uint16_t getTimeSignature(void) { return((_timeSignature[0]<<8) + _timeSignature[1]); }
 
   /** 
    * Set the internal tick time
@@ -691,7 +712,7 @@ public:
    *
    * Set the tempo offset for all tempo settings. This is useful to speed up
    * a whole SMF by a set amount for the MIDI playback. The offset from SMF
-   * speficied may be 
+   * specified may be 
    * The Tempo set by the SMF can be increased changed through this method. 
    * 
    * The default tempo offset if not specified is 0 beats/minute.
@@ -760,7 +781,7 @@ public:
    * 
    * \return character pointer to the name string
    */
-  const char* getFilename(void);
+  const char* getFilename(void) { return(_fileName); };
 
   /** 
    * Set the name of the SMF
@@ -771,7 +792,7 @@ public:
    * \param aname pointer to a string with the file name.
    * \return No return data.
    */
-  void setFilename(const char* aname);
+  void setFilename(const char* aname) { if (aname != nullptr) strcpy(_fileName, aname); }
 
   /** 
    * Load the SMF
@@ -812,7 +833,7 @@ public:
    * 
    * \return number [0..2] representing the format.
    */
-  uint8_t getFormat(void);
+  inline uint8_t getFormat(void) { return(_format); };
 
   /** 
    * Get the number of tracks in the file
@@ -824,7 +845,7 @@ public:
    * 
    * \return the number of tracks in the file
    */
-  uint8_t getTrackCount(void);
+  inline uint8_t getTrackCount(void) { return (_trackCount); };
   /** @} */
 
   //--------------------------------------------------------------
@@ -843,7 +864,7 @@ public:
    * \param bMode Set true to enable mode, false to disable.
    * \return No return data.
    */
-  void looping(bool bMode);
+  inline void looping(bool bMode) { _looping = bMode; }
 
   /** 
    * Pause or un-pause SMF playback
@@ -923,7 +944,7 @@ public:
    * \param mh  the address of the function to be called from the library.
    * \return No return data
    */
-  void setMidiHandler(void (*mh)(midi_event *pev));
+  inline void setMidiHandler(void (*mh)(midi_event *pev)) { _midiHandler = mh; };
 
   /** 
    * Set the SYSEX callback function
@@ -936,10 +957,26 @@ public:
    * callback to process. Once the function returns from the callback the pointer
    * may no longer be valid (ie, don't rely on it!).
    * 
-   * \param sh	the address of the function to be called from the library.
+   * \param sh  the address of the function to be called from the library.
    * \return No return data
    */
-  void setSysexHandler(void (*sh)(sysex_event *pev));
+  inline void setSysexHandler(void (*sh)(sysex_event *pev)) { _sysexHandler = sh; };
+
+  /** 
+   * Set the META callback function
+   *
+   * The callback function is called from the library when a META events read from a track 
+   * needs to be processed.
+   * 
+   * The callback function has one parameter of type meta_event.
+   * The pointer passed to the callback will be initialized with the meta data for the 
+   * callback to process. Once the function returns from the callback the pointer
+   * may no longer be valid (ie, don't rely on it!).
+   * 
+   * \param mh  the address of the function to be called from the library.
+   * \return No return data
+   */
+  inline void setMetaHandler(void (*mh)(const meta_event *mev)) { _metaHandler = mh; };
   /** @} */
 
   //--------------------------------------------------------------
@@ -963,8 +1000,9 @@ protected:
   void    synchTracks(void);  ///< synchronize the start of all tracks
   uint16_t tickClock(void);   ///< work out the number of ticks since the last event check
 
-  void    (*_midiHandler)(midi_event *pev);   ///< callback into user code to process MIDI stream
-  void    (*_sysexHandler)(sysex_event *pev); ///< callback into user code to process SYSEX stream
+  void (*_midiHandler)(midi_event *pev);   ///< callback into user code to process MIDI stream
+  void (*_sysexHandler)(sysex_event *pev); ///< callback into user code to process SYSEX stream
+  void (*_metaHandler)(const meta_event *pev); ///< callback into user code to process META stream
 
   char    _fileName[13];      ///< MIDI file name - should be 8.3 format
 

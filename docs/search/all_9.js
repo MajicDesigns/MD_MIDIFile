@@ -11,6 +11,7 @@ var searchData=
   ['md_5fmidihelper_2ecpp',['MD_MIDIHelper.cpp',['../_m_d___m_i_d_i_helper_8cpp.html',1,'']]],
   ['md_5fmidihelper_2eh',['MD_MIDIHelper.h',['../_m_d___m_i_d_i_helper_8h.html',1,'']]],
   ['md_5fmiditrack_2ecpp',['MD_MIDITrack.cpp',['../_m_d___m_i_d_i_track_8cpp.html',1,'']]],
+  ['meta_5fevent',['meta_event',['../structmeta__event.html',1,'']]],
   ['midi_5fevent',['midi_event',['../structmidi__event.html',1,'']]],
   ['midi_5fmax_5ftracks',['MIDI_MAX_TRACKS',['../_m_d___m_i_d_i_file_8h.html#aed157e8f945933564e07a26e2516023b',1,'MD_MIDIFile.h']]],
   ['mthd_5fhdr',['MTHD_HDR',['../_m_d___m_i_d_i_helper_8h.html#aeee334da6a62640514e422ba87a47d52',1,'MD_MIDIHelper.h']]],

@@ -10,6 +10,7 @@ MD_MIDIFile	KEYWORD1
 MD_MFTrack	KEYWORD1
 midi_event	KEYWORD1
 sysex_event	KEYWORD1
+meta_event	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -39,6 +40,7 @@ getNextEvent	KEYWORD2
 processEvents	KEYWORD2
 setMidiHandler	KEYWORD2
 setSysexHandler	KEYWORD2
+setMetaHandler	KEYWORD2
 dump	KEYWORD2
 
 ######################################

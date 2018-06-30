@@ -38,12 +38,13 @@ void MD_MIDIFile::initialise(void)
   _syncAtStart = false;
   _paused =_looping = false;
   
-  setMidiHandler(NULL);
-  setSysexHandler(NULL);
+  setMidiHandler(nullptr);
+  setSysexHandler(nullptr);
+  setMetaHandler(nullptr);
 
   // File handling
   setFilename("");
-  _sd = NULL;
+  _sd = nullptr;
 
   // Set MIDI defaults
   setTicksPerQuarterNote(48); // 48 ticks per quarter note
@@ -91,42 +92,6 @@ void MD_MIDIFile::close()
   _fd.close();
 }
 
-void MD_MIDIFile::setFilename(const char* aname) 
-// sets the filename of the MIDI file.
-// expects it to be in 8.3 format.
-{
-  if (aname != NULL)
-    strcpy(_fileName, aname);
-}
-
-const char* MD_MIDIFile::getFilename(void) 
-// returns the name of the current file
-{
-  return _fileName;
-}
-
-uint8_t MD_MIDIFile::getTrackCount(void) 
-// return the number of tracks in the Midi File.
-{ 
-  return _trackCount;
-}
-
-uint8_t MD_MIDIFile::getFormat(void) 
-// return the format of the MIDI File.
-{ 
-  return _format;
-}
-
-int16_t MD_MIDIFile::getTempoAdjust(void)
-{
-  return _tempoDelta;
-}
-
-uint16_t MD_MIDIFile::getTempo(void)
-{
-  return _tempo;
-}
-
 void MD_MIDIFile::setTempoAdjust(int16_t t)
 {
   if ((t + _tempo) > 0) _tempoDelta = t;
@@ -137,11 +102,6 @@ void MD_MIDIFile::setTempo(uint16_t t)
 {
   if ((_tempoDelta + t) > 0) _tempo = t;
   calcTickTime();
-}
-
-uint16_t MD_MIDIFile::getTimeSignature(void)
-{
-  return ((_timeSignature[0]<<8) + _timeSignature[1]);
 }
 
 void MD_MIDIFile::setTimeSignature(uint8_t n, uint8_t d)
@@ -155,11 +115,6 @@ void MD_MIDIFile::setTicksPerQuarterNote(uint16_t ticks)
 {
   _ticksPerQuarterNote = ticks;
   calcTickTime();
-}
-
-uint16_t MD_MIDIFile::getTicksPerQuarterNote(void) 
-{ 
-  return _ticksPerQuarterNote;
 }
 
 void MD_MIDIFile::setMicrosecondPerQuarterNote(uint32_t m)
@@ -184,21 +139,6 @@ void MD_MIDIFile::calcTickTime(void)
     _tickTime = (60 * 1000000L) / (_tempo + _tempoDelta); // microseconds per beat
     _tickTime = (_tickTime * 4) / (_timeSignature[1] * _ticksPerQuarterNote); // microseconds per tick
   }
-}
-
-uint32_t MD_MIDIFile::getTickTime(void) 
-{
-  return _tickTime;
-}
-
-void MD_MIDIFile::setMidiHandler(void (*mh)(midi_event *pev))
-{
-  _midiHandler = mh;
-}
-
-void MD_MIDIFile::setSysexHandler(void (*sh)(sysex_event *pev))
-{
-  _sysexHandler = sh;
 }
 
 bool MD_MIDIFile::isEOF(void)
@@ -244,11 +184,6 @@ void MD_MIDIFile::restart(void)
   _syncAtStart = false;   // force a time resych
 }
 
-void MD_MIDIFile::looping(bool bMode)
-{
-  _looping = bMode;
-}
-
 uint16_t MD_MIDIFile::tickClock(void)
 // check if enough time has passed for a MIDI tick and work out how many!
 {
@@ -283,7 +218,7 @@ boolean MD_MIDIFile::getNextEvent(void)
 
   // check if enough time has passed for a MIDI tick
   if ((ticks = tickClock()) == 0)
-    return false;	
+    return false;
 
   processEvents(ticks);
 
@@ -326,7 +261,7 @@ void MD_MIDIFile::processEvents(uint16_t ticks)
   {
     doneEvents = false;
 
-    for (uint8_t i = 0; i < _trackCount; i++)	// cycle through all
+    for (uint8_t i = 0; i < _trackCount; i++) // cycle through all
     {
       bool b;
 
@@ -418,7 +353,7 @@ int MD_MIDIFile::load()
       case 231:  framespersecond = 25; break;
       case 227:  framespersecond = 29; break;
       case 226:  framespersecond = 30; break;
-      default:   _fd.close();	return(7);
+      default:   _fd.close(); return(7);
     }
     dat16 = framespersecond * resolution;
   } 

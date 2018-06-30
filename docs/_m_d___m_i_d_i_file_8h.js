@@ -2,6 +2,7 @@ var _m_d___m_i_d_i_file_8h =
 [
     [ "midi_event", "structmidi__event.html", "structmidi__event" ],
     [ "sysex_event", "structsysex__event.html", "structsysex__event" ],
+    [ "meta_event", "structmeta__event.html", "structmeta__event" ],
     [ "MD_MFTrack", "class_m_d___m_f_track.html", "class_m_d___m_f_track" ],
     [ "MD_MIDIFile", "class_m_d___m_i_d_i_file.html", "class_m_d___m_i_d_i_file" ],
     [ "DUMP", "_m_d___m_i_d_i_file_8h.html#a5b4c5e778644ec86274206a1cb510ee4", null ],

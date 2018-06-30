@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>MD_MIDIFile Standard MIDI File Processing: sysex_event Struct Reference</title>
+<title>MD_MIDIFile Standard MIDI File Processing: meta_event Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,7 +69,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('structsysex__event.html','');});
+$(document).ready(function(){initNavTree('structmeta__event.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -90,9 +90,9 @@ $(document).ready(function(){initNavTree('structsysex__event.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structsysex__event-members.html">List of all members</a>  </div>
+<a href="structmeta__event-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">sysex_event Struct Reference</div>  </div>
+<div class="title">meta_event Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -100,22 +100,34 @@ $(document).ready(function(){initNavTree('structsysex__event.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a053ca2be5e984d886d319967d590ac29"><td class="memItemLeft" align="right" valign="top"><a id="a053ca2be5e984d886d319967d590ac29"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsysex__event.html#a053ca2be5e984d886d319967d590ac29">track</a></td></tr>
-<tr class="memdesc:a053ca2be5e984d886d319967d590ac29"><td class="mdescLeft">&#160;</td><td class="mdescRight">the track this was on <br /></td></tr>
-<tr class="separator:a053ca2be5e984d886d319967d590ac29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0e32c5fc8f9bb75c980928170010559"><td class="memItemLeft" align="right" valign="top"><a id="ab0e32c5fc8f9bb75c980928170010559"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsysex__event.html#ab0e32c5fc8f9bb75c980928170010559">size</a></td></tr>
-<tr class="memdesc:ab0e32c5fc8f9bb75c980928170010559"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of data bytes <br /></td></tr>
-<tr class="separator:ab0e32c5fc8f9bb75c980928170010559"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5482f016131c3d5bec81f107ab031c1"><td class="memItemLeft" align="right" valign="top"><a id="ac5482f016131c3d5bec81f107ab031c1"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsysex__event.html#ac5482f016131c3d5bec81f107ab031c1">data</a> [50]</td></tr>
-<tr class="memdesc:ac5482f016131c3d5bec81f107ab031c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the data. Only 'size' bytes are valid <br /></td></tr>
-<tr class="separator:ac5482f016131c3d5bec81f107ab031c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57ba8f441db69d78ae3bf23dd4350d04"><td class="memItemLeft" align="right" valign="top"><a id="a57ba8f441db69d78ae3bf23dd4350d04"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta__event.html#a57ba8f441db69d78ae3bf23dd4350d04">track</a></td></tr>
+<tr class="memdesc:a57ba8f441db69d78ae3bf23dd4350d04"><td class="mdescLeft">&#160;</td><td class="mdescRight">the track this was on <br /></td></tr>
+<tr class="separator:a57ba8f441db69d78ae3bf23dd4350d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a951109bd2d2029052b81a0658a124fb0"><td class="memItemLeft" align="right" valign="top"><a id="a951109bd2d2029052b81a0658a124fb0"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta__event.html#a951109bd2d2029052b81a0658a124fb0">size</a></td></tr>
+<tr class="memdesc:a951109bd2d2029052b81a0658a124fb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of data bytes <br /></td></tr>
+<tr class="separator:a951109bd2d2029052b81a0658a124fb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76e427b130fc45752cefbc974295fe87"><td class="memItemLeft" align="right" valign="top"><a id="a76e427b130fc45752cefbc974295fe87"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta__event.html#a76e427b130fc45752cefbc974295fe87">type</a></td></tr>
+<tr class="memdesc:a76e427b130fc45752cefbc974295fe87"><td class="mdescLeft">&#160;</td><td class="mdescRight">meta event type <br /></td></tr>
+<tr class="separator:a76e427b130fc45752cefbc974295fe87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25aed4a63ec0fc79811f6c21637769da"><td class="memItemLeft" ><a id="a25aed4a63ec0fc79811f6c21637769da"></a>
+union {</td></tr>
+<tr class="memitem:a85a1b217a84350795fcfe4f08eac0344"><td class="memItemLeft" >
+&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="structmeta__event.html#a91d29560e447ee2450286ce8162ac9c0">data</a> [50]</td></tr>
+<tr class="memdesc:a85a1b217a84350795fcfe4f08eac0344"><td class="mdescLeft">&#160;</td><td class="mdescRight">byte data. Only 'size' bytes are valid <br /></td></tr>
+<tr class="separator:a85a1b217a84350795fcfe4f08eac0344"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af13b966f946205b4a143afe13a4b7558"><td class="memItemLeft" >
+&#160;&#160;&#160;char&#160;&#160;&#160;<a class="el" href="structmeta__event.html#af0a5444764d7767a7bcc88690a0e8d34">chars</a> [50]</td></tr>
+<tr class="memdesc:af13b966f946205b4a143afe13a4b7558"><td class="mdescLeft">&#160;</td><td class="mdescRight">string data. Only 'size' bytes are valid <br /></td></tr>
+<tr class="separator:af13b966f946205b4a143afe13a4b7558"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25aed4a63ec0fc79811f6c21637769da"><td class="memItemLeft" valign="top">};&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="separator:a25aed4a63ec0fc79811f6c21637769da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>SYSEX event definition structure</p>
-<p>Structure defining a SYSEX event and its related data. A pointer to this structure type is passed the the related callback function. </p>
+<div class="textblock"><p>META event definition structure</p>
+<p>Structure defining a META event and its related data. A pointer to this structure type is passed the the related callback function. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="_m_d___m_i_d_i_file_8h.html">MD_MIDIFile.h</a></li>
 </ul>
@@ -124,7 +136,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="structsysex__event.html">sysex_event</a></li>
+    <li class="navelem"><a class="el" href="structmeta__event.html">meta_event</a></li>
     <li class="footer">Generated on Sat Jun 30 2018 17:04:58 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.14 </li>

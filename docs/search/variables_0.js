@@ -10,6 +10,7 @@ var searchData=
   ['_5flasttickerror',['_lastTickError',['../class_m_d___m_i_d_i_file.html#a0ed379bb90a4d3a8bd5eb8e4d2d12ec4',1,'MD_MIDIFile']]],
   ['_5flength',['_length',['../class_m_d___m_f_track.html#a5fad2957ed14061daa66443665edb551',1,'MD_MFTrack']]],
   ['_5flooping',['_looping',['../class_m_d___m_i_d_i_file.html#aeff092c4a2d64c14519b31ecd382eb1c',1,'MD_MIDIFile']]],
+  ['_5fmetahandler',['_metaHandler',['../class_m_d___m_i_d_i_file.html#a4109f158588639cdc3c86c3810753000',1,'MD_MIDIFile']]],
   ['_5fmev',['_mev',['../class_m_d___m_f_track.html#a20fdd720735f57f088aed3c06647a074',1,'MD_MFTrack']]],
   ['_5fmidihandler',['_midiHandler',['../class_m_d___m_i_d_i_file.html#a89c2c9bf39018351f0d7098240317490',1,'MD_MIDIFile']]],
   ['_5fpaused',['_paused',['../class_m_d___m_i_d_i_file.html#af04b0def503d624439f69b1c7453a692',1,'MD_MIDIFile']]],

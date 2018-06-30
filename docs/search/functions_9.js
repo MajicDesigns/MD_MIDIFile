@@ -1,6 +1,7 @@
 var searchData=
 [
   ['setfilename',['setFilename',['../class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324',1,'MD_MIDIFile']]],
+  ['setmetahandler',['setMetaHandler',['../class_m_d___m_i_d_i_file.html#a120cb1dbe5f48648e800b704aa79b34e',1,'MD_MIDIFile']]],
   ['setmicrosecondperquarternote',['setMicrosecondPerQuarterNote',['../class_m_d___m_i_d_i_file.html#a52b967081cc692b44d2a9ea6ffc9a848',1,'MD_MIDIFile']]],
   ['setmidihandler',['setMidiHandler',['../class_m_d___m_i_d_i_file.html#afe0927aea3ccec475c307f5169c9d073',1,'MD_MIDIFile']]],
   ['setsysexhandler',['setSysexHandler',['../class_m_d___m_i_d_i_file.html#a87b3e2395f01d792b5932317f014ffb0',1,'MD_MIDIFile']]],

@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.1</span>
+   &#160;<span id="projectnumber">2.2</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -121,6 +121,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>_looping
 : <a class="el" href="class_m_d___m_i_d_i_file.html#aeff092c4a2d64c14519b31ecd382eb1c">MD_MIDIFile</a>
 </li>
+<li>_metaHandler
+: <a class="el" href="class_m_d___m_i_d_i_file.html#a4109f158588639cdc3c86c3810753000">MD_MIDIFile</a>
+</li>
 <li>_mev
 : <a class="el" href="class_m_d___m_f_track.html#a20fdd720735f57f088aed3c06647a074">MD_MFTrack</a>
 </li>
@@ -186,6 +189,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>channel
 : <a class="el" href="structmidi__event.html#ae28dc113b66bc5eb7d38b8bee915d375">midi_event</a>
 </li>
+<li>chars
+: <a class="el" href="structmeta__event.html#af0a5444764d7767a7bcc88690a0e8d34">meta_event</a>
+</li>
 <li>close()
 : <a class="el" href="class_m_d___m_f_track.html#ae180e65f8f73f7fd4d81afbdcee9ee18">MD_MFTrack</a>
 , <a class="el" href="class_m_d___m_i_d_i_file.html#ae87cb19f6c9926ad30965a48552c1a2e">MD_MIDIFile</a>
@@ -195,7 +201,8 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 <h3><a id="index_d"></a>- d -</h3><ul>
 <li>data
-: <a class="el" href="structmidi__event.html#a1475ad8c61b5dfa4b27941808c71dbd6">midi_event</a>
+: <a class="el" href="structmeta__event.html#a91d29560e447ee2450286ce8162ac9c0">meta_event</a>
+, <a class="el" href="structmidi__event.html#a1475ad8c61b5dfa4b27941808c71dbd6">midi_event</a>
 , <a class="el" href="structsysex__event.html#ac5482f016131c3d5bec81f107ab031c1">sysex_event</a>
 </li>
 <li>dump()
@@ -210,7 +217,7 @@ $(document).ready(function(){initNavTree('functions.html','');});
 : <a class="el" href="class_m_d___m_f_track.html#a551590a673c55ab419b5ed439c07fa9b">MD_MFTrack</a>
 </li>
 <li>getFilename()
-: <a class="el" href="class_m_d___m_i_d_i_file.html#a477e81dfb9cdcd0d5485d816fcbdb266">MD_MIDIFile</a>
+: <a class="el" href="class_m_d___m_i_d_i_file.html#a9852d7c959090501c54586939e2ef10c">MD_MIDIFile</a>
 </li>
 <li>getFormat()
 : <a class="el" href="class_m_d___m_i_d_i_file.html#a71f5ac1c022dd48eba6bfcb5a00d2e99">MD_MIDIFile</a>
@@ -302,6 +309,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>setFilename()
 : <a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">MD_MIDIFile</a>
 </li>
+<li>setMetaHandler()
+: <a class="el" href="class_m_d___m_i_d_i_file.html#a120cb1dbe5f48648e800b704aa79b34e">MD_MIDIFile</a>
+</li>
 <li>setMicrosecondPerQuarterNote()
 : <a class="el" href="class_m_d___m_i_d_i_file.html#a52b967081cc692b44d2a9ea6ffc9a848">MD_MIDIFile</a>
 </li>
@@ -324,7 +334,8 @@ $(document).ready(function(){initNavTree('functions.html','');});
 : <a class="el" href="class_m_d___m_i_d_i_file.html#a4901e4e5957aa6d68c6711e2a95b6ef4">MD_MIDIFile</a>
 </li>
 <li>size
-: <a class="el" href="structmidi__event.html#af270b4ef165f69edf11b065b5ddfbc75">midi_event</a>
+: <a class="el" href="structmeta__event.html#a951109bd2d2029052b81a0658a124fb0">meta_event</a>
+, <a class="el" href="structmidi__event.html#af270b4ef165f69edf11b065b5ddfbc75">midi_event</a>
 , <a class="el" href="structsysex__event.html#ab0e32c5fc8f9bb75c980928170010559">sysex_event</a>
 </li>
 <li>synchTracks()
@@ -341,8 +352,12 @@ $(document).ready(function(){initNavTree('functions.html','');});
 : <a class="el" href="class_m_d___m_i_d_i_file.html#a3cf5b089fe1c4aae56a86574fad7acf4">MD_MIDIFile</a>
 </li>
 <li>track
-: <a class="el" href="structmidi__event.html#a22366b79c95b322c300d91f280ae2a5f">midi_event</a>
+: <a class="el" href="structmeta__event.html#a57ba8f441db69d78ae3bf23dd4350d04">meta_event</a>
+, <a class="el" href="structmidi__event.html#a22366b79c95b322c300d91f280ae2a5f">midi_event</a>
 , <a class="el" href="structsysex__event.html#a053ca2be5e984d886d319967d590ac29">sysex_event</a>
+</li>
+<li>type
+: <a class="el" href="structmeta__event.html#a76e427b130fc45752cefbc974295fe87">meta_event</a>
 </li>
 </ul>
 
@@ -360,7 +375,7 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri May 11 2018 16:03:41 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Sat Jun 30 2018 17:04:58 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.14 </li>
   </ul>

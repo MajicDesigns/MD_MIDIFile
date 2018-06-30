@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.1</span>
+   &#160;<span id="projectnumber">2.2</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -146,8 +146,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae87cb19f6c9926ad30965a48552c1a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff2163ea6752be247c13ad0302d11219"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#aff2163ea6752be247c13ad0302d11219">isEOF</a> (void)</td></tr>
 <tr class="separator:aff2163ea6752be247c13ad0302d11219"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a477e81dfb9cdcd0d5485d816fcbdb266"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a477e81dfb9cdcd0d5485d816fcbdb266">getFilename</a> (void)</td></tr>
-<tr class="separator:a477e81dfb9cdcd0d5485d816fcbdb266"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9852d7c959090501c54586939e2ef10c"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a9852d7c959090501c54586939e2ef10c">getFilename</a> (void)</td></tr>
+<tr class="separator:a9852d7c959090501c54586939e2ef10c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac12bbaa6cedc1e973312976cb85b3324"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename</a> (const char *aname)</td></tr>
 <tr class="separator:ac12bbaa6cedc1e973312976cb85b3324"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedc1967e7e34122084084a7fc8cf625c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load</a> (void)</td></tr>
@@ -173,6 +173,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afe0927aea3ccec475c307f5169c9d073"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87b3e2395f01d792b5932317f014ffb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a87b3e2395f01d792b5932317f014ffb0">setSysexHandler</a> (void(*sh)(<a class="el" href="structsysex__event.html">sysex_event</a> *pev))</td></tr>
 <tr class="separator:a87b3e2395f01d792b5932317f014ffb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a120cb1dbe5f48648e800b704aa79b34e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a120cb1dbe5f48648e800b704aa79b34e">setMetaHandler</a> (void(*mh)(const <a class="el" href="structmeta__event.html">meta_event</a> *mev))</td></tr>
+<tr class="separator:a120cb1dbe5f48648e800b704aa79b34e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Methods for debugging</div></td></tr>
 <tr class="memitem:aca850ef4d8382c297e0c687631739c59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#aca850ef4d8382c297e0c687631739c59">dump</a> (void)</td></tr>
 <tr class="separator:aca850ef4d8382c297e0c687631739c59"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -206,6 +208,10 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a38b8ae82b9c55e71855a9418395450b9">_sysexHandler</a> )(<a class="el" href="structsysex__event.html">sysex_event</a> *pev)</td></tr>
 <tr class="memdesc:a38b8ae82b9c55e71855a9418395450b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback into user code to process SYSEX stream <br /></td></tr>
 <tr class="separator:a38b8ae82b9c55e71855a9418395450b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4109f158588639cdc3c86c3810753000"><td class="memItemLeft" align="right" valign="top"><a id="a4109f158588639cdc3c86c3810753000"></a>
+void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a4109f158588639cdc3c86c3810753000">_metaHandler</a> )(const <a class="el" href="structmeta__event.html">meta_event</a> *pev)</td></tr>
+<tr class="memdesc:a4109f158588639cdc3c86c3810753000"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback into user code to process META stream <br /></td></tr>
+<tr class="separator:a4109f158588639cdc3c86c3810753000"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98e3ee35f2e5d85ddb122c51b404ade2"><td class="memItemLeft" align="right" valign="top"><a id="a98e3ee35f2e5d85ddb122c51b404ade2"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a98e3ee35f2e5d85ddb122c51b404ade2">_fileName</a> [13]</td></tr>
 <tr class="memdesc:a98e3ee35f2e5d85ddb122c51b404ade2"><td class="mdescLeft">&#160;</td><td class="mdescRight">MIDI file name - should be 8.3 format. <br /></td></tr>
@@ -398,14 +404,14 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 
 </div>
 </div>
-<a id="a477e81dfb9cdcd0d5485d816fcbdb266"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a477e81dfb9cdcd0d5485d816fcbdb266">&#9670;&nbsp;</a></span>getFilename()</h2>
+<a id="a9852d7c959090501c54586939e2ef10c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9852d7c959090501c54586939e2ef10c">&#9670;&nbsp;</a></span>getFilename()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char * MD_MIDIFile::getFilename </td>
+          <td class="memname">const char* MD_MIDIFile::getFilename </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -783,6 +789,34 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 
 </div>
 </div>
+<a id="a120cb1dbe5f48648e800b704aa79b34e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a120cb1dbe5f48648e800b704aa79b34e">&#9670;&nbsp;</a></span>setMetaHandler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MD_MIDIFile::setMetaHandler </td>
+          <td>(</td>
+          <td class="paramtype">void(*)(const <a class="el" href="structmeta__event.html">meta_event</a> *mev)&#160;</td>
+          <td class="paramname"><em>mh</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set the META callback function</p>
+<p>The callback function is called from the library when a META events read from a track needs to be processed.</p>
+<p>The callback function has one parameter of type <a class="el" href="structmeta__event.html">meta_event</a>. The pointer passed to the callback will be initialized with the meta data for the callback to process. Once the function returns from the callback the pointer may no longer be valid (ie, don't rely on it!).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mh</td><td>the address of the function to be called from the library. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>No return data </dd></dl>
+
+</div>
+</div>
 <a id="a52b967081cc692b44d2a9ea6ffc9a848"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52b967081cc692b44d2a9ea6ffc9a848">&#9670;&nbsp;</a></span>setMicrosecondPerQuarterNote()</h2>
 
@@ -910,7 +944,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Set the tempo adjustment offset</p>
-<p>Set the tempo offset for all tempo settings. This is useful to speed up a whole SMF by a set amount for the MIDI playback. The offset from SMF speficied may be The Tempo set by the SMF can be increased changed through this method.</p>
+<p>Set the tempo offset for all tempo settings. This is useful to speed up a whole SMF by a set amount for the MIDI playback. The offset from SMF specified may be The Tempo set by the SMF can be increased changed through this method.</p>
 <p>The default tempo offset if not specified is 0 beats/minute.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -999,7 +1033,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></li>
-    <li class="footer">Generated on Fri May 11 2018 16:03:41 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Sat Jun 30 2018 17:04:58 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.14 </li>
   </ul>
