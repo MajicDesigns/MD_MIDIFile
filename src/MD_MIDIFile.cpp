@@ -137,7 +137,8 @@ void MD_MIDIFile::calcTickTime(void)
   if ((_tempo + _tempoDelta != 0) && _ticksPerQuarterNote != 0 && _timeSignature[1] != 0)
   {
     _tickTime = (60 * 1000000L) / (_tempo + _tempoDelta); // microseconds per beat
-    _tickTime = (_tickTime * 4) / (_timeSignature[1] * _ticksPerQuarterNote); // microseconds per tick
+//    _tickTime = (_tickTime * 4) / (_timeSignature[1] * _ticksPerQuarterNote); // microseconds per tick
+    _tickTime /= _ticksPerQuarterNote;
   }
 }
 
