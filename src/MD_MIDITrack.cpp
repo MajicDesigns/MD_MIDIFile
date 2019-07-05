@@ -126,7 +126,6 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 {
   uint8_t eType;
   uint32_t eLen, mLen;
-  sysex_event sev;    // used for sysex callback function
 
   // now we have to process this event
   eType = mf->_fd.read();
@@ -207,37 +206,34 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
   case 0xf0:  // sysex_event = 0xF0 + <len:1> + <data_bytes> + 0xF7 
   case 0xf7:  // sysex_event = 0xF7 + <len:1> + <data_bytes> + 0xF7 
   {
-    uint8_t c, i;
     sysex_event sev;
+    uint16_t index = 0;
 
     // collect all the bytes until the 0xf7 - boundaries are included in the message
     sev.track = _trackId;
-    sev.data[0] = eType;
-    sev.size = mf->_fd.read();
-    // The length parameter includes the 0xF7 but not the start boundary. 
+    mLen = readVarLen(&mf->_fd);
+    sev.size = mLen;
+    if (eType==0xF0) {      // add space for 0xF0
+      sev.data[index++] = eType;
+      sev.size++;
+    }
+    uint16_t minLen = min(sev.size, sizeof(sev.data));
+    // The length parameter includes the 0xF7 but not the start boundary.
     // However, it may be bigger than our buffer will allow us to store.
-    sev.size = (sev.size > BUF_SIZE(sev.data) - 2 ? BUF_SIZE(sev.data) - 2 : sev.size + 1);
-    for (i = 1; (i < sev.size) && (c != 0xf7); i++)
-    {
-      c = mf->_fd.read(); // next char
-      sev.data[i] = c;
-    }
+    for (uint16_t i=index; i<minLen; ++i)
+      sev.data[i] = mf->_fd.read();
+    if (sev.size>minLen)
+      mf->_fd.seekCur(sev.size-minLen);
 
-    // check if we had an overflow
-    if (c != 0xf7)
-    {
-      while ((c = mf->_fd.read()) != 0xf7)
-        ; // skip read all data
-      sev.data[sev.size] = 0xf7;  // terminate properly - data is probably nuked anyway
-    }
-
+#if DUMP_DATA
     DUMPS("[SYSX] Data:");
-    for (uint8_t i = 0; i<sev.size; i++)
+    for (uint16_t i = 0; i<minLen; i++)
     {
       DUMPX(" ", sev.data[i]);
     }
-
-#if !DUMP_DATA
+    if (sev.size>minLen)
+      DUMPS("...");
+#else
     if (mf->_sysexHandler != nullptr)
       (mf->_sysexHandler)(&sev);
 #endif
