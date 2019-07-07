@@ -415,7 +415,7 @@ typedef struct
 typedef struct
 {
   uint8_t track;    ///< the track this was on
-  uint8_t size;     ///< the number of data bytes
+  uint16_t size;     ///< the number of data bytes
   uint8_t data[50]; ///< the data. Only 'size' bytes are valid
 } sysex_event;
 
@@ -428,7 +428,7 @@ typedef struct
 typedef struct
 {
   uint8_t track;    ///< the track this was on
-  uint8_t size;     ///< the number of data bytes
+  uint16_t size;     ///< the number of data bytes
   uint8_t type;     ///< meta event type
   union 
   {
