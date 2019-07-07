@@ -1,5 +1,6 @@
 <map id="src/MD_MIDIFile.h" name="src/MD_MIDIFile.h">
-<area shape="rect" id="node3" href="$_m_d___m_i_d_i_file_8cpp.html" title="Main file for the MD_MIDIFile class implementation. " alt="" coords="5,80,147,107"/>
-<area shape="rect" id="node5" href="$_m_d___m_i_d_i_helper_8cpp.html" title="Main file for helper functions implementation. " alt="" coords="171,80,329,107"/>
-<area shape="rect" id="node7" href="$_m_d___m_i_d_i_track_8cpp.html" title="Main file for the MFTrack class implementation. " alt="" coords="355,80,509,107"/>
+<area shape="rect" id="node1" title="Main header file for the MD_MIDIFile library." alt="" coords="186,5,315,32"/>
+<area shape="rect" id="node3" href="$_m_d___m_i_d_i_file_8cpp.html" title="Main file for the MD_MIDIFile class implementation." alt="" coords="5,80,147,107"/>
+<area shape="rect" id="node5" href="$_m_d___m_i_d_i_helper_8cpp.html" title="Main file for helper functions implementation." alt="" coords="171,80,329,107"/>
+<area shape="rect" id="node7" href="$_m_d___m_i_d_i_track_8cpp.html" title="Main file for the MFTrack class implementation." alt="" coords="355,80,509,107"/>
 </map>

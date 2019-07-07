@@ -5,6 +5,7 @@ var _m_d___m_i_d_i_file_8h =
     [ "meta_event", "structmeta__event.html", "structmeta__event" ],
     [ "MD_MFTrack", "class_m_d___m_f_track.html", "class_m_d___m_f_track" ],
     [ "MD_MIDIFile", "class_m_d___m_i_d_i_file.html", "class_m_d___m_i_d_i_file" ],
+    [ "ARRAY_SIZE", "_m_d___m_i_d_i_file_8h.html#a25f003de16c08a4888b69f619d70f427", null ],
     [ "DUMP", "_m_d___m_i_d_i_file_8h.html#a5b4c5e778644ec86274206a1cb510ee4", null ],
     [ "DUMP_DATA", "_m_d___m_i_d_i_file_8h.html#a5f4a9ee8152a0634fa531070c07cc179", null ],
     [ "DUMPS", "_m_d___m_i_d_i_file_8h.html#a74378977b17d56673d339d819054f3ca", null ],

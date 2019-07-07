@@ -30,6 +30,10 @@ Topics
 
 Revision History
 ----------------
+## 8 July 2019 - version 2.3.0 ##
+- Changed handling of SYSEX and META events with data bigger than buffer (R Foschini)
+- Fixed tick calculation by eliminating the time signature in calc (R Foschini)
+
 ## 30 Jun 2018 - version 2.2.0 ##
 - Added handling of meta events through callback (R. Foschini contribution)
 
@@ -82,19 +86,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 \page pageSmfDefinition SMF Format Definition
 MIDI
 ----
-MIDI (Musical Instrument Digital Interface) is a technical standard that describes a protocol, digital interface
-and connectors and allows a wide variety of electronic musical instruments, computers and other related devices
-to connect and communicate with one another. A single MIDI link can carry up to sixteen channels of information,
+MIDI (Musical Instrument Digital Interface) is a technical standard that describes 
+a protocol, digital interface and connectors and allows a wide variety of electronic 
+musical instruments, computers and other related devices to connect and communicate 
+with one another. A single MIDI link can carry up to sixteen channels of information,
 each of which can be routed to a separate device.
 
-MIDI carries event messages that specify notation, pitch and velocity, control signals for parameters such as
-volume, vibrato, audio panning, cues, and clock signals that set and synchronize tempo between multiple devices.
-These messages are sent to other devices where they control sound generation and other features. This data can
-also be recorded into a hardware or software device called a sequencer, which can be used to edit the data and
-to play it back at a later time. These recordings are usually in Standard MIDI File (SMF) format.
+MIDI carries event messages that specify notation, pitch and velocity, control signals
+for parameters such as volume, vibrato, audio panning, cues, and clock signals that set
+and synchronize tempo between multiple devices. These messages are sent to other devices
+where they control sound generation and other features. This data can also be recorded
+into a hardware or software device called a sequencer, which can be used to edit the
+data and to play it back at a later time. These recordings are usually in Standard MIDI
+File (SMF) format.
 
-Advantages of MIDI include compactness (an entire song can be coded in a few kilobytes), ease of modification
-and manipulation and choice of instruments.
+Advantages of MIDI include compactness (an entire song can be coded in a few kilobytes),
+ease of modification and manipulation and choice of instruments.
 
 Standard MIDI File Format
 -------------------------
@@ -278,12 +285,11 @@ Or, in terms of the calculated units of measure
 
 So the question remains as to where does this data come from?
 
-- __Time__ is the elapsed time between calls to the tick generator. This must be calculated by the tick 
-generator based on the history of the previous call to the tick generator.
-- __Tempo__ is the tempo determined by the _Set Tempo_ MIDI event. Note this event only deals in Quarter Notes.
-- __Resolution__ is held as TicksPerQuarterNote but is is also determined by the _Time Signature_. If time signature
-is specified a 4/8 then a quarter note is not a beat as it is one eighth note (denominator value). So the TicksPerQuarterNote
-resolution must be multiplied by (time_signature_demoninator)/4 to give the correct number of ticks in the beat.
+- __Time__ is the elapsed time between calls to the tick generator. This must be calculated 
+by the tick generator based on the history of the previous call to the tick generator.
+- __Tempo__ is the tempo determined by the _Set Tempo_ MIDI event. Note this event only 
+deals in Quarter Notes.
+- __Resolution__ is held as TicksPerQuarterNote.
 ____
 
 \page pageLibrary Notes on the Library
@@ -385,6 +391,8 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 
 // ------------- Configuration Section - END
 
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
+
 #if DUMP_DATA
 #define DUMPS(s)    Serial.print(F(s))                            ///< Print a string
 #define DUMP(s, v)  { Serial.print(F(s)); Serial.print(v); }      ///< Print a value (decimal)
@@ -418,7 +426,7 @@ typedef struct
 typedef struct
 {
   uint8_t track;    ///< the track this was on
-  uint16_t size;     ///< the number of data bytes
+  uint16_t size;    ///< the number of data bytes
   uint8_t data[50]; ///< the data. Only 'size' bytes are valid
 } sysex_event;
 
@@ -431,7 +439,7 @@ typedef struct
 typedef struct
 {
   uint8_t track;    ///< the track this was on
-  uint16_t size;     ///< the number of data bytes
+  uint16_t size;    ///< the number of data bytes
   uint8_t type;     ///< meta event type
   union 
   {

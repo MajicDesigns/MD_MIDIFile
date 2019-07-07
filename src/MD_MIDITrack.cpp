@@ -213,11 +213,12 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
     sev.track = _trackId;
     mLen = readVarLen(&mf->_fd);
     sev.size = mLen;
-    if (eType==0xF0) {      // add space for 0xF0
+    if (eType==0xF0)       // add space for 0xF0
+    {
       sev.data[index++] = eType;
       sev.size++;
     }
-    uint16_t minLen = min(sev.size, sizeof(sev.data));
+    uint16_t minLen = min(sev.size, ARRAY_SIZE(sev.data));
     // The length parameter includes the 0xF7 but not the start boundary.
     // However, it may be bigger than our buffer will allow us to store.
     for (uint16_t i=index; i<minLen; ++i)
@@ -413,14 +414,14 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 
       default:
       {
-        uint8_t minLen = min(sizeof(mev.data), mLen);
+        uint8_t minLen = min(ARRAY_SIZE(mev.data), mLen);
         
         for (uint8_t i = 0; i < minLen; ++i)
           mev.data[i] = mf->_fd.read(); // read next
 
         mev.chars[minLen] = '\0'; // in case it is a string
-        if (mLen > sizeof(mev.data))
-          mf->_fd.seekCur(mLen-sizeof(mev.data));
+        if (mLen > ARRAY_SIZE(mev.data))
+          mf->_fd.seekCur(mLen-ARRAY_SIZE(mev.data));
   //    DUMPS("IGNORED");
       }
       break;
