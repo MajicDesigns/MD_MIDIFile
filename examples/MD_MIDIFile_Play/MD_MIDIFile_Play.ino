@@ -110,19 +110,24 @@ void midiCallback(midi_event *pev)
 //1*255 
 #if USE_SERVO
   // int pentatonic[37] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};
-  // int i = 1;
-
-  if(pev->data[1] < 0x3F & )
-  {
-
-    }
+  if(pev->data[1]< 0x3F)
+  { 
     int midinote1 = data[1] * 16;
 
     pwm1.setPWM(midinote1/63, 0, 125);
     delay(500);
     pwm1.setPwm(midinote1/63, 0, 200);
     delay(500);
+  }
+  
+  if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
+  {
+    int midinote1 = data[1] * 16;
 
+    pwm2.setPWM(midinote1/63, 0, 125);
+    delay(500);
+    pwm2.setPwm(midinote1/63, 0, 200);
+    delay(500);
   }
 #endif
 
