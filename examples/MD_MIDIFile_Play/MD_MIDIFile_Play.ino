@@ -119,10 +119,10 @@ void midiCallback(midi_event *pev)
     pwm1.setPwm(midinote1/63, 0, 200);
     delay(500);
   }
-  
+
   if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
   {
-    int midinote1 = data[1] * 16;
+    int midinote1 = data[1];
 
     pwm2.setPWM(midinote1/63, 0, 125);
     delay(500);
