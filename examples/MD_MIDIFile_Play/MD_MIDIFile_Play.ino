@@ -9,10 +9,6 @@
 
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
-#include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
-Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(&Wire, 0x40);
-Adafruit_PWMServoDriver pwm2 = Adafruit_PWMServoDriver(&Wire, 0x41);
 
 #define USE_MIDI  1
 
@@ -21,16 +17,6 @@ Adafruit_PWMServoDriver pwm2 = Adafruit_PWMServoDriver(&Wire, 0x41);
 #define DEBUG(x)
 #define DEBUGX(x)
 #define SERIAL_RATE 31250
-
-// Depending on your servo make, the pulse width min and max may vary, you
-// want these to be as small/large as possible without hitting the hard stop
-// for max range. You'll have to tweak them as necessary to match the servos you
-// have!
-#define SERVOMIN  125 // this is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  575 // this is the 'maximum' pulse length count (out of 4096)
-
-// our servo # counter
-uint8_t servonum = 0;
 
 #else // don't use MIDI to allow printing debug statements
 
@@ -91,14 +77,13 @@ char *tuneList[] =
 SdFat	SD;
 MD_MIDIFile SMF;
 
-
 void midiCallback(midi_event *pev)
 // Called by the MIDIFile library when a file event needs to be processed
 // thru the midi communications interface.
 // This callback is set up in the setup() function.
 {
 #if USE_MIDI
-  if ((pev->data[0] >= 0x0) && (pev->data[0] <= 0xe0))
+  if ((pev->data[0] >= 0x80) && (pev->data[0] <= 0xe0))
   {
     Serial.write(pev->data[0] | pev->channel);
     Serial.write(&pev->data[1], pev->size-1);
@@ -106,31 +91,6 @@ void midiCallback(midi_event *pev)
   else
     Serial.write(pev->data, pev->size);
 #endif
-
-//1*255 
-#if USE_SERVO
-  // int pentatonic[37] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};
-  if(pev->data[1]< 0x3F)
-  { 
-    int midinote1 = data[1] * 63;
-
-    pwm1.setPWM(midinote1/16, 0, 125);
-    delay(500);
-    pwm1.setPwm(midinote1/16, 0, 200);
-    delay(500);
-  }
-
-  if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
-  {
-    int midinote1 = data[1];
-
-    pwm2.setPWM(midinote1/63, 0, 125);
-    delay(500);
-    pwm2.setPwm(midinote1/63, 0, 200);
-    delay(500);
-  }
-#endif
-
   DEBUG("\n");
   DEBUG(millis());
   DEBUG("\tM T");
@@ -138,13 +98,6 @@ void midiCallback(midi_event *pev)
   DEBUG(":  Ch ");
   DEBUG(pev->channel+1);
   DEBUG(" Data ");
-
-
-
-
-
-
-
   for (uint8_t i=0; i<pev->size; i++)
   {
 	DEBUGX(pev->data[i]);
@@ -189,18 +142,6 @@ void midiSilence(void)
 
 void setup(void)
 {
-  pwm1.begin();
-
-  pwm1.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
-
-  //yield();
-  pwm2.begin();
-
-  pwm2.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
-
-  //yield();
-  // delay(20);
-
   // Set up LED pins
   pinMode(READY_LED, OUTPUT);
   pinMode(SD_ERROR_LED, OUTPUT);
