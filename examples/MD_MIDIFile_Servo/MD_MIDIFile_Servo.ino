@@ -13,32 +13,33 @@
 #include <Adafruit_PWMServoDriver.h>
 Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(&Wire, 0x40);
 Adafruit_PWMServoDriver pwm2 = Adafruit_PWMServoDriver(&Wire, 0x41);
+ #define SERIAL_RATE 9600
+// #define USE_MIDI  1
 
-#define USE_MIDI  1
+// #if USE_MIDI // set up for direct MIDI serial output
 
-#if USE_MIDI // set up for direct MIDI serial output
+ #define DEBUG(x)
+ #define DEBUGX(x)
+// #define SERIAL_RATE 31250
 
-#define DEBUG(x)
-#define DEBUGX(x)
-#define SERIAL_RATE 31250
+ #define NUM_NOTES 37
+// // Depending on your servo make, the pulse width min and max may vary, you
+// // want these to be as small/large as possible without hitting the hard stop
+// // for max range. You'll have to tweak them as necessary to match the servos you
+// // have!
+ #define SERVOMIN  125 // this is the 'minimum' pulse length count (out of 4096)
+ #define SERVOMAX  575 // this is the 'maximum' pulse length count (out of 4096)
 
-// Depending on your servo make, the pulse width min and max may vary, you
-// want these to be as small/large as possible without hitting the hard stop
-// for max range. You'll have to tweak them as necessary to match the servos you
-// have!
-#define SERVOMIN  125 // this is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  575 // this is the 'maximum' pulse length count (out of 4096)
+// // our servo # counter
+// uint8_t servonum = 0;
 
-// our servo # counter
-uint8_t servonum = 0;
+// #else // don't use MIDI to allow printing debug statements
 
-#else // don't use MIDI to allow printing debug statements
+// #define DEBUG(x)  Serial.print(x)
+// #define DEBUGX(x) Serial.print(x, HEX)
+// #define SERIAL_RATE 57600
 
-#define DEBUG(x)  Serial.print(x)
-#define DEBUGX(x) Serial.print(x, HEX)
-#define SERIAL_RATE 57600
-
-#endif // USE_MIDI
+// #endif // USE_MIDI
 
 
 // SD chip select pin for SPI comms.
@@ -91,6 +92,8 @@ char *tuneList[] =
 SdFat	SD;
 MD_MIDIFile SMF;
 
+const int pentatonic[NUM_NOTES] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};
+unsigned long *servoarr;
 
 void midiCallback(midi_event *pev)
 // Called by the MIDIFile library when a file event needs to be processed
@@ -98,22 +101,25 @@ void midiCallback(midi_event *pev)
 // This callback is set up in the setup() function.
 {
 //array of pentatonic notes
-  int pentatonic[37] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};
+  
+  
   int midinote1 = &pev->data[1];
   Serial.println(midinote1);
   //if note is less than midi note 63 send note to servo board 1
  
       
-      for (int i=0; i < 37; i++) {
+      for (int i=0; i < NUM_NOTES; i++) {
         if (midinote1 == pentatonic[i])
         {
           int servo = i+1;
+          servoarr[i] = millis();
           
-         Serial.println(servo);
+          Serial.println(servo);
          pwm1.setPWM(servo, 0, 125);
-         delay(500);
-         pwm1.setPWM(servo, 0, 200);
-         delay(500);
+      
+
+         // pwm1.setPWM(servo, 0, 200);
+         
         }
         else
           midinote1++;
@@ -122,15 +128,15 @@ void midiCallback(midi_event *pev)
 }
 
   
-#if USE_MIDI
-  if ((pev->data[0] >= 0x0) && (pev->data[0] <= 0xe0))
-  {
-    Serial.write(pev->data[0] | pev->channel);
-    Serial.write(&pev->data[1], pev->size-1);
-  }
-  else
-    Serial.write(pev->data, pev->size);
-#endif
+// #if USE_MIDI
+//   if ((pev->data[0] >= 0x0) && (pev->data[0] <= 0xe0))
+//   {
+//     Serial.write(pev->data[0] | pev->channel);
+//     Serial.write(&pev->data[1], pev->size-1);
+//   }
+//   else
+//     Serial.write(pev->data, pev->size);
+// #endif
 
 
 
@@ -140,24 +146,24 @@ void midiCallback(midi_event *pev)
 
     
 //if midi note is between 64 and 127 then send values to 2nd breakout board
-//  if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
-//  {
-//    int midinote1 = data[1];
-//
-//    pwm2.setPWM(midinote1/63, 0, 125);
-//    delay(500);
-//    pwm2.setPwm(midinote1/63, 0, 200);
-//    delay(500);
-//  }
+  if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
+  {
+    int midinote1 = 1;
+
+    pwm2.setPWM(midinote1/63, 0, 125);
+    delay(500);
+    pwm2.setPWM(midinote1/63, 0, 200);
+    delay(500);
+  }
 
 
-  DEBUG("\n");
-  DEBUG(millis());
-  DEBUG("\tM T");
-  DEBUG(pev->track);
-  DEBUG(":  Ch ");
-  DEBUG(pev->channel+1);
-  DEBUG(" Data ");
+//  DEBUG("\n");
+//  DEBUG(millis());
+//  DEBUG("\tM T");
+//  DEBUG(pev->track);
+//  DEBUG(":  Ch ");
+//  DEBUG(pev->channel+1);
+//  DEBUG(" Data ");
 
 
 
@@ -209,6 +215,9 @@ void midiSilence(void)
 
 void setup(void)
 {
+  servoarr = malloc(NUM_NOTES * sizeof(unsigned long));
+  Serial.begin(9600);
+//  Serial.print("Help");
   pwm1.begin();
 
   pwm1.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
@@ -226,15 +235,14 @@ void setup(void)
   pinMode(SD_ERROR_LED, OUTPUT);
   pinMode(SMF_ERROR_LED, OUTPUT);
 
-  Serial.begin(SERIAL_RATE);
+  // Serial.begin(SERIAL_RATE);
 
-  DEBUG("\n[MidiFile Play List]");
+//  DEBUG("\n[MidiFile Play List]");
 
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
   {
-    DEBUG("\nSD init fail!");
-    digitalWrite(SD_ERROR_LED, HIGH);
+//d    digitalWrite(SD_ERROR_LED, HIGH);
     while (true) ;
   }
 
@@ -276,6 +284,15 @@ void tickMetronome(void)
 void loop(void)
 {
     int  err;
+
+    for (int i=0; i < NUM_NOTES; i++){
+      if (servoarr[i] && millis() - servoarr[i] > 500){
+        servoarr[i] = 0;
+        int servo = i+1;
+        pwm1.setPWM(servo, 0, 200);
+
+      }
+    }
   
   for (uint8_t i=0; i<ARRAY_SIZE(tuneList); i++)
   {
@@ -284,14 +301,14 @@ void loop(void)
     digitalWrite(SD_ERROR_LED, LOW);
 
     // use the next file name and play it
-    DEBUG("\nFile: ");
-    DEBUG(tuneList[i]);
+//    DEBUG("\nFile: ");
+//    DEBUG(tuneList[i]);
     SMF.setFilename(tuneList[i]);
     err = SMF.load();
     if (err != -1)
     {
-    DEBUG("\nSMF load Error ");
-    DEBUG(err);
+//    DEBUG("\nSMF load Error ");
+//    DEBUG(err);
     digitalWrite(SMF_ERROR_LED, HIGH);
     delay(WAIT_DELAY);
     }
