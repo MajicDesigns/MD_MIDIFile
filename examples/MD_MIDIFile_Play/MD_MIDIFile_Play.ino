@@ -43,36 +43,6 @@
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 
-// The files in the tune list should be located on the SD card 
-// or an error will occur opening the file and the next in the 
-// list will be opened (skips errors).
-char *tuneList[] = 
-{
-  "test.mid",
-  "test2.mid",
-  "test3.mid",
-  "test4.mid"
-  /*"LOOPDEMO.MID",  // simplest and shortest file
-  "ELISE.MID",
-  "TWINKLE.MID",
-  "GANGNAM.MID",
-  "FUGUEGM.MID",
-  "POPCORN.MID",
-  "AIR.MID",
-  "PRDANCER.MID",
-  "MINUET.MID",
-  "FIRERAIN.MID",
-  "MOZART.MID",
-  "FERNANDO.MID",
-  "SONATAC.MID",
-  "SKYFALL.MID",
-  "XMAS.MID",
-  "GBROWN.MID",
-  "PROWLER.MID",
-  "IPANEMA.MID",
-  "JZBUMBLE.MID",*/
-};
-
 // These don't play as they need more than 16 tracks but will run if MIDIFile.h is changed
 //#define MIDI_FILE  "SYMPH9.MID"		// 29 tracks
 //#define MIDI_FILE  "CHATCHOO.MID"		// 17 tracks
@@ -172,7 +142,7 @@ void setup(void)
     while (true) ;
   }
 
-  /*if (!dirFile.open("/", O_RDONLY)) {
+  if (!dirFile.open("/", O_RDONLY)) {
     SD.errorHalt("open root failed");
   }
   while (file.openNext(&dirFile, O_RDONLY)) {
@@ -187,7 +157,7 @@ void setup(void)
     }
     file.close();
     }
-  }*/
+  }
 
   // Initialize MIDIFile
   SMF.begin(&SD);
@@ -243,47 +213,19 @@ void loop(void)
   SMF.setMidiHandler(midiCallback);
   SMF.setSysexHandler(sysexCallback);
 
-  //SD.vwd()->rewind ();
-  //if (!dirFile.open("/", O_RDONLY)) {
-  //  SD.errorHalt("open root failed");
-  //}
-  while (file.openNext(SD.vwd(), O_RDONLY)) {
+  SD.vwd()->rewind();
+  while (file.openNext(SD.vwd(), O_RDONLY))
   {
-    DEBUG("while");
-    // Skip directories and hidden files.
     if (!file.isSubDir() && !file.isHidden()) {
-       // Print the file number and name.
-      Serial.print("blah");
-      Serial.write(' ');
-      file.getName(filename, NAMELENGTH);
-      Serial.println(filename);
-    }
-    file.close();
-    }
-  }
-  
-  // Initialize SD
-  if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
-  {
-    DEBUG("\nSD init fail!");
-    digitalWrite(SD_ERROR_LED, HIGH);
-    while (true) ;
-  }
-
-  SMF.begin(&SD);
-  SMF.setMidiHandler(midiCallback);
-  SMF.setSysexHandler(sysexCallback);
-  
-  for (uint8_t i=0; i<ARRAY_SIZE(tuneList); i++)
-  {
     // reset LEDs
     digitalWrite(READY_LED, LOW);
     digitalWrite(SD_ERROR_LED, LOW);
 
     // use the next file name and play it
     DEBUG("\nFile: ");
-    DEBUG(tuneList[i]);
-    SMF.setFilename(tuneList[i]);
+    file.getName(filename, NAMELENGTH);
+    DEBUG(filename);
+    SMF.setFilename(filename);
     err = SMF.load();
     if (err != -1)
     {
@@ -309,5 +251,7 @@ void loop(void)
     digitalWrite(READY_LED, HIGH);
     delay(WAIT_DELAY);
     }
+    }
+    file.close();
   }
 }
