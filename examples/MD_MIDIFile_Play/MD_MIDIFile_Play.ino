@@ -95,8 +95,8 @@ char *tuneList[] =
 SdFat	SD;
 MD_MIDIFile SMF;
 
-const int pentatonic[NUM_NOTES] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};  
-int servoarr[NUM_NOTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  
+const uint8_t pentatonic[NUM_NOTES] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};  
+unsigned long servoarr[NUM_NOTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  
 
 
 void midiCallback(midi_event *pev)
@@ -132,7 +132,7 @@ void midiCallback(midi_event *pev)
 for (int i=0; i < NUM_NOTES; i++) {
         if (pev->data[1] == pentatonic[i])
         {
-          int time = millis();
+          unsigned long time = millis();
           servoarr[i] = time;
           Serial.println(servoarr[i]);
           
@@ -292,7 +292,7 @@ void loop(void)
       if (SMF.getNextEvent())
       tickMetronome();
       for (int i=0; i < NUM_NOTES; i++){
-        int time = millis();
+        unsigned long time = millis();
       if (servoarr[i] && time - servoarr[i] > 500){
            Serial.println(time);
            Serial.print("Millisconds");
