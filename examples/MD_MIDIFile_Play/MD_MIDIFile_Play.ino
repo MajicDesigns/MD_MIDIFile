@@ -10,7 +10,7 @@
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define USE_MIDI  1
+#define USE_MIDI  0
 
 #if USE_MIDI // set up for direct MIDI serial output
 
@@ -31,7 +31,7 @@
 // Arduino Ethernet shield, pin 4.
 // Default SD chip select is the SPI SS pin (10).
 // Other hardware will be different as documented for that hardware.
-#define  SD_SELECT  10
+#define  SD_SELECT  4
 
 // LED definitions for user indicators
 #define READY_LED     7 // when finished
@@ -43,39 +43,18 @@
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 
-// The files in the tune list should be located on the SD card 
-// or an error will occur opening the file and the next in the 
-// list will be opened (skips errors).
-char *tuneList[] = 
-{
-  "LOOPDEMO.MID",  // simplest and shortest file
-  "ELISE.MID",
-  "TWINKLE.MID",
-  "GANGNAM.MID",
-  "FUGUEGM.MID",
-  "POPCORN.MID",
-  "AIR.MID",
-  "PRDANCER.MID",
-  "MINUET.MID",
-  "FIRERAIN.MID",
-  "MOZART.MID",
-  "FERNANDO.MID",
-  "SONATAC.MID",
-  "SKYFALL.MID",
-  "XMAS.MID",
-  "GBROWN.MID",
-  "PROWLER.MID",
-  "IPANEMA.MID",
-  "JZBUMBLE.MID",
-};
-
 // These don't play as they need more than 16 tracks but will run if MIDIFile.h is changed
 //#define MIDI_FILE  "SYMPH9.MID"		// 29 tracks
 //#define MIDI_FILE  "CHATCHOO.MID"		// 17 tracks
 //#define MIDI_FILE  "STRIPPER.MID"		// 25 tracks
 
-SdFat	SD;
-MD_MIDIFile SMF;
+
+
+// Vars for traversing SD directory
+#define NAMELENGTH 13
+char filename[NAMELENGTH];
+SdFile file;
+SdFile dirFile;
 
 void midiCallback(midi_event *pev)
 // Called by the MIDIFile library when a file event needs to be processed
@@ -151,6 +130,9 @@ void setup(void)
 
   DEBUG("\n[MidiFile Play List]");
 
+  SdFat  SD;
+  MD_MIDIFile SMF;
+
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
   {
@@ -167,14 +149,14 @@ void setup(void)
   digitalWrite(READY_LED, HIGH);
 }
 
-void tickMetronome(void)
+void tickMetronome(uint16_t tempo)
 // flash a LED to the beat
 {
   static uint32_t	lastBeatTime = 0;
   static boolean	inBeat = false;
   uint16_t	beatTime;
 
-  beatTime = 60000/SMF.getTempo();		// msec/beat = ((60sec/min)*(1000 ms/sec))/(beats/min)
+  beatTime = 60000/tempo;		// msec/beat = ((60sec/min)*(1000 ms/sec))/(beats/min)
   if (!inBeat)
   {
     if ((millis() - lastBeatTime) >= beatTime)
@@ -197,17 +179,35 @@ void tickMetronome(void)
 void loop(void)
 {
     int  err;
-  
-  for (uint8_t i=0; i<ARRAY_SIZE(tuneList); i++)
+
+  SdFat  SD;
+  MD_MIDIFile SMF;
+
+  // Initialize SD
+  if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
   {
+    DEBUG("\nSD init fail!");
+    digitalWrite(SD_ERROR_LED, HIGH);
+    while (true) ;
+  }
+
+  SMF.begin(&SD);
+  SMF.setMidiHandler(midiCallback);
+  SMF.setSysexHandler(sysexCallback);
+
+  SD.vwd()->rewind();
+  while (file.openNext(SD.vwd(), O_RDONLY))
+  {
+    if (!file.isSubDir() && !file.isHidden()) {
     // reset LEDs
     digitalWrite(READY_LED, LOW);
     digitalWrite(SD_ERROR_LED, LOW);
 
     // use the next file name and play it
     DEBUG("\nFile: ");
-    DEBUG(tuneList[i]);
-    SMF.setFilename(tuneList[i]);
+    file.getName(filename, NAMELENGTH);
+    DEBUG(filename);
+    SMF.setFilename(filename);
     err = SMF.load();
     if (err != -1)
     {
@@ -222,7 +222,7 @@ void loop(void)
     while (!SMF.isEOF())
     {
       if (SMF.getNextEvent())
-      tickMetronome();
+      tickMetronome(SMF.getTempo());
     }
 
     // done with this one
@@ -233,5 +233,7 @@ void loop(void)
     digitalWrite(READY_LED, HIGH);
     delay(WAIT_DELAY);
     }
+    }
+    file.close();
   }
 }
