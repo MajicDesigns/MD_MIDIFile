@@ -103,7 +103,7 @@ void midiCallback(midi_event *pev)
 //array of pentatonic notes
   
   
-  int midinote1 = &pev->data[2];
+  int midinote1 = &pev->data[1];
   Serial.println(midinote1);
   //if note is less than midi note 63 send note to servo board 1
  
@@ -216,8 +216,8 @@ void midiSilence(void)
 void setup(void)
 {
   servoarr = malloc(NUM_NOTES * sizeof(unsigned long));
-  Serial.begin(115200);
-  Serial.print("Help");
+  Serial.begin(57600);
+  Serial.write("Help");
   pwm1.begin();
 
   pwm1.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
