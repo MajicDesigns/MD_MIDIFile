@@ -9,8 +9,25 @@
 
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
+#include <Adafruit_PWMServoDriver.h>
+
+#define NUM_NOTES 37
 
 #define USE_MIDI  0
+#define USE_SERVO 1
+
+
+#if USE_SERVO
+
+Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(&Wire, 0x40);
+Adafruit_PWMServoDriver pwm2 = Adafruit_PWMServoDriver(&Wire, 0x41);
+
+#define SERVOMIN  125 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  575 // this is the 'maximum' pulse length count (out of 4096)
+
+
+#endif
+
 
 #if USE_MIDI // set up for direct MIDI serial output
 
@@ -25,6 +42,7 @@
 #define SERIAL_RATE 57600
 
 #endif // USE_MIDI
+
 
 
 // SD chip select pin for SPI comms.
@@ -49,6 +67,10 @@
 //#define MIDI_FILE  "STRIPPER.MID"		// 25 tracks
 
 
+const uint8_t pentatonic[NUM_NOTES] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};  
+unsigned long servoarr[NUM_NOTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  
+
+
 
 // Vars for traversing SD directory
 #define NAMELENGTH 13
@@ -70,19 +92,51 @@ void midiCallback(midi_event *pev)
   else
     Serial.write(pev->data, pev->size);
 #endif
-  DEBUG("\n");
-  DEBUG(millis());
-  DEBUG("\tM T");
-  DEBUG(pev->track);
-  DEBUG(":  Ch ");
-  DEBUG(pev->channel+1);
-  DEBUG(" Data ");
-  for (uint8_t i=0; i<pev->size; i++)
+//  DEBUG("\n");
+//  DEBUG(millis());
+//  DEBUG("\tM T");
+//  DEBUG(pev->track);
+//  DEBUG(":  Ch ");
+//  DEBUG(pev->channel+1);
+//  DEBUG(" Data ");
+//  for (uint8_t i=0; i<pev->size; i++)
+//  {
+//	DEBUGX(pev->data[i]);
+//    DEBUG(' ');
+//  }
+
+
+  if (pev->data[0] == 144)
   {
-	DEBUGX(pev->data[i]);
-    DEBUG(' ');
+for (int i=0; i < NUM_NOTES; i++) {
+        if (pev->data[1] == pentatonic[i])
+        {
+          unsigned long time = millis();
+          servoarr[i] = time;
+          Serial.println(servoarr[i]);
+          
+          pwm1.setPWM(i, 0, 200);
+      
+
+         // pwm1.setPWM(servo, 0, 200);
+//         Serial.print("servo number ");
+//         Serial.print(i);
+//         Serial.print("\n");
+//    Serial.println(pev->data[0]);
+//    Serial.println(pev->data[1]);
+//    Serial.println(pev->data[2]);
+//    Serial.println(pev->data[3]);
+//    Serial.println(pev->data[4]);
+//    Serial.print("\n");
+    
+        }
+
+    }
   }
 }
+
+ 
+
 
 void sysexCallback(sysex_event *pev)
 // Called by the MIDIFile library when a system Exclusive (sysex) file event needs 
@@ -90,14 +144,14 @@ void sysexCallback(sysex_event *pev)
 // really be processed, so we just ignore it here.
 // This callback is set up in the setup() function.
 {
-  DEBUG("\nS T");
-  DEBUG(pev->track);
-  DEBUG(": Data ");
-  for (uint8_t i=0; i<pev->size; i++)
-  {
-    DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+//  DEBUG("\nS T");
+//  DEBUG(pev->track);
+//  DEBUG(": Data ");
+//  for (uint8_t i=0; i<pev->size; i++)
+//  {
+////    DEBUGX(pev->data[i]);
+////    DEBUG(' ');
+//  }
 }
 
 void midiSilence(void)
@@ -121,6 +175,19 @@ void midiSilence(void)
 
 void setup(void)
 {
+  pwm1.begin();
+
+  pwm1.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+
+  //yield();
+  pwm2.begin();
+
+  pwm2.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+
+//
+//for (int i = 0; i < 11; i++) {
+//    pwm1.setPWM(i, 0, 125);
+//}m
   // Set up LED pins
   pinMode(READY_LED, OUTPUT);
   pinMode(SD_ERROR_LED, OUTPUT);
@@ -223,6 +290,16 @@ void loop(void)
     {
       if (SMF.getNextEvent())
       tickMetronome(SMF.getTempo());
+      for (int i=0; i < NUM_NOTES; i++){
+        unsigned long time = millis();
+      if (servoarr[i] && time - servoarr[i] > 500){
+           Serial.println(time);
+           Serial.print("Millisconds");
+            pwm1.setPWM(i, 0, 125);
+            Serial.println("reset");
+            servoarr[i] = 0;
+      }
+  }
     }
 
     // done with this one
@@ -237,3 +314,4 @@ void loop(void)
     file.close();
   }
 }
+

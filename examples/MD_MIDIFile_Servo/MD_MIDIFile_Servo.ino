@@ -14,7 +14,7 @@
 Adafruit_PWMServoDriver pwm1 = Adafruit_PWMServoDriver(&Wire, 0x40);
 Adafruit_PWMServoDriver pwm2 = Adafruit_PWMServoDriver(&Wire, 0x41);
  #define SERIAL_RATE 9600
-// #define USE_MIDI  1
+ #define USE_MIDI  0
 
 // #if USE_MIDI // set up for direct MIDI serial output
 
@@ -115,7 +115,7 @@ void midiCallback(midi_event *pev)
           servoarr[i] = millis();
           
           Serial.println(servo);
-         pwm1.setPWM(servo, 0, 125);
+//         pwm1.setPWM(servo, 0, 125);
       
 
          // pwm1.setPWM(servo, 0, 200);
@@ -146,15 +146,15 @@ void midiCallback(midi_event *pev)
 
     
 //if midi note is between 64 and 127 then send values to 2nd breakout board
-  if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
-  {
-    int midinote1 = 1;
-
-    pwm2.setPWM(midinote1/63, 0, 125);
-    delay(500);
-    pwm2.setPWM(midinote1/63, 0, 200);
-    delay(500);
-  }
+//  if (pev->data[1] < 0x80 & pev->data[1] >= 0x3f)
+//  {
+//    int midinote1 = 1;
+//
+//    pwm2.setPWM(midinote1/63, 0, 125);
+//    delay(500);
+//    pwm2.setPWM(midinote1/63, 0, 200);
+//    delay(500);
+//  }
 
 
 //  DEBUG("\n");
@@ -216,8 +216,8 @@ void midiSilence(void)
 void setup(void)
 {
   servoarr = malloc(NUM_NOTES * sizeof(unsigned long));
-  Serial.begin(9600);
-//  Serial.print("Help");
+  Serial.begin(57600);
+  Serial.write("Help");
   pwm1.begin();
 
   pwm1.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
@@ -289,7 +289,7 @@ void loop(void)
       if (servoarr[i] && millis() - servoarr[i] > 500){
         servoarr[i] = 0;
         int servo = i+1;
-        pwm1.setPWM(servo, 0, 200);
+//        pwm1.setPWM(servo, 0, 200);
 
       }
     }
