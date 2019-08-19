@@ -10,7 +10,7 @@
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define USE_MIDI  1
+#define USE_MIDI  0
 
 #if USE_MIDI // set up for direct MIDI serial output
 
@@ -31,7 +31,7 @@
 // Arduino Ethernet shield, pin 4.
 // Default SD chip select is the SPI SS pin (10).
 // Other hardware will be different as documented for that hardware.
-#define  SD_SELECT  10
+#define  SD_SELECT  4
 
 // LED definitions for user indicators
 #define READY_LED     7 // when finished
@@ -48,7 +48,11 @@
 // list will be opened (skips errors).
 char *tuneList[] = 
 {
-  "LOOPDEMO.MID",  // simplest and shortest file
+  "test.mid",
+  "test2.mid",
+  "test3.mid",
+  "test4.mid"
+  /*"LOOPDEMO.MID",  // simplest and shortest file
   "ELISE.MID",
   "TWINKLE.MID",
   "GANGNAM.MID",
@@ -66,7 +70,7 @@ char *tuneList[] =
   "GBROWN.MID",
   "PROWLER.MID",
   "IPANEMA.MID",
-  "JZBUMBLE.MID",
+  "JZBUMBLE.MID",*/
 };
 
 // These don't play as they need more than 16 tracks but will run if MIDIFile.h is changed
@@ -74,8 +78,13 @@ char *tuneList[] =
 //#define MIDI_FILE  "CHATCHOO.MID"		// 17 tracks
 //#define MIDI_FILE  "STRIPPER.MID"		// 25 tracks
 
-SdFat	SD;
-MD_MIDIFile SMF;
+
+
+// Vars for traversing SD directory
+#define NAMELENGTH 13
+char filename[NAMELENGTH];
+SdFile file;
+SdFile dirFile;
 
 void midiCallback(midi_event *pev)
 // Called by the MIDIFile library when a file event needs to be processed
@@ -142,14 +151,18 @@ void midiSilence(void)
 
 void setup(void)
 {
+  Serial.begin(SERIAL_RATE);
+  DEBUG("Begin");
+  
   // Set up LED pins
   pinMode(READY_LED, OUTPUT);
   pinMode(SD_ERROR_LED, OUTPUT);
   pinMode(SMF_ERROR_LED, OUTPUT);
 
-  Serial.begin(SERIAL_RATE);
-
   DEBUG("\n[MidiFile Play List]");
+
+  SdFat  SD;
+  MD_MIDIFile SMF;
 
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
@@ -159,6 +172,23 @@ void setup(void)
     while (true) ;
   }
 
+  /*if (!dirFile.open("/", O_RDONLY)) {
+    SD.errorHalt("open root failed");
+  }
+  while (file.openNext(&dirFile, O_RDONLY)) {
+  {
+    // Skip directories and hidden files.
+    if (!file.isSubDir() && !file.isHidden()) {
+       // Print the file number and name.
+      Serial.print("blah");
+      Serial.write(' ');
+      file.getName(filename, NAMELENGTH);
+      Serial.println(filename);
+    }
+    file.close();
+    }
+  }*/
+
   // Initialize MIDIFile
   SMF.begin(&SD);
   SMF.setMidiHandler(midiCallback);
@@ -167,14 +197,14 @@ void setup(void)
   digitalWrite(READY_LED, HIGH);
 }
 
-void tickMetronome(void)
+void tickMetronome(uint16_t tempo)
 // flash a LED to the beat
 {
   static uint32_t	lastBeatTime = 0;
   static boolean	inBeat = false;
   uint16_t	beatTime;
 
-  beatTime = 60000/SMF.getTempo();		// msec/beat = ((60sec/min)*(1000 ms/sec))/(beats/min)
+  beatTime = 60000/tempo;		// msec/beat = ((60sec/min)*(1000 ms/sec))/(beats/min)
   if (!inBeat)
   {
     if ((millis() - lastBeatTime) >= beatTime)
@@ -197,6 +227,52 @@ void tickMetronome(void)
 void loop(void)
 {
     int  err;
+
+  SdFat  SD;
+  MD_MIDIFile SMF;
+
+  // Initialize SD
+  if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
+  {
+    DEBUG("\nSD init fail!");
+    digitalWrite(SD_ERROR_LED, HIGH);
+    while (true) ;
+  }
+
+  SMF.begin(&SD);
+  SMF.setMidiHandler(midiCallback);
+  SMF.setSysexHandler(sysexCallback);
+
+  //SD.vwd()->rewind ();
+  //if (!dirFile.open("/", O_RDONLY)) {
+  //  SD.errorHalt("open root failed");
+  //}
+  while (file.openNext(SD.vwd(), O_RDONLY)) {
+  {
+    DEBUG("while");
+    // Skip directories and hidden files.
+    if (!file.isSubDir() && !file.isHidden()) {
+       // Print the file number and name.
+      Serial.print("blah");
+      Serial.write(' ');
+      file.getName(filename, NAMELENGTH);
+      Serial.println(filename);
+    }
+    file.close();
+    }
+  }
+  
+  // Initialize SD
+  if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
+  {
+    DEBUG("\nSD init fail!");
+    digitalWrite(SD_ERROR_LED, HIGH);
+    while (true) ;
+  }
+
+  SMF.begin(&SD);
+  SMF.setMidiHandler(midiCallback);
+  SMF.setSysexHandler(sysexCallback);
   
   for (uint8_t i=0; i<ARRAY_SIZE(tuneList); i++)
   {
@@ -222,7 +298,7 @@ void loop(void)
     while (!SMF.isEOF())
     {
       if (SMF.getNextEvent())
-      tickMetronome();
+      tickMetronome(SMF.getTempo());
     }
 
     // done with this one
