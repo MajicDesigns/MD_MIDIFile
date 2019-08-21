@@ -61,27 +61,47 @@ Adafruit_PWMServoDriver pwm2 = Adafruit_PWMServoDriver(&Wire, 0x41);
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 
 // list will be opened (skips errors).
-char *tuneList[] = 
+const char tuneLoopDemo[] PROGMEM = "LOOPDEMO.MID";  // simplest and shortest file
+const char tuneElsie[] PROGMEM = "ELISE.MID";
+const char tuneTwinkle[] PROGMEM = "TWINKLE.MID";
+const char tuneGangnam[] PROGMEM = "GANGNAM.MID";
+const char tuneFugueGM[] PROGMEM = "FUGUEGM.MID";
+const char tunePopcorn[] PROGMEM = "POPCORN.MID";
+const char tuneAir[] PROGMEM = "AIR.MID";
+const char tunePRDancer[] PROGMEM = "PRDANCER.MID";
+const char tuneMinuet[] PROGMEM = "MINUET.MID";
+const char tuneFireRain[] PROGMEM = "FIRERAIN.MID";
+const char tuneMozart[] PROGMEM = "MOZART.MID";
+const char tuneFernando[] PROGMEM = "FERNANDO.MID";
+const char tuneSonatac[] PROGMEM = "SONATAC.MID";
+const char tuneSkyfall[] PROGMEM = "SKYFALL.MID";
+const char tuneXmas[] PROGMEM = "XMAS.MID";
+const char tuneGBrown[] PROGMEM = "GBROWN.MID";
+const char tuneProwler[] PROGMEM = "PROWLER.MID";
+const char tuneIpanema[] PROGMEM = "IPANEMA.MID";
+const char tuneJZBumble[] PROGMEM = "JZBUMBLE.MID";
+
+const char *const tuneList[] PROGMEM = 
 {
-  "LOOPDEMO.MID",  // simplest and shortest file
-  "ELISE.MID",
-  "TWINKLE.MID",
-  "GANGNAM.MID",
-  "FUGUEGM.MID",
-  "POPCORN.MID",
-  "AIR.MID",
-  "PRDANCER.MID",
-  "MINUET.MID",
-  "FIRERAIN.MID",
-  "MOZART.MID",
-  "FERNANDO.MID",
-  "SONATAC.MID",
-  "SKYFALL.MID",
-  "XMAS.MID",
-  "GBROWN.MID",
-  "PROWLER.MID",
-  "IPANEMA.MID",
-  "JZBUMBLE.MID",
+  tuneLoopDemo,
+  tuneElsie,
+  tuneTwinkle,
+  tuneGangnam,
+  tuneFugueGM,
+  tunePopcorn,
+  tuneAir,
+  tunePRDancer,
+  tuneMinuet,
+  tuneFireRain,
+  tuneMozart,
+  tuneFernando,
+  tuneSonatac,
+  tuneSkyfall,
+  tuneXmas,
+  tuneGBrown,
+  tuneProwler,
+  tuneIpanema,
+  tuneJZBumble
 };
 
 // These don't play as they need more than 16 tracks but will run if MIDIFile.h is changed
@@ -92,8 +112,8 @@ char *tuneList[] =
 SdFat	SD;
 MD_MIDIFile SMF;
 
-const int pentatonic[NUM_NOTES] = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};
-unsigned long *servoarr;
+const int pentatonic[NUM_NOTES] PROGMEM = {21, 24, 26, 28, 31, 33, 36, 38, 40, 43, 45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96, 98, 100, 103, 105, 108};
+unsigned long servoarr[NUM_NOTES];
 
 void midiCallback(midi_event *pev)
 // Called by the MIDIFile library when a file event needs to be processed
@@ -215,7 +235,6 @@ void midiSilence(void)
 
 void setup(void)
 {
-  servoarr = malloc(NUM_NOTES * sizeof(unsigned long));
   Serial.begin(57600);
   Serial.write("Help");
   pwm1.begin();
@@ -288,7 +307,7 @@ void loop(void)
     for (int i=0; i < NUM_NOTES; i++){
       if (servoarr[i] && millis() - servoarr[i] > 500){
         servoarr[i] = 0;
-        int servo = i+1;
+//        int servo = i+1;
 //        pwm1.setPWM(servo, 0, 200);
 
       }
