@@ -7,7 +7,7 @@
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define USE_MIDI  1
+#define USE_MIDI  1  // set to 1 for MIDI output, 0 for debug output
 
 #if USE_MIDI // set up for direct MIDI serial output
 
@@ -37,7 +37,7 @@
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 
 // list will be opened (skips errors).
-char *loopfile = "AFROCUBA.MID";  // simple and short file
+const char *loopfile = "AFROCUBA.MID";  // simple and short file
 
 SdFat	SD;
 MD_MIDIFile SMF;

@@ -30,12 +30,17 @@ Topics
 
 Revision History
 ----------------
+## 25 Aug 2019 version 2.3.1 ##
+- Eliminated small compiler warnings.
+- Increase MAX_TRACKS from 16 to 24.
+- Added Player_CLI example code.
+
 ## 8 July 2019 - version 2.3.0 ##
-- Changed handling of SYSEX and META events with data bigger than buffer (R Foschini)
-- Fixed tick calculation by eliminating the time signature in calc (R Foschini)
+- Changed handling of SYSEX and META events with data bigger than buffer (R Foschini).
+- Fixed tick calculation by eliminating the time signature in calc (R Foschini).
 
 ## 30 Jun 2018 - version 2.2.0 ##
-- Added handling of meta events through callback (R. Foschini contribution)
+- Added handling of meta events through callback (R. Foschini contribution).
 
 ## 11 May 2018 - version 2.1.1 ##
 - Changed SHOW_UNUSED_META to 0 as it should have been all along. Causing music to stop.
@@ -377,7 +382,7 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
  16 tracks is the maximum available to any MIDI device. Fewer tracks may not allow many MIDI
  files to be played, while a minority of SMF may require more tracks.
  */
-#define MIDI_MAX_TRACKS 16
+#define MIDI_MAX_TRACKS 24
 
 /**
  \def TRACK_PRIORITY

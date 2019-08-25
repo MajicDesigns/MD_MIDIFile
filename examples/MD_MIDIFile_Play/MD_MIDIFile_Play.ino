@@ -10,18 +10,20 @@
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
 
-#define USE_MIDI  1
+#define USE_MIDI  1   // set to 1 to enable MIDI output, otherwise debug output
 
 #if USE_MIDI // set up for direct MIDI serial output
 
 #define DEBUG(x)
 #define DEBUGX(x)
+#define DEBUGS(s)
 #define SERIAL_RATE 31250
 
 #else // don't use MIDI to allow printing debug statements
 
 #define DEBUG(x)  Serial.print(x)
 #define DEBUGX(x) Serial.print(x, HEX)
+#define DEBUGS(s) Serial.print(F(s))
 #define SERIAL_RATE 57600
 
 #endif // USE_MIDI
@@ -46,9 +48,10 @@
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 
 // list will be opened (skips errors).
-char *tuneList[] = 
+const char *tuneList[] = 
 {
   "LOOPDEMO.MID",  // simplest and shortest file
+  "BANDIT.MID",
   "ELISE.MID",
   "TWINKLE.MID",
   "GANGNAM.MID",
@@ -196,42 +199,76 @@ void tickMetronome(void)
 
 void loop(void)
 {
-    int  err;
-  
-  for (uint8_t i=0; i<ARRAY_SIZE(tuneList); i++)
-  {
-    // reset LEDs
-    digitalWrite(READY_LED, LOW);
-    digitalWrite(SD_ERROR_LED, LOW);
+  static enum { S_IDLE, S_PLAYING, S_END, S_WAIT_BETWEEN } state = S_IDLE;
+  static uint16_t currTune = ARRAY_SIZE(tuneList);
+  static uint32_t timeStart;
 
-    // use the next file name and play it
-    DEBUG("\nFile: ");
-    DEBUG(tuneList[i]);
-    SMF.setFilename(tuneList[i]);
-    err = SMF.load();
-    if (err != -1)
+  switch (state)
+  {
+  case S_IDLE:    // now idle, set up the next tune
     {
-    DEBUG("\nSMF load Error ");
-    DEBUG(err);
-    digitalWrite(SMF_ERROR_LED, HIGH);
-    delay(WAIT_DELAY);
+      int err;
+
+      DEBUGS("\nS_IDLE");
+
+      // reset LEDs
+      digitalWrite(READY_LED, LOW);
+      digitalWrite(SD_ERROR_LED, LOW);
+
+      currTune++;
+      if (currTune >= ARRAY_SIZE(tuneList))
+        currTune = 0;
+
+      // use the next file name and play it
+      DEBUG("\nFile: ");
+      DEBUG(tuneList[currTune]);
+      SMF.setFilename(tuneList[currTune]);
+      err = SMF.load();
+      if (err != -1)
+      {
+        DEBUG(" - SMF load Error ");
+        DEBUG(err);
+        digitalWrite(SMF_ERROR_LED, HIGH);
+        timeStart = millis();
+        state = S_WAIT_BETWEEN;
+        DEBUGS("\nWAIT_BETWEEN");
+      }
+      else
+      {
+        DEBUGS("\nS_PLAYING");
+        state = S_PLAYING;
+      }
     }
-    else
-    {
-    // play the file
-    while (!SMF.isEOF())
+    break;
+
+  case S_PLAYING: // play the file
+    DEBUGS("\nS_PLAYING");
+    if (!SMF.isEOF())
     {
       if (SMF.getNextEvent())
-      tickMetronome();
+        tickMetronome();
     }
+    else
+      state = S_END;
+    break;
 
-    // done with this one
+  case S_END:   // done with this one
+    DEBUGS("\nS_END");
     SMF.close();
     midiSilence();
+    timeStart = millis();
+    state = S_WAIT_BETWEEN;
+    DEBUGS("\nWAIT_BETWEEN");
+    break;
 
-    // signal finish LED with a dignified pause
+  case S_WAIT_BETWEEN:    // signal finish LED with a dignified pause
     digitalWrite(READY_LED, HIGH);
-    delay(WAIT_DELAY);
-    }
+    if (millis() - timeStart >= WAIT_DELAY)
+      state = S_IDLE;
+    break;
+
+  default:
+    state = S_IDLE;
+    break;
   }
 }

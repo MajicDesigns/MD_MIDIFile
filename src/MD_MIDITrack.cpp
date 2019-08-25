@@ -125,7 +125,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 // process the event from the physical file
 {
   uint8_t eType;
-  uint32_t eLen, mLen;
+  uint32_t mLen;
 
   // now we have to process this event
   eType = mf->_fd.read();
@@ -442,9 +442,9 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 }
 
 int MD_MFTrack::load(uint8_t trackId, MD_MIDIFile *mf)
+// return -1 if success, 0 if malformed header, 1 if next track past end of file
 {
   uint32_t  dat32;
-  uint16_t  dat16;
 
   // save the trackid for use later
   _trackId = _mev.track = trackId;
@@ -471,7 +471,7 @@ int MD_MFTrack::load(uint8_t trackId, MD_MIDIFile *mf)
   _currOffset = 0;
 
   // Advance the file pointer to the start of the next track;
-  if (mf->_fd.seekSet(_startOffset+_length) == -1)
+  if (!mf->_fd.seekSet(_startOffset+_length))
     return(1);
 
   return(-1);
