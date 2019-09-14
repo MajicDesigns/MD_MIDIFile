@@ -30,6 +30,7 @@ close	KEYWORD2
 isEOF	KEYWORD2
 getFileName	KEYWORD2
 setFileName	KEYWORD2
+setFileFolder	KEYWORD2
 load	KEYWORD2
 getFormat	KEYWORD2
 getTrackCount	KEYWORD2

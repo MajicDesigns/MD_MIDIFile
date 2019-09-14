@@ -22,6 +22,7 @@ var class_m_d___m_i_d_i_file =
     [ "pause", "class_m_d___m_i_d_i_file.html#acaa198cd2f1dabcb387c4f044248cd57", null ],
     [ "processEvents", "class_m_d___m_i_d_i_file.html#a2a5d8df61628a1807d18160bcdb8a94b", null ],
     [ "restart", "class_m_d___m_i_d_i_file.html#a400e3638f823f985e9cc85aac7cb0d41", null ],
+    [ "setFileFolder", "class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd", null ],
     [ "setFilename", "class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324", null ],
     [ "setMetaHandler", "class_m_d___m_i_d_i_file.html#a120cb1dbe5f48648e800b704aa79b34e", null ],
     [ "setMicrosecondPerQuarterNote", "class_m_d___m_i_d_i_file.html#a52b967081cc692b44d2a9ea6ffc9a848", null ],

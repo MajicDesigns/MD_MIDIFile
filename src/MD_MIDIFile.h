@@ -30,25 +30,29 @@ Topics
 
 Revision History
 ----------------
-## 25 Aug 2019 version 2.3.1 ##
+Sep 2019 version 2.3.2
+- Fixed buffer overflow in SetFilename().
+- Added setFileFolder() method.
+
+Aug 2019 version 2.3.1
 - Eliminated small compiler warnings.
 - Increase MAX_TRACKS from 16 to 24.
 - Added Player_CLI example code.
 
-## 8 July 2019 - version 2.3.0 ##
+Jul 2019 - version 2.3.0
 - Changed handling of SYSEX and META events with data bigger than buffer (R Foschini).
 - Fixed tick calculation by eliminating the time signature in calc (R Foschini).
 
-## 30 Jun 2018 - version 2.2.0 ##
+Jun 2018 - version 2.2.0
 - Added handling of meta events through callback (R. Foschini contribution).
 
-## 11 May 2018 - version 2.1.1 ##
+May 2018 - version 2.1.1
 - Changed SHOW_UNUSED_META to 0 as it should have been all along. Causing music to stop.
 
-##5 January 2017 - version 2.1##
+Jan 2017 - version 2.1
 - Bug fix - SdFat changed behavior, needed change TIME SIGNATURE handling case.
 
-##24 August 2014 - version 2.0##
+Aug 2014 - version 2.0
 - Renamed MD_MIDIFile Library for consistency with other MajicDesigns libraries.
 - Documentation extensively revised and now in dOxygen format.
 - Revised debug output macros.
@@ -57,16 +61,16 @@ Revision History
 - Changed timebase to be 'tick' based & corrected algorithm.
 - Allow user code to control ticks directly for sync with external MIDI clock.
 
-##20 January 2013 - version 1.2##
+Jan 2013 - version 1.2
 - Cleaned up examples and added additional comments.
 - Removed dependency on the MIDI library. 
 - This version has no major changes to the core library.
 
-##6 January 2013 - version 1.1##
+Jan 2013 - version 1.1
 - Minor fixes and changes.
 - More robust handling of file errors on MIDIFile.load().
 
-##5 January 2013 - version 1.0##
+Jan 2013 - version 1.0
 - Initial release as MIDIFile Library.
 
 Copyright
@@ -803,12 +807,32 @@ public:
    * Set the name of the SMF
    *
    * Copies the supplied name to the class file name buffer.
-   * The name is expected to be in 8.3 format.
-   * 
+   * The name is expected to be in 8.3 format (ie, 13 characters
+   * long only).
+   *
+   * The file specified in this method is located in the current 
+   * working folder, which is the root folder by default. For files
+   * not in the root folder, change the current folder using the 
+   * setCurrentFolder() method.
+   *
    * \param aname pointer to a string with the file name.
    * \return No return data.
    */
-  void setFilename(const char* aname) { if (aname != nullptr) strcpy(_fileName, aname); }
+  void setFilename(const char* aname) { if (aname != nullptr) strncpy(_fileName, aname, ARRAY_SIZE(_fileName)-1); }
+
+  /**
+   * Set the current folder for the SMF
+   *
+   * Sets the current working folder to the specified path for all files.
+   * All subsequent file names passed to setFilename() are referenced to this 
+   * folder location.
+   *
+   * The default file location is the root folder denoted by "/"
+   *
+   * \param apath pointer to a string with the path name.
+   * \return No return data.
+   */
+  void setFileFolder(const char* apath) { if (apath != nullptr) _sd->chdir(apath, true); }
 
   /** 
    * Load the SMF

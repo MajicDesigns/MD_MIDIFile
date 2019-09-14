@@ -19,7 +19,7 @@ const uint8_t MIDI_IN = 3;      // Arduino RX pin number (never used)
 SoftwareSerial MidiOut(MIDI_IN, MIDI_OUT);
 
 #define MIDI MidiOut
-#else
+#else // USE_SOFTWARESERIAL
 #define MIDI Serial1
 #endif
 
@@ -33,7 +33,7 @@ const uint32_t MIDI_RATE = 31250;
 const uint8_t SD_SELECT = SS;         
 
 // Miscellaneous
-const uint8_t RCV_BUF_SIZE = 30;      // UI character buffer size
+const uint8_t RCV_BUF_SIZE = 50;      // UI character buffer size
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 void(*hwReset) (void) = 0;            // declare reset function @ address 0
 
@@ -98,7 +98,8 @@ void help(void)
 {
   CONSOLE.print(F("\nEnsure that console line termination is set to line feed only.\n"));
   CONSOLE.print(F("\nh,?\thelp"));
-  CONSOLE.print(F("\nl\tlist out files in root folder"));
+  CONSOLE.print(F("\nf fldr\tset current folder to fldr"));
+  CONSOLE.print(F("\nl\tlist out files in current folder"));
   CONSOLE.print(F("\np file\tplay the named file"));
 
   CONSOLE.print(F("\n\n* Sketch Control"));
@@ -273,15 +274,25 @@ void processUI(void)
       SMF.close(); // close old MIDI file
       midiSilence(); // silence hanging notes
 
-      CONSOLE.print(F("\nFile: "));
+      CONSOLE.print(F("\nRead File: "));
       CONSOLE.print(&rcvBuf[1]);
       SMF.setFilename(&rcvBuf[1]); // set filename
+      CONSOLE.print(F("\nSet file : "));
+      CONSOLE.print(SMF.getFilename());
       err = SMF.load(); // load the new file
       CONSOLE.print(SMFErr(err));
     }
     break;
 
-  case 'L': // list the files in the root folder
+  case 'F': // set the current folder for MIDI files
+    {
+      CONSOLE.print(F("\nFolder: "));
+      CONSOLE.print(&rcvBuf[1]);
+      SMF.setFileFolder(&rcvBuf[1]); // set folder
+    }
+    break;
+
+  case 'L': // list the files in the current folder
     {
       SdFile file;    // iterated file
 

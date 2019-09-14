@@ -108,31 +108,29 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li><a class="el" href="page_library.html">Notes on the Library</a></li>
 </ul>
 <h2>Revision History </h2>
-<h2>25 Aug 2019 version 2.3.1</h2>
-<ul>
+<p>Sep 2019 version 2.3.2</p><ul>
+<li>Fixed buffer overflow in SetFilename().</li>
+<li>Added setFileFolder() method.</li>
+</ul>
+<p>Aug 2019 version 2.3.1</p><ul>
 <li>Eliminated small compiler warnings.</li>
 <li>Increase MAX_TRACKS from 16 to 24.</li>
 <li>Added Player_CLI example code.</li>
 </ul>
-<h2>8 July 2019 - version 2.3.0</h2>
-<ul>
+<p>Jul 2019 - version 2.3.0</p><ul>
 <li>Changed handling of SYSEX and META events with data bigger than buffer (R Foschini).</li>
 <li>Fixed tick calculation by eliminating the time signature in calc (R Foschini).</li>
 </ul>
-<h2>30 Jun 2018 - version 2.2.0</h2>
-<ul>
+<p>Jun 2018 - version 2.2.0</p><ul>
 <li>Added handling of meta events through callback (R. Foschini contribution).</li>
 </ul>
-<h2>11 May 2018 - version 2.1.1</h2>
-<ul>
+<p>May 2018 - version 2.1.1</p><ul>
 <li>Changed SHOW_UNUSED_META to 0 as it should have been all along. Causing music to stop.</li>
 </ul>
-<h2>5 January 2017 - version 2.1</h2>
-<ul>
+<p>Jan 2017 - version 2.1</p><ul>
 <li>Bug fix - SdFat changed behavior, needed change TIME SIGNATURE handling case.</li>
 </ul>
-<h2>24 August 2014 - version 2.0</h2>
-<ul>
+<p>Aug 2014 - version 2.0</p><ul>
 <li>Renamed <a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a> Library for consistency with other MajicDesigns libraries.</li>
 <li>Documentation extensively revised and now in dOxygen format.</li>
 <li>Revised debug output macros.</li>
@@ -141,19 +139,16 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>Changed timebase to be 'tick' based &amp; corrected algorithm.</li>
 <li>Allow user code to control ticks directly for sync with external MIDI clock.</li>
 </ul>
-<h2>20 January 2013 - version 1.2</h2>
-<ul>
+<p>Jan 2013 - version 1.2</p><ul>
 <li>Cleaned up examples and added additional comments.</li>
 <li>Removed dependency on the MIDI library.</li>
 <li>This version has no major changes to the core library.</li>
 </ul>
-<h2>6 January 2013 - version 1.1</h2>
-<ul>
+<p>Jan 2013 - version 1.1</p><ul>
 <li>Minor fixes and changes.</li>
 <li>More robust handling of file errors on MIDIFile.load().</li>
 </ul>
-<h2>5 January 2013 - version 1.0</h2>
-<ul>
+<p>Jan 2013 - version 1.0</p><ul>
 <li>Initial release as MIDIFile Library.</li>
 </ul>
 <h2>Copyright </h2>
@@ -167,7 +162,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Aug 25 2019 15:27:13 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Sat Sep 14 2019 15:03:09 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>
