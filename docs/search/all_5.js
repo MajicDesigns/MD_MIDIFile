@@ -1,14 +1,13 @@
 var searchData=
 [
-  ['getendoftrack_40',['getEndOfTrack',['../class_m_d___m_f_track.html#a551590a673c55ab419b5ed439c07fa9b',1,'MD_MFTrack']]],
-  ['getfilename_41',['getFilename',['../class_m_d___m_i_d_i_file.html#a9852d7c959090501c54586939e2ef10c',1,'MD_MIDIFile']]],
-  ['getformat_42',['getFormat',['../class_m_d___m_i_d_i_file.html#a71f5ac1c022dd48eba6bfcb5a00d2e99',1,'MD_MIDIFile']]],
-  ['getlength_43',['getLength',['../class_m_d___m_f_track.html#a0ad057e88863d199e5ca082f99454dfd',1,'MD_MFTrack']]],
-  ['getnextevent_44',['getNextEvent',['../class_m_d___m_f_track.html#a062b412312d1e55a4eee0c8444106a9f',1,'MD_MFTrack::getNextEvent()'],['../class_m_d___m_i_d_i_file.html#a16907a425bf544327503a48a485300f4',1,'MD_MIDIFile::getNextEvent()']]],
-  ['gettempo_45',['getTempo',['../class_m_d___m_i_d_i_file.html#ae8f7fdbbb0ace13b59791516e34872b9',1,'MD_MIDIFile']]],
-  ['gettempoadjust_46',['getTempoAdjust',['../class_m_d___m_i_d_i_file.html#aaa615f2ddf14d4dca8fb504ee6572436',1,'MD_MIDIFile']]],
-  ['getticksperquarternote_47',['getTicksPerQuarterNote',['../class_m_d___m_i_d_i_file.html#a3e49706a324e7d6c8b1cc6329260d9f8',1,'MD_MIDIFile']]],
-  ['getticktime_48',['getTickTime',['../class_m_d___m_i_d_i_file.html#aec07e2f1cf1098692a19830f15364e69',1,'MD_MIDIFile']]],
-  ['gettimesignature_49',['getTimeSignature',['../class_m_d___m_i_d_i_file.html#a3a86cd34e68089d8d7b05e1042048fe0',1,'MD_MIDIFile']]],
-  ['gettrackcount_50',['getTrackCount',['../class_m_d___m_i_d_i_file.html#adc152212bb3d64586d7edf0c76d4f7ec',1,'MD_MIDIFile']]]
+  ['e_5fchunk_5feof_40',['E_CHUNK_EOF',['../class_m_d___m_i_d_i_file.html#a037206c2306b5594056000aecf81d68a',1,'MD_MIDIFile']]],
+  ['e_5fchunk_5fid_41',['E_CHUNK_ID',['../class_m_d___m_i_d_i_file.html#a9661b19166c360e4942e56de9c3f33f1',1,'MD_MIDIFile']]],
+  ['e_5fformat_42',['E_FORMAT',['../class_m_d___m_i_d_i_file.html#af928cfd3006fd2c50ead3e11d6cc2751',1,'MD_MIDIFile']]],
+  ['e_5fformat0_43',['E_FORMAT0',['../class_m_d___m_i_d_i_file.html#a2a7e524f4d609defd4c66f45669670de',1,'MD_MIDIFile']]],
+  ['e_5fheader_44',['E_HEADER',['../class_m_d___m_i_d_i_file.html#a6a0d49e938f44074c0b6aec111e1785d',1,'MD_MIDIFile']]],
+  ['e_5fno_5ffile_45',['E_NO_FILE',['../class_m_d___m_i_d_i_file.html#a794db43abced8fb094f358682635f28b',1,'MD_MIDIFile']]],
+  ['e_5fno_5fopen_46',['E_NO_OPEN',['../class_m_d___m_i_d_i_file.html#af372613c83608b235fd6335136388be6',1,'MD_MIDIFile']]],
+  ['e_5fnot_5fmidi_47',['E_NOT_MIDI',['../class_m_d___m_i_d_i_file.html#aee5a2137fce140266a1f67dc95d31f46',1,'MD_MIDIFile']]],
+  ['e_5fok_48',['E_OK',['../class_m_d___m_i_d_i_file.html#aa568f4afb9a3dd9192122d4cf7a11c22',1,'MD_MIDIFile']]],
+  ['e_5ftracks_49',['E_TRACKS',['../class_m_d___m_i_d_i_file.html#a77a4014489c23ee2610bf30c56b01b98',1,'MD_MIDIFile']]]
 ];

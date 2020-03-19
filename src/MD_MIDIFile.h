@@ -30,6 +30,11 @@ Topics
 
 Revision History
 ----------------
+Mar 2020 version 2.4
+- Changed error codes to defined constants.
+- Changed CLI example to use MD_cmdProcessor.
+- Fixed resynch error after pause().
+
 Sep 2019 version 2.3.2
 - Fixed buffer overflow in SetFilename().
 - Added setFileFolder() method.
@@ -167,6 +172,8 @@ common such events being some of the most common.
 
 Relevant META events are processed by the library code, but this is only a subset of all
 the available events.
+
+META events may be processed by the calling program through a callback.
 
 Note that the status bytes associated with System Common messages (0xF1 to 0xF6 inclusive)
 and System Real Time messages (0xF8 to 0xFE inclusive) are not valid within a MIDI file.
@@ -386,7 +393,7 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
  16 tracks is the maximum available to any MIDI device. Fewer tracks may not allow many MIDI
  files to be played, while a minority of SMF may require more tracks.
  */
-#define MIDI_MAX_TRACKS 24
+#define MIDI_MAX_TRACKS 16
 
 /**
  \def TRACK_PRIORITY
@@ -591,8 +598,23 @@ public:
   /** @} */
 
 protected:
-  void  parseEvent(MD_MIDIFile *mf);  ///< process the event from the physical file
-  void  reset(void);        ///< initialize class variables all in one place
+  /**
+   * Process the event from the physical file
+   *
+   * Read and process the next event for this track from the file.
+   *
+   * \param mf  pointer tho the MIDIFile object with the file to process.
+   *
+   * \return No return data.
+   */
+  void  parseEvent(MD_MIDIFile *mf);
+
+  /**
+   * Initialize the class all in one place
+   *
+   * \return No return data.
+   */
+  void  reset(void);
 
   uint8_t   _trackId;       ///< the id for this track
   uint32_t  _length;        ///< length of track in bytes
@@ -614,7 +636,22 @@ class MD_MIDIFile
 public:
   friend class MD_MFTrack;
 
-  /** 
+  /** Error codes as constants
+   */
+  static const int E_OK = 0;       ///< No errors
+  static const int E_NO_FILE = 1;  ///< Blank file name
+  static const int E_NO_OPEN = 2;  ///< Can't open file specified
+  static const int E_NOT_MIDI = 3; ///< File is not MIDI format
+  static const int E_HEADER = 4;   ///< MIDI header size incorrect
+  static const int E_FORMAT = 5;   ///< File format type not 0 or 1
+  static const int E_FORMAT0 = 6;  ///< File format 0 but more than 1 track
+  static const int E_TRACKS = 7;   ///< More than MIDI_MAX_TRACKS required
+
+  // Errors >= 10
+  static const int E_CHUNK_ID = 0;   ///< error >= 10; n0 Track n track chunk not found
+  static const int E_CHUNK_EOF = 1;  ///< error >= 10; n1 Track n chunk size past end of file
+
+  /**
    * Class Constructor
    *
    * Instantiate a new instance of the class.
@@ -841,17 +878,7 @@ public:
    * initialized by invoking this method. The file name must be set using the 
    * setfilename() method before calling load().
    * 
-   * \return Error code with one of these values
-   * - -1 = no errors
-   * - 0 = Blank file name
-   * - 2 = Can't open file specified
-   * - 3 = File is not MIDI format
-   * - 4 = MIDI header size incorrect
-   * - 5 = File format type not 0 or 1
-   * - 6 = File format 0 but more than 1 track
-   * - 7 = More than MIDI_MAX_TRACKS required
-   * - n0 = Track n track chunk not found
-   * - n1 = Track n chunk size past end of file
+   * \return Error code with one of the MFError_t values
    */
   int load(void);
   /** @} */
@@ -1054,7 +1081,7 @@ protected:
   uint16_t  _lastTickError;       ///< error brought forward from last tick check
   uint32_t  _lastTickCheckTime;   ///< the last time (microsec) an tick check was performed
 
-  bool    _syncAtStart;           ///< sync up at the start of all tracks
+  bool    _synchDone;             ///< sync up at the start of all tracks
   bool    _paused;                ///< if true we are currently paused
   bool    _looping;               ///< if true we are currently looping
 

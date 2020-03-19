@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.3</span>
+   &#160;<span id="projectnumber">2.4</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -121,6 +121,7 @@ $(document).ready(function(){initNavTree('page_smf_definition.html','');});
 </ul>
 <p>These contain additional information which would not be in the MIDI data stream itself. TimeSig, KeySig, Tempo, TrackName, Text, Marker, Special, EOT (End of Track) are the most common such events being some of the most common.</p>
 <p>Relevant META events are processed by the library code, but this is only a subset of all the available events.</p>
+<p>META events may be processed by the calling program through a callback.</p>
 <p>Note that the status bytes associated with System Common messages (0xF1 to 0xF6 inclusive) and System Real Time messages (0xF8 to 0xFE inclusive) are not valid within a MIDI file. For the rare occasion when you do need to include one of these messages, it should be embedded within a SysEx escape sequence.</p>
 <h2>SMF Format Grammar </h2>
 <p>This grammar is from <a href="http://www.ccarh.org/courses/253/handout/smf/">http://www.ccarh.org/courses/253/handout/smf/</a> and is useful to understand the structure of the file in a programmer-friendly format. </p><pre class="fragment"> &lt;descriptor:length&gt; means 'length' bytes, MSB first
@@ -141,7 +142,7 @@ $(document).ready(function(){initNavTree('page_smf_definition.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Sep 14 2019 15:03:09 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Thu Mar 19 2020 14:27:13 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>

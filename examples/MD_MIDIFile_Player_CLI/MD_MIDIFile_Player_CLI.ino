@@ -4,9 +4,13 @@
 // Change the CLI and MIDI outputs to suit your hardware.
 // This should adjust by itself to use Serial1 if USE_SOFTWARSERIAL is set to 0.
 //
+// Library Dependencies
+// MD_cmdProcessor located at https://github.com/MajicDesigns/MD_cmdProcessor
+//
 
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
+#include <MD_cmdProcessor.h>
 
 #define USE_SOFTWARESERIAL 1
 
@@ -33,13 +37,11 @@ const uint32_t MIDI_RATE = 31250;
 const uint8_t SD_SELECT = SS;         
 
 // Miscellaneous
-const uint8_t RCV_BUF_SIZE = 50;      // UI character buffer size
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 void(*hwReset) (void) = 0;            // declare reset function @ address 0
 
 // Global Data
 bool printMidiStream = false;   // flag to print the real time midi stream
-char rcvBuf[RCV_BUF_SIZE];  // buffer for characters received from the console
 SdFat SD;
 MD_MIDIFile SMF;
 
@@ -63,15 +65,17 @@ void midiCallback(midi_event *pev)
     CONSOLE.print(F("\nT"));
     CONSOLE.print(pev->track);
     CONSOLE.print(F(": Ch "));
+    if (pev->channel + 1 < 10) CONSOLE.print(F("0"));
     CONSOLE.print(pev->channel + 1);
-    CONSOLE.print(F(" Data"));
+    CONSOLE.print(F(" ["));
     for (uint8_t i = 0; i < pev->size; i++)
     {
-      CONSOLE.print(F(" "));
+      if (i != 0) CONSOLE.print(F(" "));
       if (pev->data[i] <= 0x0f)
         CONSOLE.print(F("0"));
       CONSOLE.print(pev->data[i], HEX);
     }
+    CONSOLE.print(F("]"));
   }
 }
 
@@ -94,28 +98,6 @@ void midiSilence(void)
     midiCallback(&ev);
 }
 
-void help(void)
-{
-  CONSOLE.print(F("\nEnsure that console line termination is set to line feed only.\n"));
-  CONSOLE.print(F("\nh,?\thelp"));
-  CONSOLE.print(F("\nf fldr\tset current folder to fldr"));
-  CONSOLE.print(F("\nl\tlist out files in current folder"));
-  CONSOLE.print(F("\np file\tplay the named file"));
-
-  CONSOLE.print(F("\n\n* Sketch Control"));
-  CONSOLE.print(F("\nz s\tsoftware reset"));
-  CONSOLE.print(F("\nz m\tmidi silence"));
-  CONSOLE.print(F("\nz d\tdump the real time midi stream (toggle on/off)"));
-
-  CONSOLE.print(F("\n\n* Play Control"));
-  CONSOLE.print(F("\nc ln\tlooping (n 0=off, 1=on)"));
-  CONSOLE.print(F("\nc pn\tpause (n 0=off, 1=on)"));
-  CONSOLE.print(F("\nc r\trestart"));
-  CONSOLE.print(F("\nc c\tclose"));
-
-  CONSOLE.print(F("\n"));
-}
-
 const char *SMFErr(int err)
 {
   const char *DELIM_OPEN = "[";
@@ -124,14 +106,14 @@ const char *SMFErr(int err)
   static char szErr[30];
   char szFmt[10];
 
-  static const char PROGMEM E_OK[] = "\nOK";  // -1
-  static const char PROGMEM E_FILE_NUL[] = "Empty filename"; // 0 
-  static const char PROGMEM E_OPEN[] = "Cannot open"; // 1
-  static const char PROGMEM E_FORMAT[] = "Not MIDI"; // 2
-  static const char PROGMEM E_HEADER[] = "Header size"; // 3
-  static const char PROGMEM E_FILE_FMT[] = "File unsupproted"; // 5
-  static const char PROGMEM E_FILE_TRK0[] = "File fmt 0; trk > 1"; // 6
-  static const char PROGMEM E_MAX_TRACK[] = "Too many tracks"; // 7
+  static const char PROGMEM E_OK[] = "\nOK";
+  static const char PROGMEM E_FILE_NUL[] = "Empty filename";
+  static const char PROGMEM E_OPEN[] = "Cannot open";
+  static const char PROGMEM E_FORMAT[] = "Not MIDI";
+  static const char PROGMEM E_HEADER[] = "Header size";
+  static const char PROGMEM E_FILE_FMT[] = "File unsupported";
+  static const char PROGMEM E_FILE_TRK0[] = "File fmt 0; trk > 1";
+  static const char PROGMEM E_MAX_TRACK[] = "Too many tracks";
   static const char PROGMEM E_NO_CHUNK[] = "no chunk"; // n0
   static const char PROGMEM E_PAST_EOF[] = "past eof"; // n1
   static const char PROGMEM E_UNKNOWN[] = "Unknown";
@@ -139,7 +121,7 @@ const char *SMFErr(int err)
   static const char PROGMEM EF_ERR[] = "\n%d %s";    // error number
   static const char PROGMEM EF_TRK[] = "Trk %d,";  // for errors >= 10
 
-  if (err == -1)    // this is a simple message
+  if (err == MD_MIDIFile::E_OK)    // this is a simple message
     strcpy_P(szErr, E_OK);
   else              // this is a complicated message
   {
@@ -149,14 +131,13 @@ const char *SMFErr(int err)
     {
       switch (err)
       {
-      case 0: strcat_P(szErr, E_FILE_NUL); break;
-      case 1: strcat_P(szErr, E_OPEN); break;
-      case 2: strcat_P(szErr, E_FORMAT); break;
-      case 3: strcat_P(szErr, E_HEADER); break;
-      case 4: strcat_P(szErr, E_FILE_FMT); break;
-      case 5: strcat_P(szErr, E_FILE_TRK0); break;
-      case 6: strcat_P(szErr, E_MAX_TRACK); break;
-      case 7: strcat_P(szErr, E_NO_CHUNK); break;
+      case MD_MIDIFile::E_NO_FILE:  strcat_P(szErr, E_FILE_NUL); break;
+      case MD_MIDIFile::E_NO_OPEN:  strcat_P(szErr, E_OPEN); break;
+      case MD_MIDIFile::E_NOT_MIDI: strcat_P(szErr, E_FORMAT); break;
+      case MD_MIDIFile::E_HEADER:   strcat_P(szErr, E_HEADER); break;
+      case MD_MIDIFile::E_FORMAT:   strcat_P(szErr, E_FILE_FMT); break;
+      case MD_MIDIFile::E_FORMAT0:  strcat_P(szErr, E_FILE_TRK0); break;
+      case MD_MIDIFile::E_TRACKS:   strcat_P(szErr, E_MAX_TRACK); break;
       default: strcat_P(szErr, E_UNKNOWN); break;
       }
     }
@@ -172,8 +153,8 @@ const char *SMFErr(int err)
       // now do the message
       switch (err % 10)
       {
-      case 0: strcat_P(szErr, E_NO_CHUNK); break;
-      case 1: strcat_P(szErr, E_PAST_EOF); break;
+      case MD_MIDIFile::E_CHUNK_ID:  strcat_P(szErr, E_NO_CHUNK); break;
+      case MD_MIDIFile::E_CHUNK_EOF: strcat_P(szErr, E_PAST_EOF); break;
       default: strcat_P(szTemp, E_UNKNOWN); break;
       }
     }
@@ -183,136 +164,118 @@ const char *SMFErr(int err)
   return(szErr);
 }
 
-bool recvLine(void) 
-{
-  const char endMarker = '\n'; // end of the Serial input line
-  static byte ndx = 0;
-  char c;
-  bool b = false;        // true when we have a complete line
+// handler functions
+void handlerHelp(char* param); // function prototype
 
-  while (CONSOLE.available() && !b) // process all available characters before eoln
-  {
-    c = CONSOLE.read();
-    if (c != endMarker) // is the character not the end of the string termintator?
-    {
-      if (!isspace(c))  // filter out all the whitespace
-      {
-        rcvBuf[ndx] = toupper(c); // save the character
-        ndx++;
-        if (ndx >= RCV_BUF_SIZE) // handle potential buffer overflow
-          ndx--;
-        rcvBuf[ndx] = '\0';       // alwaqys maintain a valid string
-      }
-    }
-    else
-    {
-      ndx = 0;          // reset buffer to receive the next line
-      b = true;         // return this flag
-    }
-  }
-  return(b);
+void handlerZS(char* param) { hwReset(); }
+
+void handlerZM(char* param) 
+{ 
+  CONSOLE.print(F("\nMIDI silence"));
+  midiSilence(); 
+  CONSOLE.print(SMFErr(MD_MIDIFile::E_OK)); 
 }
 
-void processUI(void)
+void handlerCL(char* param) 
+{ 
+  SMF.looping(*param != '0'); 
+  CONSOLE.print(F("\nLooping "));
+  CONSOLE.print(*param); 
+  CONSOLE.print(F(" ")); 
+  CONSOLE.print(SMFErr(MD_MIDIFile::E_OK)); 
+}
+
+void handlerCP(char* param) 
+{ 
+  SMF.pause(*param != '0'); 
+  CONSOLE.print(F("\nPause "));
+  CONSOLE.print(*param);
+  CONSOLE.print(F(" "));
+  CONSOLE.print(SMFErr(MD_MIDIFile::E_OK)); 
+}
+
+void handlerCD(char* param)
 {
-  if (!recvLine())
-    return;
+  printMidiStream = !printMidiStream;
+  CONSOLE.print(SMFErr(MD_MIDIFile::E_OK));
+}
 
-  // we have a line to process
-  switch (rcvBuf[0])
+void handlerCC(char* param)
+{ 
+  SMF.close(); 
+  CONSOLE.print(F("\nMIDI close"));
+  CONSOLE.print(SMFErr(MD_MIDIFile::E_OK));
+}
+
+void handlerP(char *param)
+// play specified file
+{
+  int err;
+
+  // clean up current environment
+  SMF.close(); // close old MIDI file
+  midiSilence(); // silence hanging notes
+
+  CONSOLE.print(F("\nFile: "));
+  CONSOLE.print(param);
+  SMF.setFilename(param); // set filename
+  CONSOLE.print(F("\nSet to: "));
+  CONSOLE.print(SMF.getFilename());
+  err = SMF.load(); // load the new file
+  CONSOLE.print(SMFErr(err));
+}
+
+void handlerF(char *param)
+// set the current folder
+{
+  CONSOLE.print(F("\nFolder: "));
+  CONSOLE.print(param);
+  SMF.setFileFolder(param); // set folder
+}
+
+void handlerL(char *param)
+// list the files in the current folder
+{
+  SdFile file;    // iterated file
+
+  SD.vwd()->rewind();
+  while (file.openNext(SD.vwd(), O_READ))
   {
-  case 'H':
-  case '?':
-    help();
-    break;
-
-  case 'Z':   // resets
-    switch (rcvBuf[1])
+    if (file.isFile())
     {
-    case 'S': hwReset(); break;
-    case 'M': midiSilence(); CONSOLE.print(SMFErr(-1)); break;
-    case 'D': printMidiStream = !printMidiStream; CONSOLE.print(SMFErr(-1)); break;
-    }
-    break;
+      char buf[20];
 
-  case 'C':  // control
-    switch (rcvBuf[1])
-    {
-    case 'L': // looping
-      if (rcvBuf[2] == '0')
-        SMF.looping(false);
-      else
-        SMF.looping(true);
-      CONSOLE.print(SMFErr(-1));
-      break;
-
-    case 'P': // pause
-      if (rcvBuf[2] == '0')
-        SMF.pause(false);
-      else
-        SMF.pause(true);
-      CONSOLE.print(SMFErr(-1));
-      break;
-
-    case 'R': // restart
-      SMF.restart();
-      CONSOLE.print(SMFErr(-1));
-      break;
-
-    case 'C': // close
-      SMF.close();
-      CONSOLE.print(SMFErr(-1));
-      break;
-    }
-    break;
-
-  case 'P': // play
-    {
-      int err;
-
-      // clean up current environment
-      SMF.close(); // close old MIDI file
-      midiSilence(); // silence hanging notes
-
-      CONSOLE.print(F("\nRead File: "));
-      CONSOLE.print(&rcvBuf[1]);
-      SMF.setFilename(&rcvBuf[1]); // set filename
-      CONSOLE.print(F("\nSet file : "));
-      CONSOLE.print(SMF.getFilename());
-      err = SMF.load(); // load the new file
-      CONSOLE.print(SMFErr(err));
-    }
-    break;
-
-  case 'F': // set the current folder for MIDI files
-    {
-      CONSOLE.print(F("\nFolder: "));
-      CONSOLE.print(&rcvBuf[1]);
-      SMF.setFileFolder(&rcvBuf[1]); // set folder
-    }
-    break;
-
-  case 'L': // list the files in the current folder
-    {
-      SdFile file;    // iterated file
-
-      SD.vwd()->rewind();
-      while (file.openNext(SD.vwd(), O_READ))
-      {
-        if (file.isFile())
-        {
-          char buf[20];
-
-          file.getName(buf, ARRAY_SIZE(buf));
-          CONSOLE.print(F("\n"));
-          CONSOLE.print(buf);
-        }
-        file.close();
-      }
+      file.getName(buf, ARRAY_SIZE(buf));
       CONSOLE.print(F("\n"));
+      CONSOLE.print(buf);
     }
-    break;
+    file.close();
   }
+  CONSOLE.print(F("\n"));
+}
+
+const MD_cmdProcessor::cmdItem_t PROGMEM cmdTable[] =
+{
+  { "?",  handlerHelp, "",     "Help" },
+  { "h",  handlerHelp, "",     "Help" },
+  { "f",  handlerF,    "fldr", "Set current folder to fldr" },
+  { "l",  handlerL,    "",     "List files in current folder" },
+  { "p",  handlerP,    "file", "Play the named file" },
+  { "zs", handlerZS,   "",     "Software reset" },
+  { "zm", handlerZM,   "",     "Silence MIDI" },
+  { "cd", handlerCD,   "",     "Toggle dumping of MIDI stream" },
+  { "cl", handlerCL,   "n",    "Looping (n 0=off, 1=on)" },
+  { "cp", handlerCP,   "n",    "Pause (n 0=off, 1=on)" },
+  { "cc", handlerCC,   "",     "Close" },
+};
+
+MD_cmdProcessor CP(CONSOLE, cmdTable, ARRAY_SIZE(cmdTable));
+
+void handlerHelp(char* param)
+{
+  CONSOLE.print(F("\nHelp\n===="));
+  CP.help();
+  CONSOLE.print(F("\n"));
 }
 
 void setup(void) // This is run once at power on
@@ -321,6 +284,7 @@ void setup(void) // This is run once at power on
   CONSOLE.begin(CONSOLE_RATE); // For Console I/O
 
   CONSOLE.print(F("\n[MidiFile CLI Player]"));
+  CONSOLE.print(F("\nEnsure that console line termination is set to line feed only.\n"));
 
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
@@ -335,7 +299,7 @@ void setup(void) // This is run once at power on
   midiSilence(); // Silence any hanging notes
 
   // show the available commands
-  help();
+  handlerHelp(nullptr);
 }
 
 void loop(void)
@@ -343,5 +307,5 @@ void loop(void)
   if (!SMF.isEOF()) 
     SMF.getNextEvent(); // Play MIDI data
 
-  processUI();  // process the User Interface
+  CP.run();  // process the CLI
 }

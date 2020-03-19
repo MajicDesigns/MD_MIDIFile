@@ -17,7 +17,7 @@ var searchData=
   ['_5fsd_14',['_sd',['../class_m_d___m_i_d_i_file.html#a8bf6200e1032cc5f4422cc45dada9ccb',1,'MD_MIDIFile']]],
   ['_5fselectsd_15',['_selectSD',['../class_m_d___m_i_d_i_file.html#a0726be7a48ba5fb09501c8c71ad41ff1',1,'MD_MIDIFile']]],
   ['_5fstartoffset_16',['_startOffset',['../class_m_d___m_f_track.html#a529a15b2b95e8fa05320d32bb8a79a73',1,'MD_MFTrack']]],
-  ['_5fsyncatstart_17',['_syncAtStart',['../class_m_d___m_i_d_i_file.html#a957368ba840077bb53046d3fa22ecb57',1,'MD_MIDIFile']]],
+  ['_5fsynchdone_17',['_synchDone',['../class_m_d___m_i_d_i_file.html#a1db1179ca70da58ab5687cb2271e49ff',1,'MD_MIDIFile']]],
   ['_5fsysexhandler_18',['_sysexHandler',['../class_m_d___m_i_d_i_file.html#a38b8ae82b9c55e71855a9418395450b9',1,'MD_MIDIFile']]],
   ['_5ftempo_19',['_tempo',['../class_m_d___m_i_d_i_file.html#a47dc16e7e253209f489b321f2102406a',1,'MD_MIDIFile']]],
   ['_5ftempodelta_20',['_tempoDelta',['../class_m_d___m_i_d_i_file.html#adc0a833ebf1ad4c318903ec2d653af77',1,'MD_MIDIFile']]],

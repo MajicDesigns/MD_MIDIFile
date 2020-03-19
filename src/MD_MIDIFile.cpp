@@ -33,9 +33,8 @@ void MD_MIDIFile::initialise(void)
 {
   _trackCount = 0;            // number of tracks in file
   _format = 0;
-  _tickTime = 0;
-  _lastTickError = 0;
-  _syncAtStart = false;
+  _tickTime = _lastTickError = 0;
+  _synchDone = false;
   _paused =_looping = false;
   
   setMidiHandler(nullptr);
@@ -46,7 +45,7 @@ void MD_MIDIFile::initialise(void)
   setFilename("");
   _sd = nullptr;
 
-  // Set MIDI defaults
+  // Set MIDI specified standard defaults
   setTicksPerQuarterNote(48); // 48 ticks per quarter note
   setTempo(120);              // 120 beats per minute
   setTempoAdjust(0);          // 0 beats per minute adjustment
@@ -56,10 +55,11 @@ void MD_MIDIFile::initialise(void)
 
 void MD_MIDIFile::synchTracks(void)
 {
-  for (uint8_t i=0; i<_trackCount; i++)
+  for (uint8_t i = 0; i < _trackCount; i++)
     _track[i].syncTime();
 
   _lastTickCheckTime = micros();
+  _lastTickError = 0;
 }
 
 MD_MIDIFile::MD_MIDIFile(void) 
@@ -85,7 +85,7 @@ void MD_MIDIFile::close()
     _track[i].close();
   }
   _trackCount = 0;
-  _syncAtStart = false;
+  _synchDone = false;
   _paused = false;
 
   setFilename("");
@@ -169,8 +169,8 @@ void MD_MIDIFile::pause(bool bMode)
 {
   _paused = bMode;
 
-  if (!_paused)           // restarting so ..
-    _syncAtStart = false; // .. force a time resynch when next processing events
+  if (!_paused)         // restarting so adjust the time last checked to now
+    _lastTickCheckTime = micros();
 }
 
 void MD_MIDIFile::restart(void)
@@ -182,7 +182,7 @@ void MD_MIDIFile::restart(void)
   for (uint8_t i=(_looping && _trackCount>1 ? 1 : 0); i<_trackCount; i++)
     _track[i].restart();
 
-  _syncAtStart = false;   // force a time resych
+  _synchDone = false;   // force a time resych as well
 }
 
 uint16_t MD_MIDIFile::tickClock(void)
@@ -211,10 +211,10 @@ boolean MD_MIDIFile::getNextEvent(void)
     return false;
 
   // sync start all the tracks if we need to
-  if (!_syncAtStart)
+  if (!_synchDone)
   {
     synchTracks();
-    _syncAtStart = true;
+    _synchDone = true;
   }
 
   // check if enough time has passed for a MIDI tick
@@ -243,7 +243,7 @@ void MD_MIDIFile::processEvents(uint16_t ticks)
     if (_format != 0) DUMPX("", i);
     // Limit n to be a sensible number of events in the loop counter
     // When there are no more events, just break out
-    // Other than the first event, the other have an elapsed time of 0 (ie occur simultaneously)
+    // Other than the first event, the others have an elapsed time of 0 (ie occur simultaneously)
     for (n=0; n < 100; n++)
     {
       if (!_track[i].getNextEvent(this, (n==0 ? ticks : 0)))
@@ -284,16 +284,17 @@ void MD_MIDIFile::processEvents(uint16_t ticks)
 
 int MD_MIDIFile::load() 
 // Load the MIDI file into memory ready for processing
+// Return one of the E_* error codes
 {
   uint32_t dat32;
   uint16_t dat16;
   
   if (_fileName[0] == '\0')  
-    return(0);
+    return(E_NO_FILE);
 
-  // open the file for reading:
+  // open the file for reading
   if (!_fd.open(_fileName, O_READ)) 
-    return(2);
+    return(E_NO_OPEN);
 
   // Read the MIDI header
   // header chunk = "MThd" + <header_length:4> + <format:2> + <num_tracks:2> + <time_division:2>
@@ -306,7 +307,7 @@ int MD_MIDIFile::load()
     if (strcmp(h, MTHD_HDR) != 0)
     {
       _fd.close();
-      return(3);
+      return(E_NOT_MIDI);
     }
   }
 
@@ -315,7 +316,7 @@ int MD_MIDIFile::load()
   if (dat32 != 6)   // must be 6 for this header
   {
     _fd.close();
-    return(4);
+    return(E_HEADER);
   }
   
   // read file type
@@ -323,25 +324,25 @@ int MD_MIDIFile::load()
   if ((dat16 != 0) && (dat16 != 1))
   {
     _fd.close();
-    return(5);
+    return(E_FORMAT);
   }
   _format = dat16;
  
-   // read number of tracks
+  // read number of tracks
   dat16 = readMultiByte(&_fd, MB_WORD);
   if ((_format == 0) && (dat16 != 1)) 
   {
     _fd.close();
-    return(6);
+    return(E_FORMAT0);
   }
   if (dat16 > MIDI_MAX_TRACKS)
   {
     _fd.close();
-    return(7);
+    return(E_TRACKS);
   }
   _trackCount = dat16;
 
-   // read ticks per quarter note
+  // read ticks per quarter note
   dat16 = readMultiByte(&_fd, MB_WORD);
   if (dat16 & 0x8000) // top bit set is SMTE format
   {
@@ -373,7 +374,7 @@ int MD_MIDIFile::load()
     }
    }
 
-  return(-1);
+  return(E_OK);
 }
 
 #if DUMP_DATA

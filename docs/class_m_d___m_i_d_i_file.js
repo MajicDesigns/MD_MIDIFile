@@ -46,7 +46,7 @@ var class_m_d___m_i_d_i_file =
     [ "_paused", "class_m_d___m_i_d_i_file.html#af04b0def503d624439f69b1c7453a692", null ],
     [ "_sd", "class_m_d___m_i_d_i_file.html#a8bf6200e1032cc5f4422cc45dada9ccb", null ],
     [ "_selectSD", "class_m_d___m_i_d_i_file.html#a0726be7a48ba5fb09501c8c71ad41ff1", null ],
-    [ "_syncAtStart", "class_m_d___m_i_d_i_file.html#a957368ba840077bb53046d3fa22ecb57", null ],
+    [ "_synchDone", "class_m_d___m_i_d_i_file.html#a1db1179ca70da58ab5687cb2271e49ff", null ],
     [ "_sysexHandler", "class_m_d___m_i_d_i_file.html#a38b8ae82b9c55e71855a9418395450b9", null ],
     [ "_tempo", "class_m_d___m_i_d_i_file.html#a47dc16e7e253209f489b321f2102406a", null ],
     [ "_tempoDelta", "class_m_d___m_i_d_i_file.html#adc0a833ebf1ad4c318903ec2d653af77", null ],
@@ -54,5 +54,15 @@ var class_m_d___m_i_d_i_file =
     [ "_tickTime", "class_m_d___m_i_d_i_file.html#a226171ac715b48888b245898aa1930ee", null ],
     [ "_timeSignature", "class_m_d___m_i_d_i_file.html#acb0c33c213cbb0048ebe53913cc6166c", null ],
     [ "_track", "class_m_d___m_i_d_i_file.html#a33d9a92bf9da32eafd58e0d67b960ff5", null ],
-    [ "_trackCount", "class_m_d___m_i_d_i_file.html#a787d580fa42a61a42dc0fe9a75796be8", null ]
+    [ "_trackCount", "class_m_d___m_i_d_i_file.html#a787d580fa42a61a42dc0fe9a75796be8", null ],
+    [ "E_CHUNK_EOF", "class_m_d___m_i_d_i_file.html#a037206c2306b5594056000aecf81d68a", null ],
+    [ "E_CHUNK_ID", "class_m_d___m_i_d_i_file.html#a9661b19166c360e4942e56de9c3f33f1", null ],
+    [ "E_FORMAT", "class_m_d___m_i_d_i_file.html#af928cfd3006fd2c50ead3e11d6cc2751", null ],
+    [ "E_FORMAT0", "class_m_d___m_i_d_i_file.html#a2a7e524f4d609defd4c66f45669670de", null ],
+    [ "E_HEADER", "class_m_d___m_i_d_i_file.html#a6a0d49e938f44074c0b6aec111e1785d", null ],
+    [ "E_NO_FILE", "class_m_d___m_i_d_i_file.html#a794db43abced8fb094f358682635f28b", null ],
+    [ "E_NO_OPEN", "class_m_d___m_i_d_i_file.html#af372613c83608b235fd6335136388be6", null ],
+    [ "E_NOT_MIDI", "class_m_d___m_i_d_i_file.html#aee5a2137fce140266a1f67dc95d31f46", null ],
+    [ "E_OK", "class_m_d___m_i_d_i_file.html#aa568f4afb9a3dd9192122d4cf7a11c22", null ],
+    [ "E_TRACKS", "class_m_d___m_i_d_i_file.html#a77a4014489c23ee2610bf30c56b01b98", null ]
 ];

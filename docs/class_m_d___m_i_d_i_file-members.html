@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.3</span>
+   &#160;<span id="projectnumber">2.4</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -106,7 +106,7 @@ $(document).ready(function(){initNavTree('class_m_d___m_i_d_i_file.html','');});
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#af04b0def503d624439f69b1c7453a692">_paused</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a8bf6200e1032cc5f4422cc45dada9ccb">_sd</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a0726be7a48ba5fb09501c8c71ad41ff1">_selectSD</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a957368ba840077bb53046d3fa22ecb57">_syncAtStart</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a1db1179ca70da58ab5687cb2271e49ff">_synchDone</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a38b8ae82b9c55e71855a9418395450b9">_sysexHandler</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a47dc16e7e253209f489b321f2102406a">_tempo</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#adc0a833ebf1ad4c318903ec2d653af77">_tempoDelta</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
@@ -119,6 +119,16 @@ $(document).ready(function(){initNavTree('class_m_d___m_i_d_i_file.html','');});
   <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#abdc5808b61c3956d43e9d893dab9ed15">calcTickTime</a>(void)</td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#ae87cb19f6c9926ad30965a48552c1a2e">close</a>(void)</td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#aca850ef4d8382c297e0c687631739c59">dump</a>(void)</td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a037206c2306b5594056000aecf81d68a">E_CHUNK_EOF</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a9661b19166c360e4942e56de9c3f33f1">E_CHUNK_ID</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#af928cfd3006fd2c50ead3e11d6cc2751">E_FORMAT</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a2a7e524f4d609defd4c66f45669670de">E_FORMAT0</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a6a0d49e938f44074c0b6aec111e1785d">E_HEADER</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a794db43abced8fb094f358682635f28b">E_NO_FILE</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#af372613c83608b235fd6335136388be6">E_NO_OPEN</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#aee5a2137fce140266a1f67dc95d31f46">E_NOT_MIDI</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#aa568f4afb9a3dd9192122d4cf7a11c22">E_OK</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a77a4014489c23ee2610bf30c56b01b98">E_TRACKS</a></td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a9852d7c959090501c54586939e2ef10c">getFilename</a>(void)</td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a71f5ac1c022dd48eba6bfcb5a00d2e99">getFormat</a>(void)</td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html#a16907a425bf544327503a48a485300f4">getNextEvent</a>(void)</td><td class="entry"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></td><td class="entry"></td></tr>
@@ -155,7 +165,7 @@ $(document).ready(function(){initNavTree('class_m_d___m_i_d_i_file.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Sep 14 2019 15:03:09 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Thu Mar 19 2020 14:27:13 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>

@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.3</span>
+   &#160;<span id="projectnumber">2.4</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -139,13 +139,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:aad029338978dee33603bce818c82767d"><td class="memItemLeft" align="right" valign="top"><a id="aad029338978dee33603bce818c82767d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_f_track.html#aad029338978dee33603bce818c82767d">parseEvent</a> (<a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a> *mf)</td></tr>
-<tr class="memdesc:aad029338978dee33603bce818c82767d"><td class="mdescLeft">&#160;</td><td class="mdescRight">process the event from the physical file <br /></td></tr>
+<tr class="memitem:aad029338978dee33603bce818c82767d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_f_track.html#aad029338978dee33603bce818c82767d">parseEvent</a> (<a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a> *mf)</td></tr>
 <tr class="separator:aad029338978dee33603bce818c82767d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59cf04d07fe893a98d342299e44ae593"><td class="memItemLeft" align="right" valign="top"><a id="a59cf04d07fe893a98d342299e44ae593"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_f_track.html#a59cf04d07fe893a98d342299e44ae593">reset</a> (void)</td></tr>
-<tr class="memdesc:a59cf04d07fe893a98d342299e44ae593"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize class variables all in one place <br /></td></tr>
+<tr class="memitem:a59cf04d07fe893a98d342299e44ae593"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_f_track.html#a59cf04d07fe893a98d342299e44ae593">reset</a> (void)</td></tr>
 <tr class="separator:a59cf04d07fe893a98d342299e44ae593"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
@@ -391,6 +387,69 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 </div>
 </div>
+<a id="aad029338978dee33603bce818c82767d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad029338978dee33603bce818c82767d">&#9670;&nbsp;</a></span>parseEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MD_MFTrack::parseEvent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a> *&#160;</td>
+          <td class="paramname"><em>mf</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Process the event from the physical file</p>
+<p>Read and process the next event for this track from the file.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mf</td><td>pointer tho the MIDIFile object with the file to process.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>No return data. </dd></dl>
+
+</div>
+</div>
+<a id="a59cf04d07fe893a98d342299e44ae593"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59cf04d07fe893a98d342299e44ae593">&#9670;&nbsp;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MD_MFTrack::reset </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Initialize the class all in one place</p>
+<dl class="section return"><dt>Returns</dt><dd>No return data. </dd></dl>
+
+</div>
+</div>
 <a id="a8643214182b8dab60f38616b6f6fbca9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8643214182b8dab60f38616b6f6fbca9">&#9670;&nbsp;</a></span>restart()</h2>
 
@@ -443,7 +502,7 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_m_d___m_f_track.html">MD_MFTrack</a></li>
-    <li class="footer">Generated on Sat Sep 14 2019 15:03:09 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Thu Mar 19 2020 14:27:13 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>
