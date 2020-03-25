@@ -369,6 +369,7 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 
 // ------------- Configuration Section - START
 
+#ifndef DUMP_DATA
 /**
  \def DUMP_DATA
  Set to 1 to to dump the file data instead of processing callback.
@@ -377,7 +378,9 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
   are called to print information to the serial monitor.
  */
 #define DUMP_DATA 0
+#endif
 
+#ifndef SHOW_USED_META
 /**
  \def SHOW_UNUSED_META
  Set to 1 to display unused META messages. DUMP_DATA must also be enabled for this 
@@ -386,7 +389,9 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
  functions are called to print information to the serial monitor.
  */
 #define SHOW_UNUSED_META  0
+#endif
 
+#ifndef MIDI_MAX_TRACKS
 /**
  \def MIDI_MAX_TRACKS
  Max number of MIDI tracks. This may be reduced or increased depending on memory requirements.
@@ -394,7 +399,9 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
  files to be played, while a minority of SMF may require more tracks.
  */
 #define MIDI_MAX_TRACKS 16
+#endif
 
+#ifndef TRACK_PRIORITY
 /**
  \def TRACK_PRIORITY
  Events may be processed in 2 different ways. One way is to give priority to all 
@@ -404,6 +411,7 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
  the mode of operation implemented in getNextEvent().
  */
 #define TRACK_PRIORITY  1
+#endif
 
 // ------------- Configuration Section - END
 
@@ -937,7 +945,11 @@ public:
    * Pause or un-pause SMF playback
    *
    * SMF playback can be paused (true) or un-paused (false) using this method. Whilst in pause 
-   * mode, calls to methods to play the SMF will not work. 
+   * mode, all callbacks are suspended. 
+   * 
+   * Note that this call only stops the library from processing the file and has no effect 
+   * on the playback device. Silencing the MIDI playback device during the pause is the 
+   * responsibility of the user application.
    * 
    * \param bMode Set true to enable mode, false to disable.
    *
