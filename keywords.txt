@@ -35,7 +35,9 @@ load	KEYWORD2
 getFormat	KEYWORD2
 getTrackCount	KEYWORD2
 looping	KEYWORD2
+isLooping	KEYWORD2
 pause	KEYWORD2
+isPaused	KEYWORD2
 restart	KEYWORD2
 getNextEvent	KEYWORD2
 processEvents	KEYWORD2

@@ -289,7 +289,7 @@ int MD_MIDIFile::load()
   uint32_t dat32;
   uint16_t dat16;
   
-  if (_fileName[0] == '\0')  
+  if ((_fileName == nullptr) || (*_fileName == '\0'))
     return(E_NO_FILE);
 
   // open the file for reading

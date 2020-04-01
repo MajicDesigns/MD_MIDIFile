@@ -30,6 +30,10 @@ Topics
 
 Revision History
 ----------------
+xxx 2020 version 2.5
+ - Added isPaused() and isLooping() methods.
+ - Removed internal buffer for file name. Now can be full path and not 8.3.
+
 Mar 2020 version 2.4
 - Changed error codes to defined constants.
 - Changed CLI example to use MD_cmdProcessor.
@@ -80,7 +84,7 @@ Jan 2013 - version 1.0
 
 Copyright
 ---------
-Copyright (C) 2013-16 Marco Colli
+Copyright (C) 2013-20 Marco Colli
 All rights reserved.
 
 This library is free software; you can redistribute it and/or
@@ -833,7 +837,7 @@ public:
    * Check if SMF is and end of file
    *
    * An SMF is at EOF when there is nothing left to play (ie, all tracks have finished).
-   * The method will return EOF when this condition is reached.
+   * The method will return EOF true when this condition is reached.
    *
    * \return true if the SMF is at EOF, false otherwise.
    */
@@ -851,28 +855,32 @@ public:
   /** 
    * Set the name of the SMF
    *
-   * Copies the supplied name to the class file name buffer.
-   * The name is expected to be in 8.3 format (ie, 13 characters
-   * long only).
+   * Stores the pointer reference to the supplied name.
+   * The file name buffer is located in user code and must persist
+   * at least until the load() method is invoked.
    *
-   * The file specified in this method is located in the current 
-   * working folder, which is the root folder by default. For files
-   * not in the root folder, change the current folder using the 
-   * setCurrentFolder() method.
+   * The file specified can include path or just a file name. If not
+   * fully specified the file is located in the current working folder,
+   * which is the root folder by default. For files not in the root 
+   * folder, change the current folder using the setFileFolder() method.
+   *
+   * \sa setFileFolder(), load()
    *
    * \param aname pointer to a string with the file name.
    * \return No return data.
    */
-  void setFilename(const char* aname) { if (aname != nullptr) strncpy(_fileName, aname, ARRAY_SIZE(_fileName)-1); }
+  void setFilename(const char* aname) { _fileName = aname; }
 
   /**
    * Set the current folder for the SMF
    *
-   * Sets the current working folder to the specified path for all files.
-   * All subsequent file names passed to setFilename() are referenced to this 
-   * folder location.
+   * Sets the current working folder to the specified path.
+   * All subsequent simple (ie, not fully qualified) file names passed 
+   * to setFilename() are referenced to this folder location.
    *
    * The default file location is the root folder denoted by "/"
+   *
+   * \sa setFilename
    *
    * \param apath pointer to a string with the path name.
    * \return No return data.
@@ -884,7 +892,9 @@ public:
    *
    * Before it can be processed, a file must be opened, loaded and the MIDI playback 
    * initialized by invoking this method. The file name must be set using the 
-   * setfilename() method before calling load().
+   * setFilename() method before calling load().
+   *
+   * \sa setFilename()
    * 
    * \return Error code with one of the MFError_t values
    */
@@ -941,7 +951,18 @@ public:
    */
   inline void looping(bool bMode) { _looping = bMode; }
 
-  /** 
+  /**
+   * Get the current looping mode
+   *
+   * Returns the currently set looping mode.
+   *
+   * \sa looping()
+   *
+   * \return Current looping mode.
+   */
+  inline bool isLooping(void) { return(_looping); }
+
+  /**
    * Pause or un-pause SMF playback
    *
    * SMF playback can be paused (true) or un-paused (false) using this method. Whilst in pause 
@@ -957,7 +978,18 @@ public:
    */
   void pause(bool bMode);
 
-  /** 
+  /**
+   * Get the current pause mode
+   *
+   * Returns the currently set pause mode.
+   *
+   * \sa looping()
+   *
+   * \return Current paused mode.
+   */
+  inline bool isPaused(void) { return(_paused); }
+
+  /**
    * Force the SMF to be restarted
    *
    * SMF playback can be reset back to the beginning of all tracks using this method. The method
@@ -1083,7 +1115,7 @@ protected:
   void (*_sysexHandler)(sysex_event *pev); ///< callback into user code to process SYSEX stream
   void (*_metaHandler)(const meta_event *pev); ///< callback into user code to process META stream
 
-  char    _fileName[13];      ///< MIDI file name - should be 8.3 format
+  const char *_fileName;      ///< MIDI file name buffer in user code
 
   uint8_t _format;            ///< file format - 0: single track, 1: multiple track, 2: multiple song
   uint8_t _trackCount;        ///< number of tracks in file

@@ -164,8 +164,12 @@ Public Member Functions</h2></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Methods for MIDI playback control</div></td></tr>
 <tr class="memitem:abc5ffcc7650fdee5ed744df74861b5c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#abc5ffcc7650fdee5ed744df74861b5c3">looping</a> (bool bMode)</td></tr>
 <tr class="separator:abc5ffcc7650fdee5ed744df74861b5c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6909106c9d64bea2cdf91aed4874e1b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#ad6909106c9d64bea2cdf91aed4874e1b">isLooping</a> (void)</td></tr>
+<tr class="separator:ad6909106c9d64bea2cdf91aed4874e1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaa198cd2f1dabcb387c4f044248cd57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#acaa198cd2f1dabcb387c4f044248cd57">pause</a> (bool bMode)</td></tr>
 <tr class="separator:acaa198cd2f1dabcb387c4f044248cd57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3f1b0c25b5521cb0e36059cab259bf5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#af3f1b0c25b5521cb0e36059cab259bf5">isPaused</a> (void)</td></tr>
+<tr class="separator:af3f1b0c25b5521cb0e36059cab259bf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a400e3638f823f985e9cc85aac7cb0d41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a400e3638f823f985e9cc85aac7cb0d41">restart</a> (void)</td></tr>
 <tr class="separator:a400e3638f823f985e9cc85aac7cb0d41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Methods for data handling</div></td></tr>
@@ -258,10 +262,10 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a4109f158588639cdc3c86c3810753000">_metaHandler</a> )(const <a class="el" href="structmeta__event.html">meta_event</a> *pev)</td></tr>
 <tr class="memdesc:a4109f158588639cdc3c86c3810753000"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback into user code to process META stream <br /></td></tr>
 <tr class="separator:a4109f158588639cdc3c86c3810753000"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98e3ee35f2e5d85ddb122c51b404ade2"><td class="memItemLeft" align="right" valign="top"><a id="a98e3ee35f2e5d85ddb122c51b404ade2"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a98e3ee35f2e5d85ddb122c51b404ade2">_fileName</a> [13]</td></tr>
-<tr class="memdesc:a98e3ee35f2e5d85ddb122c51b404ade2"><td class="mdescLeft">&#160;</td><td class="mdescRight">MIDI file name - should be 8.3 format. <br /></td></tr>
-<tr class="separator:a98e3ee35f2e5d85ddb122c51b404ade2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a918e0f21db333ea5edfc8aef28a4b8e9"><td class="memItemLeft" align="right" valign="top"><a id="a918e0f21db333ea5edfc8aef28a4b8e9"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a918e0f21db333ea5edfc8aef28a4b8e9">_fileName</a></td></tr>
+<tr class="memdesc:a918e0f21db333ea5edfc8aef28a4b8e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">MIDI file name buffer in user code. <br /></td></tr>
+<tr class="separator:a918e0f21db333ea5edfc8aef28a4b8e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17e490101f750ff1d033937ab8c48083"><td class="memItemLeft" align="right" valign="top"><a id="a17e490101f750ff1d033937ab8c48083"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a17e490101f750ff1d033937ab8c48083">_format</a></td></tr>
 <tr class="memdesc:a17e490101f750ff1d033937ab8c48083"><td class="mdescLeft">&#160;</td><td class="mdescRight">file format - 0: single track, 1: multiple track, 2: multiple song <br /></td></tr>
@@ -662,8 +666,52 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Check if SMF is and end of file</p>
-<p>An SMF is at EOF when there is nothing left to play (ie, all tracks have finished). The method will return EOF when this condition is reached.</p>
+<p>An SMF is at EOF when there is nothing left to play (ie, all tracks have finished). The method will return EOF true when this condition is reached.</p>
 <dl class="section return"><dt>Returns</dt><dd>true if the SMF is at EOF, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="ad6909106c9d64bea2cdf91aed4874e1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6909106c9d64bea2cdf91aed4874e1b">&#9670;&nbsp;</a></span>isLooping()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MD_MIDIFile::isLooping </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the current looping mode</p>
+<p>Returns the currently set looping mode.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#abc5ffcc7650fdee5ed744df74861b5c3">looping()</a></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Current looping mode. </dd></dl>
+
+</div>
+</div>
+<a id="af3f1b0c25b5521cb0e36059cab259bf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3f1b0c25b5521cb0e36059cab259bf5">&#9670;&nbsp;</a></span>isPaused()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MD_MIDIFile::isPaused </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the current pause mode</p>
+<p>Returns the currently set pause mode.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#abc5ffcc7650fdee5ed744df74861b5c3">looping()</a></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Current paused mode. </dd></dl>
 
 </div>
 </div>
@@ -683,7 +731,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Load the SMF</p>
-<p>Before it can be processed, a file must be opened, loaded and the MIDI playback initialized by invoking this method. The file name must be set using the setfilename() method before calling <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a>.</p>
+<p>Before it can be processed, a file must be opened, loaded and the MIDI playback initialized by invoking this method. The file name must be set using the <a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename()</a> method before calling <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a>.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Error code with one of the MFError_t values </dd></dl>
 
 </div>
@@ -731,7 +780,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Pause or un-pause SMF playback</p>
-<p>SMF playback can be paused (true) or un-paused (false) using this method. Whilst in pause mode, calls to methods to play the SMF will not work.</p>
+<p>SMF playback can be paused (true) or un-paused (false) using this method. Whilst in pause mode, all callbacks are suspended.</p>
+<p>Note that this call only stops the library from processing the file and has no effect on the playback device. Silencing the MIDI playback device during the pause is the responsibility of the user application.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">bMode</td><td>Set true to enable mode, false to disable.</td></tr>
@@ -812,8 +862,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Set the current folder for the SMF</p>
-<p>Sets the current working folder to the specified path for all files. All subsequent file names passed to <a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename()</a> are referenced to this folder location.</p>
+<p>Sets the current working folder to the specified path. All subsequent simple (ie, not fully qualified) file names passed to <a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename()</a> are referenced to this folder location.</p>
 <p>The default file location is the root folder denoted by "/"</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">apath</td><td>pointer to a string with the path name. </td></tr>
@@ -840,8 +891,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Set the name of the SMF</p>
-<p>Copies the supplied name to the class file name buffer. The name is expected to be in 8.3 format (ie, 13 characters long only).</p>
-<p>The file specified in this method is located in the current working folder, which is the root folder by default. For files not in the root folder, change the current folder using the setCurrentFolder() method.</p>
+<p>Stores the pointer reference to the supplied name. The file name buffer is located in user code and must persist at least until the <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a> method is invoked.</p>
+<p>The file specified can include path or just a file name. If not fully specified the file is located in the current working folder, which is the root folder by default. For files not in the root folder, change the current folder using the <a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a> method.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a>, <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">aname</td><td>pointer to a string with the file name. </td></tr>
@@ -1122,7 +1174,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></li>
-    <li class="footer">Generated on Thu Mar 19 2020 14:27:13 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Wed Apr 1 2020 14:29:29 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>

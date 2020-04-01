@@ -73,9 +73,9 @@ const char *tuneList[] =
 };
 
 // These don't play as they need more than 16 tracks but will run if MIDIFile.h is changed
-//#define MIDI_FILE  "SYMPH9.MID"		// 29 tracks
-//#define MIDI_FILE  "CHATCHOO.MID"		// 17 tracks
-//#define MIDI_FILE  "STRIPPER.MID"		// 25 tracks
+//#define MIDI_FILE  "SYMPH9.MID"     // 29 tracks
+//#define MIDI_FILE  "CHATCHOO.MID"   // 17 tracks
+//#define MIDI_FILE  "STRIPPER.MID"   // 25 tracks
 
 SdFat	SD;
 MD_MIDIFile SMF;
@@ -173,11 +173,11 @@ void setup(void)
 void tickMetronome(void)
 // flash a LED to the beat
 {
-  static uint32_t	lastBeatTime = 0;
-  static boolean	inBeat = false;
-  uint16_t	beatTime;
+  static uint32_t lastBeatTime = 0;
+  static boolean  inBeat = false;
+  uint16_t  beatTime;
 
-  beatTime = 60000/SMF.getTempo();		// msec/beat = ((60sec/min)*(1000 ms/sec))/(beats/min)
+  beatTime = 60000/SMF.getTempo();    // msec/beat = ((60sec/min)*(1000 ms/sec))/(beats/min)
   if (!inBeat)
   {
     if ((millis() - lastBeatTime) >= beatTime)

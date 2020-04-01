@@ -23,7 +23,7 @@ const uint8_t MIDI_IN = 3;      // Arduino RX pin number (never used)
 SoftwareSerial MidiOut(MIDI_IN, MIDI_OUT);
 
 #define MIDI MidiOut
-#else // USE_SOFTWARESERIAL
+#else // not USE_SOFTWARESERIAL
 #define MIDI Serial1
 #endif
 
@@ -180,7 +180,7 @@ void handlerCL(char* param)
 { 
   SMF.looping(*param != '0'); 
   CONSOLE.print(F("\nLooping "));
-  CONSOLE.print(*param); 
+  CONSOLE.print(SMF.isLooping()); 
   CONSOLE.print(F(" ")); 
   CONSOLE.print(SMFErr(MD_MIDIFile::E_OK)); 
 }
@@ -189,7 +189,7 @@ void handlerCP(char* param)
 { 
   SMF.pause(*param != '0'); 
   CONSOLE.print(F("\nPause "));
-  CONSOLE.print(*param);
+  CONSOLE.print(SMF.isPaused());
   CONSOLE.print(F(" "));
   CONSOLE.print(SMFErr(MD_MIDIFile::E_OK)); 
 }

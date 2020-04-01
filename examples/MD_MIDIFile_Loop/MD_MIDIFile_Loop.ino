@@ -12,9 +12,9 @@
 #if USE_MIDI // set up for direct MIDI serial output
 
 #define DEBUGS(s)
-#define	DEBUG(s, x)
-#define	DEBUGX(s, x)
-#define	SERIAL_RATE	31250
+#define DEBUG(s, x)
+#define DEBUGX(s, x)
+#define SERIAL_RATE 31250
 
 #else // don't use MIDI to allow printing debug statements
 

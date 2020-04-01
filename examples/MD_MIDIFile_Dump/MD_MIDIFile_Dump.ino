@@ -41,7 +41,7 @@ void loop(void)
 {
   int  err;
   static fsm_state state = STATE_BEGIN;
-  static char	fname[20];
+  static char fname[20];
 
   switch (state)
   {
@@ -53,7 +53,7 @@ void loop(void)
 
   case STATE_READ_FNAME:
     {
-      uint8_t	len = 0;
+      uint8_t len = 0;
       char c; 
 
       // read until end of line
