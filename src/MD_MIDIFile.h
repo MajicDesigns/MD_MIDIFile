@@ -30,9 +30,10 @@ Topics
 
 Revision History
 ----------------
-xxx 2020 version 2.5
+Apr 2020 version 2.5
  - Added isPaused() and isLooping() methods.
  - Removed internal buffer for file name. Now can be full path and not 8.3.
+ - Deprecated setFilename(), use load() with file name specified.
 
 Mar 2020 version 2.4
 - Changed error codes to defined constants.
@@ -847,6 +848,12 @@ public:
    * Get the name of the SMF
    *
    * Gets a pointer to the buffer containing the name of the SMF.
+   *
+   * This is a pointer to a user defined buffer passed to the load()
+   * method when the file is opened. The scope and persistence of this
+   * buffer depends on what the user code does, so the poiter returned
+   * *may* be invalid if the pointer rebernces a buffer that has become 
+   * out of scope.
    * 
    * \return character pointer to the name string
    */
@@ -854,6 +861,9 @@ public:
 
   /** 
    * Set the name of the SMF
+   *
+   * THIS METHOD IS DEPRECATED.
+   * Use play() with the file name.
    *
    * Stores the pointer reference to the supplied name.
    * The file name buffer is located in user code and must persist
@@ -888,17 +898,27 @@ public:
   void setFileFolder(const char* apath) { if (apath != nullptr) _sd->chdir(apath, true); }
 
   /** 
-   * Load the SMF
+   * Load the named SMF
    *
-   * Before it can be processed, a file must be opened, loaded and the MIDI playback 
-   * initialized by invoking this method. The file name must be set using the 
-   * setFilename() method before calling load().
+   * Before it can be processed, a file must be opened, loaded and the
+   * MIDI playback initialized by invoking this method.
    *
-   * \sa setFilename()
-   * 
+   * The file name specified can include path or just a file name.
+   * If not fully specified the file is located in the current working
+   * folder, which is the root folder by default. For files not in the 
+   * root folder, change the current folder using the setFileFolder() 
+   * method.
+   *
+   * The file name buffer is located in user code and must persist during 
+   * this call. 
+   *
+   * \sa setFileFolder()
+   *
+   * \param fname pointer to a user buffered string with the file name.
    * \return Error code with one of the MFError_t values
    */
-  int load(void);
+  int load(const char *fname);
+
   /** @} */
 
   //--------------------------------------------------------------

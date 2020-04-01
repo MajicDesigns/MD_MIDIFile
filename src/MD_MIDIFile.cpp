@@ -282,12 +282,14 @@ void MD_MIDIFile::processEvents(uint16_t ticks)
 #endif // EVENT/TRACK_PRIORITY
 }
 
-int MD_MIDIFile::load() 
+int MD_MIDIFile::load(const char *fname) 
 // Load the MIDI file into memory ready for processing
 // Return one of the E_* error codes
 {
   uint32_t dat32;
   uint16_t dat16;
+
+  _fileName = fname;
   
   if ((_fileName == nullptr) || (*_fileName == '\0'))
     return(E_NO_FILE);

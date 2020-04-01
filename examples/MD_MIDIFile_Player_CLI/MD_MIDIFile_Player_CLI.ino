@@ -218,11 +218,10 @@ void handlerP(char *param)
 
   CONSOLE.print(F("\nFile: "));
   CONSOLE.print(param);
-  SMF.setFilename(param); // set filename
-  CONSOLE.print(F("\nSet to: "));
-  CONSOLE.print(SMF.getFilename());
-  err = SMF.load(); // load the new file
+  err = SMF.load(param); // load the new file
   CONSOLE.print(SMFErr(err));
+  CONSOLE.print(F(": "));
+  CONSOLE.print(SMF.getFilename());
 }
 
 void handlerF(char *param)
