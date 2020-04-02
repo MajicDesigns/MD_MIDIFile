@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.4</span>
+   &#160;<span id="projectnumber">2.5</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -108,9 +108,11 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li><a class="el" href="page_library.html">Notes on the Library</a></li>
 </ul>
 <h2>Revision History </h2>
-<p>xxx 2020 version 2.5</p><ul>
+<p>Apr 2020 version 2.5</p><ul>
 <li>Added isPaused() and isLooping() methods.</li>
 <li>Removed internal buffer for file name. Now can be full path and not 8.3.</li>
+<li>Deprecated setFilename(), use load() with file name specified.</li>
+<li>Rechecked and updated examples.</li>
 </ul>
 <p>Mar 2020 version 2.4</p><ul>
 <li>Changed error codes to defined constants.</li>
@@ -171,7 +173,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Apr 1 2020 14:29:29 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Thu Apr 2 2020 13:42:53 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>

@@ -34,6 +34,7 @@ Apr 2020 version 2.5
  - Added isPaused() and isLooping() methods.
  - Removed internal buffer for file name. Now can be full path and not 8.3.
  - Deprecated setFilename(), use load() with file name specified.
+ - Rechecked and updated examples.
 
 Mar 2020 version 2.4
 - Changed error codes to defined constants.
@@ -420,7 +421,7 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 
 // ------------- Configuration Section - END
 
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 
 #if DUMP_DATA
 #define DUMPS(s)    Serial.print(F(s))                            ///< Print a string
@@ -915,7 +916,7 @@ public:
    * \sa setFileFolder()
    *
    * \param fname pointer to a user buffered string with the file name.
-   * \return Error code with one of the MFError_t values
+   * \return Error code with one of the E_* error values
    */
   int load(const char *fname);
 

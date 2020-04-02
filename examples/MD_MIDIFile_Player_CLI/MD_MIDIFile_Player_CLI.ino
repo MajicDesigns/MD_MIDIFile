@@ -37,7 +37,7 @@ const uint32_t MIDI_RATE = 31250;
 const uint8_t SD_SELECT = SS;         
 
 // Miscellaneous
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 void(*hwReset) (void) = 0;            // declare reset function @ address 0
 
 // Global Data

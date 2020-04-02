@@ -10,16 +10,16 @@
  * Arduino Ethernet shield, pin 4.
  * Default SD chip select is the SPI SS pin (10).
  */
-#define  SD_SELECT  10
+const uint8_t SD_SELECT = 10;
 
 // states for the state machine
 enum fsm_state { STATE_BEGIN, STATE_PROMPT, STATE_READ_FNAME, STATE_OPEN, STATE_DUMP, STATE_CLOSE };
 
 // MIDI file section headers
-#define  HDR_SIZE  4
-#define  HDR_ERR   0
-#define  HDR_MTHD  1
-#define  HDR_MTRK  2
+const uint8_t HDR_SIZE = 4;
+const uint8_t HDR_ERR =  0;
+const uint8_t HDR_MTHD = 1;
+const uint8_t HDR_MTRK = 2;
 
 // File handler
 SdFat sd;
@@ -27,8 +27,7 @@ SdFile myFile;
 
 int ReadHeaderType(SdFile *f)
 {
-  #define  HDR_SIZE  4
-  char    c[HDR_SIZE+1];
+  char c[HDR_SIZE+1];
 
   f->fgets(c, HDR_SIZE+1);
   c[HDR_SIZE] = '\0';
@@ -43,7 +42,7 @@ int ReadHeaderType(SdFile *f)
 
 void dumpBuffer(SdFile *f, int len)
 {
-  #define  CHARPERLINE  8
+  const uint8_t CHARPERLINE = 8;
   uint8_t  data[CHARPERLINE];
   int      tcount = 0, lcount;
     

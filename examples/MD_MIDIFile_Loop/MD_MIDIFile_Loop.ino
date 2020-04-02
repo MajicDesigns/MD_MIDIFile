@@ -30,14 +30,14 @@
 // Arduino Ethernet shield, pin 4.
 // Default SD chip select is the SPI SS pin (10).
 // Other hardware will be different as documented for that hardware.
-#define  SD_SELECT  10
+const uint8_t SD_SELECT = 10;
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 
 // list will be opened (skips errors).
-const char *loopfile = "AFROCUBA.MID";  // simple and short file
+const char *loopfile = "LOOPDEMO.MID";  // simple and short file
 
 SdFat	SD;
 MD_MIDIFile SMF;
@@ -87,9 +87,8 @@ void setup(void)
 
   // use the next file name and play it
   DEBUG("\nFile: ", loopfile);
-  SMF.setFilename(loopfile);
-  err = SMF.load();
-  if (err != -1)
+  err = SMF.load(loopfile);
+  if (err != MD_MIDIFile::E_OK)
   {
     DEBUG("\nSMF load Error ", err);
     while (true);

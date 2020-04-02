@@ -33,15 +33,15 @@
 // Arduino Ethernet shield, pin 4.
 // Default SD chip select is the SPI SS pin (10).
 // Other hardware will be different as documented for that hardware.
-#define  SD_SELECT  10
+const uint8_t SD_SELECT = 10;
 
-// LED definitions for user indicators
-#define READY_LED     7 // when finished
-#define SMF_ERROR_LED 6 // SMF error
-#define SD_ERROR_LED  5 // SD error
-#define BEAT_LED      6 // toggles to the 'beat'
+// LED definitions for status and user indicators
+const uint8_t READY_LED = 7;      // when finished
+const uint8_t SMF_ERROR_LED = 6;  // SMF error
+const uint8_t SD_ERROR_LED = 5;   // SD error
+const uint8_t BEAT_LED = 4;       // toggles to the 'beat'
 
-#define WAIT_DELAY    2000 // ms
+const uint16_t WAIT_DELAY = 2000; // ms
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
 
@@ -103,7 +103,7 @@ void midiCallback(midi_event *pev)
   DEBUG(" Data ");
   for (uint8_t i=0; i<pev->size; i++)
   {
-	DEBUGX(pev->data[i]);
+  DEBUGX(pev->data[i]);
     DEBUG(' ');
   }
 }
@@ -149,7 +149,14 @@ void setup(void)
   pinMode(READY_LED, OUTPUT);
   pinMode(SD_ERROR_LED, OUTPUT);
   pinMode(SMF_ERROR_LED, OUTPUT);
+  pinMode(BEAT_LED, OUTPUT);
 
+  // reset LEDs
+  digitalWrite(READY_LED, LOW);
+  digitalWrite(SD_ERROR_LED, LOW);
+  digitalWrite(SMF_ERROR_LED, LOW);
+  digitalWrite(BEAT_LED, LOW);
+  
   Serial.begin(SERIAL_RATE);
 
   DEBUG("\n[MidiFile Play List]");
@@ -211,9 +218,8 @@ void loop(void)
 
       DEBUGS("\nS_IDLE");
 
-      // reset LEDs
       digitalWrite(READY_LED, LOW);
-      digitalWrite(SD_ERROR_LED, LOW);
+      digitalWrite(SMF_ERROR_LED, LOW);
 
       currTune++;
       if (currTune >= ARRAY_SIZE(tuneList))
@@ -222,9 +228,8 @@ void loop(void)
       // use the next file name and play it
       DEBUG("\nFile: ");
       DEBUG(tuneList[currTune]);
-      SMF.setFilename(tuneList[currTune]);
-      err = SMF.load();
-      if (err != -1)
+      err = SMF.load(tuneList[currTune]);
+      if (err != MD_MIDIFile::E_OK)
       {
         DEBUG(" - SMF load Error ");
         DEBUG(err);
@@ -261,7 +266,7 @@ void loop(void)
     DEBUGS("\nWAIT_BETWEEN");
     break;
 
-  case S_WAIT_BETWEEN:    // signal finish LED with a dignified pause
+  case S_WAIT_BETWEEN:    // signal finished with a dignified pause
     digitalWrite(READY_LED, HIGH);
     if (millis() - timeStart >= WAIT_DELAY)
       state = S_IDLE;
