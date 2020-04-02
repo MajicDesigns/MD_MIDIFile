@@ -1,7 +1,7 @@
 // Look at the internals of a MIDI file, as interpreted by the library.
 // Good for close level debugging of a file and how and in what order it
 // is it is being parsed by the library.
-// Also good just for curiosity on is in the file!
+// Also good just for curiosity of what is in the file!
 
 #include <SdFat.h>
 #include <MD_MIDIFile.h>
@@ -15,10 +15,10 @@
 // SD chip select pin.
 // * Arduino Ethernet shield, pin 4.
 // * Default SD lib chip select is the SPI SS pin (10).
-#define  SD_SELECT  10
+const uint8_t SD_SELECT = 10;
 
 // states for the state machine
-enum fsm_state { STATE_BEGIN, STATE_PROMPT, STATE_READ_FNAME, STATE_OPEN, STATE_PROCESS, STATE_CLOSE };
+enum fsm_state { STATE_BEGIN, STATE_PROMPT, STATE_READ_FNAME, STATE_LOAD, STATE_PROCESS, STATE_CLOSE };
 
 SdFat   SD;
 MD_MIDIFile SMF;
@@ -41,7 +41,7 @@ void loop(void)
 {
   int  err;
   static fsm_state state = STATE_BEGIN;
-  static char fname[20];
+  static char fname[50];
 
   switch (state)
   {
@@ -70,14 +70,13 @@ void loop(void)
       fname[len++] = '\0';
 
       Serial.println(fname);
-      SMF.setFilename(fname);
-      state = STATE_OPEN;
+      state = STATE_LOAD;
     }
     break;
 
-  case STATE_OPEN:
-    err = SMF.load();
-    if (err != -1)
+  case STATE_LOAD:
+    err = SMF.load(fname);
+    if (err != MD_MIDIFile::E_OK)
     {
       Serial.print("SMF load Error ");
       Serial.println(err);

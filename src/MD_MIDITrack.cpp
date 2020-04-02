@@ -355,7 +355,7 @@ void MD_MFTrack::parseEvent(MD_MIDIFile *mf)
 #if SHOW_UNUSED_META
       case 0x01:  // Text
       DUMPS("TEXT ");
-      for (int i=0; i<mLen; i++)
+      for (uint8_t i=0; i<mLen; i++)
         DUMP("", (char)mf->_fd.read());
       break;
 

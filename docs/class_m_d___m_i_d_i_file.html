@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Logo" src="MajicDesigns_Logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MD_MIDIFile Standard MIDI File Processing
-   &#160;<span id="projectnumber">2.4</span>
+   &#160;<span id="projectnumber">2.5</span>
    </div>
    <div id="projectbrief">Library to play Standard MIDI Files (SMF)</div>
   </td>
@@ -154,8 +154,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac12bbaa6cedc1e973312976cb85b3324"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a162a7c3710f4ca492d57330215ac83dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder</a> (const char *apath)</td></tr>
 <tr class="separator:a162a7c3710f4ca492d57330215ac83dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedc1967e7e34122084084a7fc8cf625c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load</a> (void)</td></tr>
-<tr class="separator:aedc1967e7e34122084084a7fc8cf625c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a116acdd51af4405692dcc322458eb0b5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load</a> (const char *fname)</td></tr>
+<tr class="separator:a116acdd51af4405692dcc322458eb0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Methods for SMF header data</div></td></tr>
 <tr class="memitem:a71f5ac1c022dd48eba6bfcb5a00d2e99"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_d___m_i_d_i_file.html#a71f5ac1c022dd48eba6bfcb5a00d2e99">getFormat</a> (void)</td></tr>
 <tr class="separator:a71f5ac1c022dd48eba6bfcb5a00d2e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -428,7 +428,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Close the SMF</p>
-<p>Before a new SMF is processed the current SMF must be closed. All tracks are stopped and the file name is reset. A new file can then be started using <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a>.</p>
+<p>Before a new SMF is processed the current SMF must be closed. All tracks are stopped and the file name is reset. A new file can then be started using <a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load()</a>.</p>
 <dl class="section return"><dt>Returns</dt><dd>No return data. </dd></dl>
 
 </div>
@@ -471,6 +471,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 </div><div class="memdoc">
 <p>Get the name of the SMF</p>
 <p>Gets a pointer to the buffer containing the name of the SMF.</p>
+<p>This is a pointer to a user defined buffer passed to the <a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load()</a> method when the file is opened. The scope and persistence of this buffer depends on what the user code does, so the poiter returned <em>may</em> be invalid if the pointer rebernces a buffer that has become out of scope.</p>
 <dl class="section return"><dt>Returns</dt><dd>character pointer to the name string </dd></dl>
 
 </div>
@@ -496,7 +497,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 <li>Type 1 files may contain any number of tracks, running synchronously.</li>
 <li>Type 2 files may contain any number of tracks, running asynchronously. This type is rarely used and not supported by this library..</li>
 </ul>
-<p>The <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a> method must be invoked to read the SMF header information.</p>
+<p>The <a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load()</a> method must be invoked to read the SMF header information.</p>
 <dl class="section return"><dt>Returns</dt><dd>number [0..2] representing the format. </dd></dl>
 
 </div>
@@ -645,7 +646,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 </div><div class="memdoc">
 <p>Get the number of tracks in the file</p>
 <p>The SMF header specifies the number of MIDI tracks in the file. This must be between [0..MIDI_MAX_TRACKS-1] for the SMF to be successfully processed.</p>
-<p>The <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a> method must be invoked to read the SMF header information.</p>
+<p>The <a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load()</a> method must be invoked to read the SMF header information.</p>
 <dl class="section return"><dt>Returns</dt><dd>the number of tracks in the file </dd></dl>
 
 </div>
@@ -715,8 +716,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 
 </div>
 </div>
-<a id="aedc1967e7e34122084084a7fc8cf625c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedc1967e7e34122084084a7fc8cf625c">&#9670;&nbsp;</a></span>load()</h2>
+<a id="a116acdd51af4405692dcc322458eb0b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a116acdd51af4405692dcc322458eb0b5">&#9670;&nbsp;</a></span>load()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -724,16 +725,24 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
         <tr>
           <td class="memname">int MD_MIDIFile::load </td>
           <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>fname</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Load the SMF</p>
-<p>Before it can be processed, a file must be opened, loaded and the MIDI playback initialized by invoking this method. The file name must be set using the <a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename()</a> method before calling <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a>.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#ac12bbaa6cedc1e973312976cb85b3324">setFilename()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Error code with one of the MFError_t values </dd></dl>
+<p>Load the named SMF</p>
+<p>Before it can be processed, a file must be opened, loaded and the MIDI playback initialized by invoking this method.</p>
+<p>The file name specified can include path or just a file name. If not fully specified the file is located in the current working folder, which is the root folder by default. For files not in the root folder, change the current folder using the <a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a> method.</p>
+<p>The file name buffer is located in user code and must persist during this call.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fname</td><td>pointer to a user buffered string with the file name. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Error code with one of the E_* error values </dd></dl>
 
 </div>
 </div>
@@ -891,9 +900,10 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
       </table>
 </div><div class="memdoc">
 <p>Set the name of the SMF</p>
-<p>Stores the pointer reference to the supplied name. The file name buffer is located in user code and must persist at least until the <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a> method is invoked.</p>
+<p>THIS METHOD IS DEPRECATED. Use play() with the file name.</p>
+<p>Stores the pointer reference to the supplied name. The file name buffer is located in user code and must persist at least until the <a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load()</a> method is invoked.</p>
 <p>The file specified can include path or just a file name. If not fully specified the file is located in the current working folder, which is the root folder by default. For files not in the root folder, change the current folder using the <a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a> method.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a>, <a class="el" href="class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c">load()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_m_d___m_i_d_i_file.html#a162a7c3710f4ca492d57330215ac83dd">setFileFolder()</a>, <a class="el" href="class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5">load()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">aname</td><td>pointer to a string with the file name. </td></tr>
@@ -1174,7 +1184,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MD_MFTrack</b></td><
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_m_d___m_i_d_i_file.html">MD_MIDIFile</a></li>
-    <li class="footer">Generated on Wed Apr 1 2020 14:29:29 for MD_MIDIFile Standard MIDI File Processing by
+    <li class="footer">Generated on Thu Apr 2 2020 13:42:53 for MD_MIDIFile Standard MIDI File Processing by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>

@@ -1,5 +1,5 @@
-// Play a file from the SD card in looping mode controlliong the tempo.
-// Tempo is controlled wither by just setting the Tempo in the SMF object
+// Play a file from the SD card in looping mode controlling the tempo.
+// Tempo is controlled either by just setting the Tempo in the SMF object
 // or by generating the MIDI ticks in this application.
 //
 // Example program to demonstrate the use of the MIDFile library
@@ -9,15 +9,17 @@
 //  LCD 1602 shield - change pins for LCD control
 //  Key switches on the LCD shield - connected to an analog pin
 // 
+// Library Dependencies:
+// MD_UISwitch located at https://github.com/MajicDesigns/MD_UISwitch
 
 #include <SdFat.h>
 #include <LiquidCrystal.h>
-#include <MD_AButton.h>
+#include <MD_UISwitch.h>
 #include <MD_MIDIFile.h>
 
 // Set to 1 to generate the MIDI ticks in this application
 // Set to 0 to allow library to generate clock based on Tempo
-#define GENERATE_TICKS  0
+#define GENERATE_TICKS  1
 
 // Set to 1 to use the MIDI interface (ie, not debugging to serial port)
 #define USE_MIDI  1
@@ -43,33 +45,41 @@
 // Arduino Ethernet shield, pin 4.
 // Default SD chip select is the SPI SS pin (10).
 // Other hardware will be different as documented for that hardware.
-#define  SD_SELECT  10
+const uint8_t SD_SELECT = 10;
 
 // LCD display defines ---------
-#define  LCD_ROWS  2
-#define  LCD_COLS  16
+const uint8_t LCD_ROWS = 2;
+const uint8_t LCD_COLS = 16;
 
 // LCD pin definitions ---------
 // These need to be modified for the LCD hardware setup
-#define  LCD_RS    8
-#define  LCD_ENA   9
-#define  LCD_D4    4
-#define  LCD_D5    (LCD_D4+1)
-#define  LCD_D6    (LCD_D4+2)
-#define  LCD_D7    (LCD_D4+3)
-#define  LCD_KEYS  KEY_ADC_PORT
+const uint8_t LCD_RS = 8;
+const uint8_t LCD_ENA = 9;
+const uint8_t LCD_D4 = 4;
+const uint8_t LCD_D5 = (LCD_D4 + 1);
+const uint8_t LCD_D6 = (LCD_D4 + 2);
+const uint8_t LCD_D7 = (LCD_D4 + 3);
+const uint8_t LCD_KEYS = A0;
+
+// Define the key table for the analog keys
+MD_UISwitch_Analog::uiAnalogKeys_t kt[] =
+{
+  {  30, 30, 'R' },  // Right
+  { 100, 40, 'U' },  // Up
+  { 250, 50, 'D' },  // Down
+  { 410, 60, 'L' },  // Left
+  { 640, 60, 'S' },  // Select
+};
 
 // Library objects -------------
 LiquidCrystal LCD(LCD_RS, LCD_ENA, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 SdFat SD;
 MD_MIDIFile SMF;
-MD_AButton  LCDKey(LCD_KEYS);
-
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
+MD_UISwitch_Analog LCDKey(LCD_KEYS, kt, ARRAY_SIZE(kt));
 
 // The in the tune list should be located on the SD card 
 // or an error will occur opening the file.
-char *loopfile = "AFROCUBA.MID";  // simple and short file
+const char *loopfile = "birthday.mid";  // simple and short file
 #if GENERATE_TICKS
 uint8_t lclBPM = 120;
 #endif
@@ -145,29 +155,32 @@ void LCDbpm(void)
 void CheckUI(void)
 // Check the button on the UI and take action - depends on the mode we are running
 {
-#if GENERATE_TICKS
-  switch (LCDKey.getKey())
+  if (LCDKey.read() == MD_UISwitch::KEY_PRESS)
   {
+#if GENERATE_TICKS
+    switch (LCDKey.getKey())
+    {
     case 'S': lclBPM = 120;  break; // set to default
-    
+
     case 'R': if (lclBPM <= 245) lclBPM += 10; break; // Increase Tempo by 10
     case 'L': if (lclBPM >= 11)  lclBPM -= 10; break; // Decrease Tempo by 10
 
     case 'U': if (lclBPM <= 254) lclBPM++; break; // Increase Tempo by 1
     case 'D': if (lclBPM >= 2)   lclBPM--; break; // Decrease Tempo by 1
-  }
+    }
 #else
-  switch (LCDKey.getKey())
-  {
+    switch (LCDKey.getKey())
+    {
     case 'S': SMF.setTempoAdjust(0);  break;  // set to default
-    
-    case 'R': SMF.setTempoAdjust(SMF.getTempoAdjust()+10); break; // Increase Tempo by 10
-    case 'L': SMF.setTempoAdjust(SMF.getTempoAdjust()-10); break; // Decrease Tempo by 10
 
-    case 'U': SMF.setTempoAdjust(SMF.getTempoAdjust()+1); break;  // Increase Tempo by 1
-    case 'D': SMF.setTempoAdjust(SMF.getTempoAdjust()-1); break;  // Decrease Tempo by 1
-  }
+    case 'R': SMF.setTempoAdjust(SMF.getTempoAdjust() + 10); break; // Increase Tempo by 10
+    case 'L': SMF.setTempoAdjust(SMF.getTempoAdjust() - 10); break; // Decrease Tempo by 10
+
+    case 'U': SMF.setTempoAdjust(SMF.getTempoAdjust() + 1); break;  // Increase Tempo by 1
+    case 'D': SMF.setTempoAdjust(SMF.getTempoAdjust() - 1); break;  // Decrease Tempo by 1
+    }
 #endif
+  }
 }
 
 #if GENERATE_TICKS
@@ -200,14 +213,18 @@ void setup(void)
 
   DEBUGS("\n[MidiFile Tempo]");
 
+  // initialize LCD keys
+  LCDKey.begin();
+  LCDKey.enableDoublePress(false);
+  LCDKey.enableLongPress(false);
+  LCDKey.enableRepeat(false);
+
   // initialise LCD display
   LCD.begin(LCD_COLS, LCD_ROWS);
   LCD.clear();
   LCD.noCursor();
   LCDMessage(0, 0, loopfile, false);
   
-  pinMode(LCD_KEYS, INPUT);
-
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
     LCDErrMessage("SD init fail!");
@@ -219,9 +236,7 @@ void setup(void)
 
   // use the next file name and play it
   DEBUG("\nFile: ", loopfile);
-  SMF.setFilename(loopfile);
-  err = SMF.load();
-  if (err != -1)
+  if ((err = SMF.load(loopfile)) != MD_MIDIFile::E_OK)
   {
     char sBuf[20] = "SMF load err ";
 

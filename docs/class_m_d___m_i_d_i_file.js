@@ -19,7 +19,7 @@ var class_m_d___m_i_d_i_file =
     [ "isEOF", "class_m_d___m_i_d_i_file.html#aff2163ea6752be247c13ad0302d11219", null ],
     [ "isLooping", "class_m_d___m_i_d_i_file.html#ad6909106c9d64bea2cdf91aed4874e1b", null ],
     [ "isPaused", "class_m_d___m_i_d_i_file.html#af3f1b0c25b5521cb0e36059cab259bf5", null ],
-    [ "load", "class_m_d___m_i_d_i_file.html#aedc1967e7e34122084084a7fc8cf625c", null ],
+    [ "load", "class_m_d___m_i_d_i_file.html#a116acdd51af4405692dcc322458eb0b5", null ],
     [ "looping", "class_m_d___m_i_d_i_file.html#abc5ffcc7650fdee5ed744df74861b5c3", null ],
     [ "pause", "class_m_d___m_i_d_i_file.html#acaa198cd2f1dabcb387c4f044248cd57", null ],
     [ "processEvents", "class_m_d___m_i_d_i_file.html#a2a5d8df61628a1807d18160bcdb8a94b", null ],
