@@ -30,6 +30,9 @@ Topics
 
 Revision History
 ----------------
+Nov 2020 version 2.5.1
+- Adjusted setFileFolder() due to changes methods in SdFat version 2+.
+
 Apr 2020 version 2.5
  - Added isPaused() and isLooping() methods.
  - Removed internal buffer for file name. Now can be full path and not 8.3.
@@ -896,7 +899,7 @@ public:
    * \param apath pointer to a string with the path name.
    * \return No return data.
    */
-  void setFileFolder(const char* apath) { if (apath != nullptr) _sd->chdir(apath, true); }
+  void setFileFolder(const char* apath) { if (apath != nullptr && _sd->chdir(apath)) _sd->chvol(); }
 
   /** 
    * Load the named SMF
