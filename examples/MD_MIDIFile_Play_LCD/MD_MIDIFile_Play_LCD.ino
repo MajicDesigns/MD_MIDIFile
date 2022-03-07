@@ -19,14 +19,16 @@
 
 #if DEBUG_ON
 
-#define DEBUG(x)  Serial.print(x)
-#define DEBUGX(x) Serial.print(x, HEX)
+#define DEBUG(s, x)  do ( Serial.print(F(s)); Serial.print(x); } while(false);
+#define DEBUGX(s, x) do { Serial.print(f(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false);
+#define DEBUGS(s)    Serial.print(F(s))
 #define SERIAL_RATE 57600
 
 #else
 
 #define DEBUG(x)
 #define DEBUGX(x)
+#define DEBUGS(s)
 #define SERIAL_RATE 31250
 
 #endif
@@ -100,16 +102,11 @@ void midiCallback(midi_event *pev)
   else
     Serial.write(pev->data, pev->size);
 #endif
-  DEBUG("\nM T");
-  DEBUG(pev->track);
-  DEBUG(":  Ch ");
-  DEBUG(pev->channel+1);
-  DEBUG(" Data ");
-  for (uint8_t i=0; i<=pev->size; i++)
-  {
-    DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+  DEBUG("\nM T", pev->track);
+  DEBUG(":  Ch ", pev->channel+1);
+  DEBUG(" Data");
+  for (uint8_t i = 0; i <= pev->size; i++)
+    DEBUGX(" ", pev->data[i]);
 }
 
 void sysexCallback(sysex_event *pev)
@@ -118,14 +115,10 @@ void sysexCallback(sysex_event *pev)
 // really be processed, so we just ignore it here.
 // This callback is set up in the setup() function.
 {
-  DEBUG("\nS T");
-  DEBUG(pev->track);
-  DEBUG(": Data ");
-  for (uint8_t i=0; i<pev->size; i++)
-  {
-    DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+  DEBUG("\nS T", pev->track);
+  DEBUG(": Data");
+  for (uint8_t i = 0; i < pev->size; i++)
+    DEBUGX(" ", pev->data[i]);
 }
 
 void midiSilence(void)
@@ -164,8 +157,7 @@ void LCDMessage(uint8_t r, uint8_t c, const char *msg, bool clrEol = false)
 void LCDErrMessage(const char *msg, bool fStop)
 {
   LCDMessage(1, 0, msg, true);
-  DEBUG("\nLCDErr: ");
-  DEBUG(msg);
+  DEBUG("\nLCDErr: ", msg);
   while (fStop) ;   // stop here if told to
   delay(2000);      // if not stop, pause to show message
 }
@@ -193,10 +185,8 @@ uint16_t createPlaylistFile(void)
     {
       mFile.getName(fname, FNAME_SIZE);
 
-      DEBUG("\nFile ");
-      DEBUG(count);
-      DEBUG(" ");
-      DEBUG(fname);
+      DEBUG("\nFile ", count);
+      DEBUG(" ", fname);
 
       if (mFile.isFile())
       {
@@ -263,32 +253,32 @@ seq_state lcdFSM(seq_state curSS)
         // Down:    move to the last file name
       {
       case 'S': // Select
-        DEBUG("\n>Play");
+        DEBUGS("\n>Play");
         curSS = MIDISeq;    // switch mode to playing MIDI in main loop
         s = LSBegin;        // reset for next time
         break;
 
       case 'L': // Left
-        DEBUG("\n>Previous");
+        DEBUGS("\n>Previous");
         if (plIndex != 0)
           plIndex--;
         s = LSShowFile;
         break;
 
       case 'U': // Up
-        DEBUG("\n>First");
+        DEBUGS("\n>First");
         plIndex = 0;
         s = LSShowFile;
         break;
 
       case 'D': // Down
-        DEBUG("\n>Last");
+        DEBUGS("\n>Last");
         plIndex = plCount - 1;
         s = LSShowFile;
         break;
 
       case 'R': // Right
-        DEBUG("\n>Next");
+        DEBUGS("\n>Next");
         if (plIndex != plCount - 1)
           plIndex++;
         s = LSShowFile;

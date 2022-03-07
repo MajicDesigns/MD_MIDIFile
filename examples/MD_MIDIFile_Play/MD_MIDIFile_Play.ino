@@ -14,16 +14,16 @@
 
 #if USE_MIDI // set up for direct MIDI serial output
 
-#define DEBUG(x)
-#define DEBUGX(x)
+#define DEBUG(s, x)
+#define DEBUGX(s, x)
 #define DEBUGS(s)
 #define SERIAL_RATE 31250
 
 #else // don't use MIDI to allow printing debug statements
 
-#define DEBUG(x)  Serial.print(x)
-#define DEBUGX(x) Serial.print(x, HEX)
-#define DEBUGS(s) Serial.print(F(s))
+#define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x); } while(false)
+#define DEBUGX(s, x) do ( Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false);
+#define DEBUGS(s)    Serial.print(F(s))
 #define SERIAL_RATE 57600
 
 #endif // USE_MIDI
@@ -94,18 +94,12 @@ void midiCallback(midi_event *pev)
   else
     Serial.write(pev->data, pev->size);
 #endif
-  DEBUG("\n");
-  DEBUG(millis());
-  DEBUG("\tM T");
-  DEBUG(pev->track);
-  DEBUG(":  Ch ");
-  DEBUG(pev->channel+1);
-  DEBUG(" Data ");
+  DEBUG("\n", millis());
+  DEBUG("\tM T", pev->track);
+  DEBUG(":  Ch ", pev->channel+1);
+  DEBUGS(" Data");
   for (uint8_t i=0; i<pev->size; i++)
-  {
-  DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+    DEBUGX(" ", pev->data[i]);
 }
 
 void sysexCallback(sysex_event *pev)
@@ -114,14 +108,10 @@ void sysexCallback(sysex_event *pev)
 // really be processed, so we just ignore it here.
 // This callback is set up in the setup() function.
 {
-  DEBUG("\nS T");
-  DEBUG(pev->track);
-  DEBUG(": Data ");
+  DEBUG("\nS T", pev->track);
+  DEBUGS(": Data");
   for (uint8_t i=0; i<pev->size; i++)
-  {
-    DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+    DEBUGX(" ", pev->data[i]);
 }
 
 void midiSilence(void)
@@ -159,12 +149,12 @@ void setup(void)
   
   Serial.begin(SERIAL_RATE);
 
-  DEBUG("\n[MidiFile Play List]");
+  DEBUGS("\n[MidiFile Play List]");
 
   // Initialize SD
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
   {
-    DEBUG("\nSD init fail!");
+    DEBUGS("\nSD init fail!");
     digitalWrite(SD_ERROR_LED, HIGH);
     while (true) ;
   }
@@ -226,13 +216,11 @@ void loop(void)
         currTune = 0;
 
       // use the next file name and play it
-      DEBUG("\nFile: ");
-      DEBUG(tuneList[currTune]);
+      DEBUG("\nFile: ", tuneList[currTune]);
       err = SMF.load(tuneList[currTune]);
       if (err != MD_MIDIFile::E_OK)
       {
-        DEBUG(" - SMF load Error ");
-        DEBUG(err);
+        DEBUG(" - SMF load Error ", err);
         digitalWrite(SMF_ERROR_LED, HIGH);
         timeStart = millis();
         state = S_WAIT_BETWEEN;

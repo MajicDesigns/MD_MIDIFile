@@ -18,9 +18,9 @@
 
 #else // don't use MIDI to allow printing debug statements
 
-#define DEBUGS(s)     Serial.print(s)
-#define DEBUG(s, x)   { Serial.print(F(s)); Serial.print(x); }
-#define DEBUGX(s, x)  { Serial.print(F(s)); Serial.print(x, HEX); }
+#define DEBUGS(s)     do { Serial.print(s) } while(false)
+#define DEBUG(s, x)   do { Serial.print(F(s)); Serial.print(x); } while(false)
+#define DEBUGX(s, x)  do { Serial.print(F(s)); Serial.print(x, HEX); } while(false)
 #define SERIAL_RATE 57600
 
 #endif // USE_MIDI

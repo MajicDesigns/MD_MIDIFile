@@ -10,7 +10,9 @@
 // #define  DUMP_DATA         1
 // #define  SHOW_UNUSED_META  1
 //
-// REMEMBER TO TURN ON LINE ENDING IN SERIAL MONITOR TO NEWLINE
+// -= REMEMBER =-
+//  * Turn line ending in Serial Monitor to NEWLINE
+//  * Turn DUMP_DATA and SHOW_METADATA after back to default (0) when done
 //
 // SD chip select pin.
 // * Arduino Ethernet shield, pin 4.

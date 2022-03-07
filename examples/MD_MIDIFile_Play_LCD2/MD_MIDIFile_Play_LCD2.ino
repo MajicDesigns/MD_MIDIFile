@@ -11,7 +11,7 @@
 //    the LCD display buttons.
 //
 // MC 2020-04-02 Updated to current usage but untested. LCD library throws up warnings
-//               probably due toincoirrect version ofthe lib installed.
+//               probably due to incorrect version of the lib installed.
 //
 
 #include <avr/wdt.h>
@@ -24,14 +24,16 @@
 
 #if DEBUG_ON
 
-#define DEBUG(x)  Serial.print(x)
-#define DEBUGX(x) Serial.print(x, HEX)
+#define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x) } while(false)
+#define DEBUGX(s, x) do { Serial.print(F(s)); Serial.print(F("0x"); Serial.print(x, HEX); } while(false)
+#define DEBUGS(s)    Serial.print(F(s))
 #define SERIAL_RATE 57600
 
 #else
 
 #define DEBUG(x)
 #define DEBUGX(x)
+#define DEBUGS(s)
 #define SERIAL_RATE 31250
 
 #endif
@@ -104,16 +106,11 @@ void midiCallback(midi_event * const pev)
   Serial.write(&pev->data[1], pev->size-1);
 #endif
 #if DEBUG_ON
-  DEBUG("\nMIDI T");
-  DEBUG(pev->track);
-  DEBUG(":  Ch ");
-  DEBUG(pev->channel+1);
-  DEBUG(" Data ");
+  DEBUG("\nMIDI T", pev->track);
+  DEBUG(":  Ch ", pev->channel+1);
+  DEBUG(" Data");
   for (uint8_t i=0; i<pev->size; i++)
-  {
-    DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+    DEBUGX(" ", pev->data[i]);
 #endif
 }
 
@@ -123,14 +120,10 @@ void sysexCallback(sysex_event * const pev)
 // really be processed, so we just ignore it here.
 // This callback is set up in the setup() function.
 {
-  DEBUG("\nSYSEX T");
-  DEBUG(pev->track);
-  DEBUG(": Data ");
+  DEBUG("\nSYSEX T", pev->track);
+  DEBUG(": Data");
   for (uint8_t i=0; i<pev->size; i++)
-  {
-    DEBUGX(pev->data[i]);
-    DEBUG(' ');
-  }
+    DEBUGX(" ", pev->data[i]);
 }
 
 void metaCallback(const meta_event *pev) 
@@ -139,11 +132,9 @@ void metaCallback(const meta_event *pev)
 // really be processed, so we just ignore it here.
 // This callback is set up in the setup() function.
 {
-  DEBUG("\nMETA T");
-  DEBUG(pev->track);
-  DEBUG(": Type 0x");
-  DEBUGX(pev->type);
-  DEBUG(" Data ");
+  DEBUG("\nMETA T", pev->track);
+  DEBUG(": Type ", pev->type);
+  DEBUGS(" Data");
   switch (pev->type) 
   {
     case 0x1:
@@ -153,15 +144,12 @@ void metaCallback(const meta_event *pev)
     case 0x5:
     case 0x6:
     case 0x7:
-      DEBUG(pev->chars);
+      DEBUG(" ", pev->chars);
       break;
 
     default:
       for (uint8_t i=0; i<pev->size; i++)
-      {
-        DEBUGX(pev->data[i]);
-        DEBUG(' ');
-      }
+        DEBUGX(" ", pev->data[i]);
       break;
   }
 }
@@ -239,8 +227,7 @@ void LCDMessage(uint8_t r, uint8_t c, const char *msg, bool clrEol = false)
 void LCDErrMessage(const char *msg, bool fStop)
 {
   LCDMessage(1, 0, msg, true);
-  DEBUG("\nLCDErr: ");
-  DEBUG(msg);
+  DEBUG("\nLCDErr: ", msg);
   while (fStop) ;   // stop here if told to
   delay(2000);      // if not stop, pause to show message
 }
@@ -268,10 +255,8 @@ uint16_t createPlaylistFile(void)
     {
       mFile.getName(fname, FNAME_SIZE);
 
-      DEBUG("\nFile ");
-      DEBUG(count);
-      DEBUG(" ");
-      DEBUG(fname);
+      DEBUG("\nFile ", count);
+      DEBUG(" ", fname);
 
       if (mFile.isFile())
       {
@@ -284,7 +269,7 @@ uint16_t createPlaylistFile(void)
       }
       mFile.close();
     }
-    DEBUG("\nList completed");
+    DEBUGS("\nList completed");
 
     // close the play list file
     plFile.close();
