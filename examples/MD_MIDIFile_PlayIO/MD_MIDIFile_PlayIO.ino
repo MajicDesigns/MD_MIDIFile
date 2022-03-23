@@ -14,7 +14,7 @@
 
 #if USE_DEBUG // set up for direct DEBUG output
 
-#define DEBUGS(s)    Serial.print(F(s))
+#define DEBUGS(s)    do { Serial.print(F(s)); } while (false)
 #define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x); } while(false)
 #define DEBUGX(s, x) do { Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false)
 

@@ -22,8 +22,8 @@
 #else // don't use MIDI to allow printing debug statements
 
 #define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x); } while(false)
-#define DEBUGX(s, x) do ( Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false);
-#define DEBUGS(s)    Serial.print(F(s))
+#define DEBUGX(s, x) do { Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false)
+#define DEBUGS(s)    do { Serial.print(F(s)); } while (false)
 #define SERIAL_RATE 57600
 
 #endif // USE_MIDI
@@ -43,7 +43,7 @@ const uint8_t BEAT_LED = 4;       // toggles to the 'beat'
 
 const uint16_t WAIT_DELAY = 2000; // ms
 
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 
 // The files in the tune list should be located on the SD card 
 // or an error will occur opening the file and the next in the 

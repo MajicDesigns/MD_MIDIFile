@@ -20,19 +20,19 @@
 #include <MD_UISwitch.h>
 #include <LiquidCrystal_I2C.h>
 
-#define DEBUG_ON 1
+#define DEBUG_ON 0
 
 #if DEBUG_ON
 
-#define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x) } while(false)
-#define DEBUGX(s, x) do { Serial.print(F(s)); Serial.print(F("0x"); Serial.print(x, HEX); } while(false)
-#define DEBUGS(s)    Serial.print(F(s))
+#define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x); } while(false)
+#define DEBUGX(s, x) do { Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false)
+#define DEBUGS(s)    do { Serial.print(F(s)); } while (false)
 #define SERIAL_RATE 57600
 
 #else
 
-#define DEBUG(x)
-#define DEBUGX(x)
+#define DEBUG(s, x)
+#define DEBUGX(s, x)
 #define DEBUGS(s)
 #define SERIAL_RATE 31250
 
@@ -108,7 +108,7 @@ void midiCallback(midi_event * const pev)
 #if DEBUG_ON
   DEBUG("\nMIDI T", pev->track);
   DEBUG(":  Ch ", pev->channel+1);
-  DEBUG(" Data");
+  DEBUGS(" Data");
   for (uint8_t i=0; i<pev->size; i++)
     DEBUGX(" ", pev->data[i]);
 #endif
@@ -121,7 +121,7 @@ void sysexCallback(sysex_event * const pev)
 // This callback is set up in the setup() function.
 {
   DEBUG("\nSYSEX T", pev->track);
-  DEBUG(": Data");
+  DEBUGS(": Data");
   for (uint8_t i=0; i<pev->size; i++)
     DEBUGX(" ", pev->data[i]);
 }
@@ -323,32 +323,32 @@ seq_state lcdFSM(seq_state curSS)
         // Down:    move to the last file name
       {
       case 'S': // Select
-        DEBUG("\n>Play");
+        DEBUGS("\n>Play");
         curSS = MIDISeq;    // switch mode to playing MIDI in main loop
         s = LSBegin;        // reset for next time
         break;
 
       case 'L': // Left
-        DEBUG("\n>Previous");
+        DEBUGS("\n>Previous");
         if (plIndex != 0)
           plIndex--;
         s = LSShowFile;
         break;
 
       case 'U': // Up
-        DEBUG("\n>First");
+        DEBUGS("\n>First");
         plIndex = 0;
         s = LSShowFile;
         break;
 
       case 'D': // Down
-        DEBUG("\n>Last");
+        DEBUGS("\n>Last");
         plIndex = plCount - 1;
         s = LSShowFile;
         break;
 
       case 'R': // Right
-        DEBUG("\n>Next");
+        DEBUGS("\n>Next");
         if (plIndex != plCount - 1)
           plIndex++;
         s = LSShowFile;

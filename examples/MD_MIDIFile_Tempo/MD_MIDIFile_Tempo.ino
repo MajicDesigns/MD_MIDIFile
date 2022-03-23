@@ -33,7 +33,7 @@
 
 #else // don't use MIDI to allow printing debug statements
 
-#define DEBUGS(s)     Serial.print(s)
+#define DEBUGS(s)     do { Serial.print(s); } while (false)
 #define DEBUG(s, x)   do { Serial.print(F(s)); Serial.print(x); } while(false)
 #define DEBUGX(s, x)  do { Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false)
 #define SERIAL_RATE 57600
@@ -140,7 +140,7 @@ void LCDbpm(void)
   char  sBuf[LCD_COLS];
   
 #if GENERATE_TICKS
-  sprintf(sBuf, "BPM:%d", lclBPM, 10);
+  sprintf(sBuf, "BPM:%d", lclBPM);
 #else
   sprintf(sBuf, "BPM:%d%s%d", 
   SMF.getTempo(), (SMF.getTempoAdjust() >= 0 ? "+" : ""), SMF.getTempoAdjust());

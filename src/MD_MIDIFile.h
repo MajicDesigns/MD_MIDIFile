@@ -30,6 +30,9 @@ Topics
 
 Revision History
 ----------------
+Mar 2022 version 2.5.3
+- Corrected errors from new DEBUG statements
+
 Mar 2022 version 2.5.2
 - Added PlayIO example for custom I/O player.
 - Added additional explanation for callbacks for message handling.

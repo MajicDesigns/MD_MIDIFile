@@ -7,7 +7,7 @@
 //  LCD interface - assumed to be 2 rows 16 chars. Change LCD 
 //    pin definitions for hardware setup. Uses the MD_UISwitch library 
 //    (found at https://github.com/MajicDesigns/MD_UISwitch) to read and manage 
-//    the LCD display buttons.
+//    the LCD display switches.
 //
 
 #include <SdFat.h>
@@ -19,15 +19,15 @@
 
 #if DEBUG_ON
 
-#define DEBUG(s, x)  do ( Serial.print(F(s)); Serial.print(x); } while(false);
-#define DEBUGX(s, x) do { Serial.print(f(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false);
-#define DEBUGS(s)    Serial.print(F(s))
+#define DEBUG(s, x)  do { Serial.print(F(s)); Serial.print(x); } while(false)
+#define DEBUGX(s, x) do { Serial.print(F(s)); Serial.print(F("0x")); Serial.print(x, HEX); } while(false)
+#define DEBUGS(s)    do { Serial.print(F(s)); } while (false)
 #define SERIAL_RATE 57600
 
 #else
 
-#define DEBUG(x)
-#define DEBUGX(x)
+#define DEBUG(s, x)
+#define DEBUGX(s, x)
 #define DEBUGS(s)
 #define SERIAL_RATE 31250
 
@@ -104,7 +104,7 @@ void midiCallback(midi_event *pev)
 #endif
   DEBUG("\nM T", pev->track);
   DEBUG(":  Ch ", pev->channel+1);
-  DEBUG(" Data");
+  DEBUGS(" Data");
   for (uint8_t i = 0; i <= pev->size; i++)
     DEBUGX(" ", pev->data[i]);
 }
@@ -116,7 +116,7 @@ void sysexCallback(sysex_event *pev)
 // This callback is set up in the setup() function.
 {
   DEBUG("\nS T", pev->track);
-  DEBUG(": Data");
+  DEBUGS(": Data");
   for (uint8_t i = 0; i < pev->size; i++)
     DEBUGX(" ", pev->data[i]);
 }
@@ -199,7 +199,7 @@ uint16_t createPlaylistFile(void)
       }
       mFile.close();
     }
-    DEBUG("\nList completed");
+    DEBUGS("\nList completed");
 
     // close the play list file
     plFile.close();
