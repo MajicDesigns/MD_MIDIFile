@@ -28,7 +28,7 @@
  * \brief Main file for helper functions implementation
  */
 
-uint32_t readMultiByte(SdFile *f, uint8_t nLen)
+uint32_t readMultiByte(ExFile *f, uint8_t nLen)
 // read fixed length parameter from input
 {
   uint32_t  value = 0L;
@@ -41,7 +41,7 @@ uint32_t readMultiByte(SdFile *f, uint8_t nLen)
   return(value);
 }
 
-uint32_t readVarLen(SdFile *f)
+uint32_t readVarLen(ExFile *f)
 // read variable length parameter from input
 {
   uint32_t  value = 0;
