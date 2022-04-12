@@ -52,7 +52,7 @@
  * \param nLen  one of MB_LONG, MB_TRYTE, MB_WORD, MB_BYTE to specify the number of bytes to read.
  * \return the value read as a 4 byte integer. This should be cast to the expected size if required.
  */
-uint32_t readMultiByte(SdFile *f, uint8_t nLen);
+uint32_t readMultiByte(ExFile *f, uint8_t nLen);
 
 /**
  * Read a variable length parameter from the input stream
@@ -63,7 +63,7 @@ uint32_t readMultiByte(SdFile *f, uint8_t nLen);
  * \param *f    pointer to SDFile object to use for reading.
  * \return the value read as a 4 byte integer. This should be cast to the expected size if required.
  */
-uint32_t readVarLen(SdFile *f);   
+uint32_t readVarLen(ExFile *f);   
 
 /** 
  * Dump a block of data stream
