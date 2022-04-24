@@ -30,8 +30,12 @@ Topics
 
 Revision History
 ----------------
+Apr 2022 version 2.6.0
+- Changes file referencing from SdFat only to FAT16/FAT32/exFAT using SD_FAT_TYPE define.
+- Adjusted examples for SDFat library version 2 changes/deprecated methods.
+
 Mar 2022 version 2.5.3
-- Corrected errors from new DEBUG statements
+- Corrected errors from new DEBUG statements.
 
 Mar 2022 version 2.5.2
 - Added PlayIO example for custom I/O player.
@@ -432,6 +436,20 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 #define TRACK_PRIORITY  1
 #endif
 
+#ifndef SD_FAT_TYPE
+/**
+ \def SD_FAT_TYPE
+ Defines the type of file system that is supported by the SDFat library
+ - SD_FAT_TYPE = 0 for SdFat/File as defined in SdFatConfig.h,
+ - SD_FAT_TYPE = 1 for FAT16/FAT32,
+ - SD_FAT_TYPE = 2 for exFAT,
+ - SD_FAT_TYPE = 3 for FAT16/FAT32/exFAT.
+
+ The library and application code should use the typedefs SDFAT, SDFILE, SDDIR
+ */
+#define SD_FAT_TYPE 0
+#endif
+
 // ------------- Configuration Section - END
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
@@ -445,6 +463,26 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 #define DUMP(s, v)    ///< Print a value (decimal)
 #define DUMPX(s, x)   ///< Print a value (hex)
 #endif // DUMP_DATA
+
+#if SD_FAT_TYPE == 0      // SDFat
+typedef SdFat SDFAT;      ///< SDFat class used
+typedef File SDDIR;       ///< File type for folders
+typedef File SDFILE;      ///< File type for files
+#elif SD_FAT_TYPE == 1    // FAT16/FAT32
+typedef SdFat32 SDFAT;    ///< SDFat class used
+typedef File32 SDDIR;     ///< File type for folders
+typedef File32 SDFILE;    ///< File type for files
+#elif SD_FAT_TYPE == 2    // ExFAT
+typedef SdExFat SDFAT;    ///< SDFat class used
+typedef ExFile SDDIR;     ///< File type for folders
+typedef ExFile SDFILE;    ///< File type for files 
+#elif SD_FAT_TYPE == 3    // FAT16/FAT32/exFAT
+typedef SdFs SDFAT;       ///< SDFat class used
+typedef FsFile SDDIR;     ///< File type for folders
+typedef FsFile SDFILE;    ///< File type for files
+#else  
+#error invalid definition for SD_FAT_TYPE
+#endif  // SD_FAT_TYPE
 
 /**
  MIDI event definition structure
@@ -736,13 +774,13 @@ public:
    * 
    * The main purpose if to pass in a pointer to the SDFat object will be used for file 
    * operations on the SMF.  A copy of this pointer is retained by the library for the life 
-   * of the MD_MIDIFile object. THge SDFat object should be initialized before calling this 
+   * of the MD_MIDIFile object. The SDFs object should be initialized before calling this 
    * method.
    *
    * \param psd Pointer to the SDFat object.
    * \return No return data.
    */
-  void begin(SdFat *psd);
+  void begin(SDFAT *psd);
 
   //--------------------------------------------------------------
   /** \name Methods for MIDI time base
@@ -896,8 +934,8 @@ public:
    *
    * This is a pointer to a user defined buffer passed to the load()
    * method when the file is opened. The scope and persistence of this
-   * buffer depends on what the user code does, so the poiter returned
-   * *may* be invalid if the pointer rebernces a buffer that has become 
+   * buffer depends on what the user code does, so the pointer returned
+   * *may* be invalid if the pointer references a buffer that has become 
    * out of scope.
    * 
    * \return character pointer to the name string
@@ -1201,8 +1239,8 @@ protected:
 
   // file handling
   uint8_t   _selectSD;          ///< SDFat select line
-  SdFat     *_sd;               ///< SDFat library descriptor supplied by calling program
-  SdFile    _fd;                ///< SDFat file descriptor
+  SDFAT     *_sd;                ///< SDFat library descriptor supplied by calling program
+  SDFILE    _fd;                ///< SDFat file descriptor
   MD_MFTrack   _track[MIDI_MAX_TRACKS]; ///< the track data for this file
 };
 

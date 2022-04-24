@@ -42,7 +42,7 @@ void(*hwReset) (void) = 0;            // declare reset function @ address 0
 
 // Global Data
 bool printMidiStream = false;   // flag to print the real time midi stream
-SdFat SD;
+SDFAT SD;
 MD_MIDIFile SMF;
 
 void midiCallback(midi_event *pev)
@@ -235,22 +235,38 @@ void handlerF(char *param)
 void handlerL(char *param)
 // list the files in the current folder
 {
-  SdFile file;    // iterated file
+  uint16_t count = 0;
+  SDDIR dir;
+  SDFILE file;    // iterated file
+  char root[] = "/";
+  char *fldr = (*param == '\0' ? root : param);
 
-  SD.vwd()->rewind();
-  while (file.openNext(SD.vwd(), O_READ))
+  CONSOLE.print(F("\n- Listing '"));
+  CONSOLE.print(fldr);
+  CONSOLE.print(F("'"));
+
+  if (!dir.open(fldr))
   {
-    if (file.isFile())
-    {
-      char buf[20];
-
-      file.getName(buf, ARRAY_SIZE(buf));
-      CONSOLE.print(F("\n"));
-      CONSOLE.print(buf);
-    }
-    file.close();
+    CONSOLE.print(F("\nError opening folder"));
   }
-  CONSOLE.print(F("\n"));
+  else
+  {
+    while (file.openNext(&dir, O_RDONLY))
+    {
+      CONSOLE.print(F("\n"));
+      file.printName(&CONSOLE);
+      if (file.isDir()) CONSOLE.write('/');
+      file.close();
+
+      count++;
+    }
+    if (dir.getError())
+      CONSOLE.print(F("\nopenNext() failed"));
+  }
+  CONSOLE.print(F("\n\n"));
+  CONSOLE.print(count);
+  CONSOLE.print(F(" items"));
+  dir.close();
 }
 
 const MD_cmdProcessor::cmdItem_t PROGMEM cmdTable[] =
@@ -258,7 +274,7 @@ const MD_cmdProcessor::cmdItem_t PROGMEM cmdTable[] =
   { "?",  handlerHelp, "",     "Help" },
   { "h",  handlerHelp, "",     "Help" },
   { "f",  handlerF,    "fldr", "Set current folder to fldr" },
-  { "l",  handlerL,    "",     "List files in current folder" },
+  { "l",  handlerL,    "fldr", "List files in current folder, / default" },
   { "p",  handlerP,    "file", "Play the named file" },
   { "zs", handlerZS,   "",     "Software reset" },
   { "zm", handlerZM,   "",     "Silence MIDI" },

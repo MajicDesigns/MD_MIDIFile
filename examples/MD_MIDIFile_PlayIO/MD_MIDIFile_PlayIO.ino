@@ -27,9 +27,8 @@
 #endif // USE_DEBUG
 
 // SD chip select pin for SPI comms.
-// Default SD chip select is the SPI SS pin (10).
-// Other hardware will be different as documented for that hardware.
-const uint8_t SD_SELECT = 10;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;
 
 const uint16_t WAIT_DELAY = 2000; // ms
 
@@ -59,7 +58,7 @@ const char fileName[] = "LOOPDEMO.MID";
 const uint8_t ACTIVE = HIGH;
 const uint8_t SILENT = LOW;
 
-SdFat	SD;
+SDFAT	SD;
 MD_MIDIFile SMF;
 
 // Define the list of I/O pins used by the application to play notes.

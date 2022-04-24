@@ -7,10 +7,9 @@
 // REMEMBER TO TURN ON LINE ENDING IN SERIAL MONITOR TO NEWLINE
 /*
  * SD chip select pin.
- * Arduino Ethernet shield, pin 4.
- * Default SD chip select is the SPI SS pin (10).
+ * Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
  */
-const uint8_t SD_SELECT = 10;
+const uint8_t SD_SELECT = SS;  
 
 // states for the state machine
 enum fsm_state { STATE_BEGIN, STATE_PROMPT, STATE_READ_FNAME, STATE_OPEN, STATE_DUMP, STATE_CLOSE };
@@ -137,7 +136,6 @@ uint32_t readVarLen(SdFile *f)
   
   return (value);
 }
-
 
 void setup(void)
 {

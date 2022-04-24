@@ -10,6 +10,6 @@ var _m_d___m_i_d_i_helper_8h =
     [ "MTRK_HDR", "_m_d___m_i_d_i_helper_8h.html#a8fefcf615716f0172e4e8dfe489f719e", null ],
     [ "MTRK_HDR_SIZE", "_m_d___m_i_d_i_helper_8h.html#a942956972806a3d617851b9d05673cb9", null ],
     [ "dumpBuffer", "_m_d___m_i_d_i_helper_8h.html#ab64fa23e90b38100e0b9cc2e96ee1232", null ],
-    [ "readMultiByte", "_m_d___m_i_d_i_helper_8h.html#a6b1e1e8ed884f8109bc917f1b375d178", null ],
-    [ "readVarLen", "_m_d___m_i_d_i_helper_8h.html#ab58f1779116f27b7f307c513b993b0f5", null ]
+    [ "readMultiByte", "_m_d___m_i_d_i_helper_8h.html#a6314c56abcfb4aca59369a2cad3f8f0a", null ],
+    [ "readVarLen", "_m_d___m_i_d_i_helper_8h.html#a783190beb277517bfb1f69a65ae92bc9", null ]
 ];

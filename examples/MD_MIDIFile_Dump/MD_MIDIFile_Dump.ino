@@ -14,25 +14,25 @@
 //  * Turn line ending in Serial Monitor to NEWLINE
 //  * Turn DUMP_DATA and SHOW_METADATA after back to default (0) when done
 //
+
 // SD chip select pin.
-// * Arduino Ethernet shield, pin 4.
-// * Default SD lib chip select is the SPI SS pin (10).
-const uint8_t SD_SELECT = 10;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;
 
 // states for the state machine
 enum fsm_state { STATE_BEGIN, STATE_PROMPT, STATE_READ_FNAME, STATE_LOAD, STATE_PROCESS, STATE_CLOSE };
 
-SdFat   SD;
+SDFAT SD;
 MD_MIDIFile SMF;
 
 void setup(void)
 {
   Serial.begin(57600);
-  Serial.println("[MIDI_File_Dumper]");
+  Serial.println(F("[MIDI_File_Dumper]"));
 
   if (!SD.begin(SD_SELECT, SPI_FULL_SPEED))
   {
-    Serial.println("SD init failed!");
+    Serial.println(F("SD init failed!"));
     while (true) ;
   }
 
@@ -49,7 +49,9 @@ void loop(void)
   {
   case STATE_BEGIN:
   case STATE_PROMPT:
-    Serial.print("\nEnter file name: ");
+    Serial.print(F("\n\n"));
+    SD.ls(Serial);
+    Serial.print(F("\nEnter file name: "));
     state = STATE_READ_FNAME;
     break;
 
@@ -71,7 +73,7 @@ void loop(void)
       --len;
       fname[len++] = '\0';
 
-      Serial.println(fname);
+      Serial.print(fname);
       state = STATE_LOAD;
     }
     break;
@@ -80,8 +82,8 @@ void loop(void)
     err = SMF.load(fname);
     if (err != MD_MIDIFile::E_OK)
     {
-      Serial.print("SMF load Error ");
-      Serial.println(err);
+      Serial.print(F("\nSMF load Error "));
+      Serial.print(err);
       state = STATE_PROMPT;
     }
     else

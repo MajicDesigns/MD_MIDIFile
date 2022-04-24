@@ -35,10 +35,8 @@
 
 // SD Hardware defines ---------
 // SPI select pin for SD card (SPI comms).
-// Arduino Ethernet shield, pin 4.
-// Default SD chip select is the SPI SS pin (10).
-// Other hardware will be different as documented for that hardware.
-const uint8_t SD_SELECT = 10;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;
 
 // LCD display defines ---------
 const uint8_t LCD_ROWS = 2;
@@ -70,13 +68,13 @@ MD_UISwitch_Analog::uiAnalogKeys_t kt[] =
 
 // Library objects -------------
 LiquidCrystal LCD(LCD_RS, LCD_ENA, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-SdFat SD;
+SDFAT SD;
 MD_MIDIFile SMF;
 MD_UISwitch_Analog LCDKey(LCD_KEYS, kt, ARRAY_SIZE(kt));
 
 // Playlist handling -----------
 const uint8_t FNAME_SIZE = 13;               // file names 8.3 to fit onto LCD display
-const char* PLAYLIST_FILE = "PLAYLIST.TXT";  // file of file names
+const char* PLAYLIST_FILE = "PLAYLIST.TXT"; // file of file names
 const char* MIDI_EXT = ".MID";               // MIDI file extension
 uint16_t  plCount = 0;
 char fname[FNAME_SIZE+1];
@@ -158,7 +156,7 @@ void LCDErrMessage(const char *msg, bool fStop)
 {
   LCDMessage(1, 0, msg, true);
   DEBUG("\nLCDErr: ", msg);
-  while (fStop) ;   // stop here if told to
+  while (fStop) { yield(); }; // stop here (busy loop) if told to
   delay(2000);      // if not stop, pause to show message
 }
 
@@ -168,42 +166,58 @@ uint16_t createPlaylistFile(void)
 // create a play list file on the SD card with the names of the files.
 // This will then be used in the menu.
 {
-  SdFile    plFile;   // play list file
-  SdFile    mFile;    // MIDI file
+  SDFILE    plFile;   // play list file
+  SDFILE    mFile;    // MIDI file
+  SDDIR     dir;      // directory folder
   uint16_t  count = 0;// count of files
   char      fname[FNAME_SIZE+1];
 
-  // open/create the play list file
+  // Open/create the display list and directory files
+  // Errors will stop execution...
+  if (!dir.open("/", O_READ))
+  {
+    DEBUGX("\nDir open fail, err ", dir.getError());
+    LCDErrMessage("Dir open fail", true);
+  }
+
   if (!plFile.open(PLAYLIST_FILE, O_CREAT | O_WRITE))
   {
+    DEBUGX("\nPL Create fail, err ", plFile.getError());
     LCDErrMessage("PL create fail", true);
   }
-  else
+
+  while (mFile.openNext(&dir, O_READ))
   {
-    SD.vwd()->rewind();
-    while (mFile.openNext(SD.vwd(), O_READ))
+    mFile.getName(fname, FNAME_SIZE);
+
+    DEBUG("\n", count);
+    DEBUG(" ", fname);
+
+    if (mFile.isFile() && !mFile.isHidden())
     {
-      mFile.getName(fname, FNAME_SIZE);
-
-      DEBUG("\nFile ", count);
-      DEBUG(" ", fname);
-
-      if (mFile.isFile())
+      // only include files with MIDI extension
+      if (strcasecmp(MIDI_EXT, &fname[strlen(fname) - strlen(MIDI_EXT)]) == 0)
       {
-        if (strcasecmp(MIDI_EXT, &fname[strlen(fname) - strlen(MIDI_EXT)]) == 0)
-          // only include files with MIDI extension
-        {
-          plFile.write(fname, FNAME_SIZE);
-          count++;
-        }
+        DEBUGS(" -> W");
+        if (plFile.write(fname, FNAME_SIZE) == 0)
+          DEBUGS(" error");
+        else
+          DEBUGS(" OK");
+        count++;
       }
-      mFile.close();
+      else
+        DEBUGS(" -> not MIDI");
     }
-    DEBUGS("\nList completed");
+    else
+      DEBUGS(" -> folder/hidden");
 
-    // close the play list file
-    plFile.close();
+    mFile.close();
+
   }
+  // close the control files
+  plFile.close();
+  dir.close();
+  DEBUGS("\nList completed");
 
   return(count);
 }
@@ -215,7 +229,7 @@ seq_state lcdFSM(seq_state curSS)
 {
   static lcd_state s = LSBegin;
   static uint8_t plIndex = 0;
-  static SdFile plFile;  // play list file
+  static SDFILE plFile;  // play list file
 
   // LCD state machine
   switch (s)
@@ -225,13 +239,13 @@ seq_state lcdFSM(seq_state curSS)
     if (!plFile.isOpen())
     {
       if (!plFile.open(PLAYLIST_FILE, O_READ))
-        LCDErrMessage("PL file no open", true);
+        LCDErrMessage("PL file no read open", true);
     }
     s = LSShowFile;
     break;
 
   case LSShowFile:
-    plFile.seekSet(FNAME_SIZE*plIndex);
+    plFile.seekSet(FNAME_SIZE * plIndex);
     plFile.read(fname, FNAME_SIZE);
 
     LCDMessage(1, 0, fname, true);
@@ -378,6 +392,7 @@ void setup(void)
 {
   // initialize MIDI output stream
   Serial.begin(SERIAL_RATE);
+  DEBUGS("\n[MIDI PLAY LCD]");
 
   // initialize LCD keys
   LCDKey.begin();

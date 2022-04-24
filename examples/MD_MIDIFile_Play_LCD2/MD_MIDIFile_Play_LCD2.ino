@@ -12,6 +12,7 @@
 //
 // MC 2020-04-02 Updated to current usage but untested. LCD library throws up warnings
 //               probably due to incorrect version of the lib installed.
+// MC 2022-04-23 Again updated to current usage but untested.
 //
 
 #include <avr/wdt.h>
@@ -40,10 +41,8 @@
 
 // SD Hardware defines ---------
 // SPI select pin for SD card (SPI comms).
-// Arduino Ethernet shield, pin 4.
-// Default SD chip select is the SPI SS pin (10) on Uno, 53 on Mega.
-// Other hardware will be different as documented for that hardware.
-const uint8_t SD_SELECT = 53;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;
 
 const uint8_t PUSHBUTTON1 = 2;
 const uint8_t PUSHBUTTON2 = 3;
@@ -228,7 +227,7 @@ void LCDErrMessage(const char *msg, bool fStop)
 {
   LCDMessage(1, 0, msg, true);
   DEBUG("\nLCDErr: ", msg);
-  while (fStop) ;   // stop here if told to
+  while (fStop) { yield(); }   // stop here if told to
   delay(2000);      // if not stop, pause to show message
 }
 
@@ -238,42 +237,57 @@ uint16_t createPlaylistFile(void)
 // create a play list file on the SD card with the names of the files.
 // This will then be used in the menu.
 {
-  SdFile    plFile;   // play list file
-  SdFile    mFile;    // MIDI file
+  SDFILE    plFile;   // play list file
+  SDFILE    mFile;    // MIDI file
+  SDDIR     dir;      // directory folder
   uint16_t  count = 0;// count of files
-  char      fname[FNAME_SIZE];
+  char      fname[FNAME_SIZE + 1];
 
-  // open/create the play list file
+  // Open/create the display list and directory files
+  // Errors will stop execution...
+  if (!dir.open("/", O_READ))
+  {
+    DEBUGX("\nDir open fail, err ", dir.getError());
+    LCDErrMessage("Dir open fail", true);
+  }
+
   if (!plFile.open(PLAYLIST_FILE, O_CREAT | O_WRITE))
   {
+    DEBUGX("\nPL Create fail, err ", plFile.getError());
     LCDErrMessage("PL create fail", true);
   }
-  else
+
+  while (mFile.openNext(&dir, O_READ))
   {
-    SD.vwd()->rewind();
-    while (mFile.openNext(SD.vwd(), O_READ))
+    mFile.getName(fname, FNAME_SIZE);
+
+    DEBUG("\n", count);
+    DEBUG(" ", fname);
+
+    if (mFile.isFile() && !mFile.isHidden())
     {
-      mFile.getName(fname, FNAME_SIZE);
-
-      DEBUG("\nFile ", count);
-      DEBUG(" ", fname);
-
-      if (mFile.isFile())
+      // only include files with MIDI extension
+      if (strcasecmp(MIDI_EXT, &fname[strlen(fname) - strlen(MIDI_EXT)]) == 0)
       {
-        if (strcasecmp(MIDI_EXT, &fname[strlen(fname) - strlen(MIDI_EXT)]) == 0)
-          // only include files with MIDI extension
-        {
-          plFile.write(fname, FNAME_SIZE);
-          count++;
-        }
+        DEBUGS(" -> W");
+        if (plFile.write(fname, FNAME_SIZE) == 0)
+          DEBUGS(" error");
+        else
+          DEBUGS(" OK");
+        count++;
       }
-      mFile.close();
+      else
+        DEBUGS(" -> not MIDI");
     }
-    DEBUGS("\nList completed");
+    else
+      DEBUGS(" -> folder/hidden");
 
-    // close the play list file
-    plFile.close();
+    mFile.close();
   }
+  // close the control files
+  plFile.close();
+  dir.close();
+  DEBUGS("\nList completed");
 
   return(count);
 }

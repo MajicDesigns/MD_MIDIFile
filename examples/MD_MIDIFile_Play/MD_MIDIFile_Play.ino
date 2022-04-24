@@ -30,10 +30,8 @@
 
 
 // SD chip select pin for SPI comms.
-// Arduino Ethernet shield, pin 4.
-// Default SD chip select is the SPI SS pin (10).
-// Other hardware will be different as documented for that hardware.
-const uint8_t SD_SELECT = 10;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;
 
 // LED definitions for status and user indicators
 const uint8_t READY_LED = 7;      // when finished
@@ -77,7 +75,7 @@ const char *tuneList[] =
 //#define MIDI_FILE  "CHATCHOO.MID"   // 17 tracks
 //#define MIDI_FILE  "STRIPPER.MID"   // 25 tracks
 
-SdFat	SD;
+SDFAT	SD;
 MD_MIDIFile SMF;
 
 void midiCallback(midi_event *pev)

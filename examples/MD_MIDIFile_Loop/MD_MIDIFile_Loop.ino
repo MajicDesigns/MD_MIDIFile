@@ -27,10 +27,8 @@
 
 
 // SD chip select pin for SPI comms.
-// Arduino Ethernet shield, pin 4.
-// Default SD chip select is the SPI SS pin (10).
-// Other hardware will be different as documented for that hardware.
-const uint8_t SD_SELECT = 10;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;  
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 
@@ -39,7 +37,7 @@ const uint8_t SD_SELECT = 10;
 // list will be opened (skips errors).
 const char *loopfile = "LOOPDEMO.MID";  // simple and short file
 
-SdFat	SD;
+SDFAT	SD;
 MD_MIDIFile SMF;
 
 void midiCallback(midi_event *pev)

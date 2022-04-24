@@ -42,10 +42,8 @@
 
 // SD Hardware defines ---------
 // SPI select pin for SD card (SPI comms).
-// Arduino Ethernet shield, pin 4.
-// Default SD chip select is the SPI SS pin (10).
-// Other hardware will be different as documented for that hardware.
-const uint8_t SD_SELECT = 10;
+// Default SD chip select is the SPI SS pin (10 on Uno, 53 on Mega).
+const uint8_t SD_SELECT = SS;
 
 // LCD display defines ---------
 const uint8_t LCD_ROWS = 2;
@@ -73,7 +71,7 @@ MD_UISwitch_Analog::uiAnalogKeys_t kt[] =
 
 // Library objects -------------
 LiquidCrystal LCD(LCD_RS, LCD_ENA, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-SdFat SD;
+SDFAT SD;
 MD_MIDIFile SMF;
 MD_UISwitch_Analog LCDKey(LCD_KEYS, kt, ARRAY_SIZE(kt));
 
