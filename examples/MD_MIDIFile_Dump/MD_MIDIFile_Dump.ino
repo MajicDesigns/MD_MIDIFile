@@ -22,7 +22,7 @@ const uint8_t SD_SELECT = SS;
 // states for the state machine
 enum fsm_state { STATE_BEGIN, STATE_PROMPT, STATE_READ_FNAME, STATE_LOAD, STATE_PROCESS, STATE_CLOSE };
 
-SDFAT SD;
+SdFat SD;
 MD_MIDIFile SMF;
 
 void setup(void)
