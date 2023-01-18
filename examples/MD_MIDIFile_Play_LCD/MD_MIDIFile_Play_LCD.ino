@@ -68,7 +68,7 @@ MD_UISwitch_Analog::uiAnalogKeys_t kt[] =
 
 // Library objects -------------
 LiquidCrystal LCD(LCD_RS, LCD_ENA, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
-SDFAT SD;
+SdFat SD;
 MD_MIDIFile SMF;
 MD_UISwitch_Analog LCDKey(LCD_KEYS, kt, ARRAY_SIZE(kt));
 
