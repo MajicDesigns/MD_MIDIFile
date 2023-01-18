@@ -37,7 +37,7 @@ const uint8_t SD_SELECT = SS;
 // list will be opened (skips errors).
 const char *loopfile = "LOOPDEMO.MID";  // simple and short file
 
-SDFAT	SD;
+SdFat	SD;
 MD_MIDIFile SMF;
 
 void midiCallback(midi_event *pev)
