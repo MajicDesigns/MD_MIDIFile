@@ -75,7 +75,7 @@ const char *tuneList[] =
 //#define MIDI_FILE  "CHATCHOO.MID"   // 17 tracks
 //#define MIDI_FILE  "STRIPPER.MID"   // 25 tracks
 
-SDFAT	SD;
+SdFat	SD;
 MD_MIDIFile SMF;
 
 void midiCallback(midi_event *pev)
