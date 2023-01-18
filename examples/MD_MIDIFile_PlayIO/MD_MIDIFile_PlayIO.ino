@@ -58,7 +58,7 @@ const char fileName[] = "LOOPDEMO.MID";
 const uint8_t ACTIVE = HIGH;
 const uint8_t SILENT = LOW;
 
-SDFAT	SD;
+SdFat	SD;
 MD_MIDIFile SMF;
 
 // Define the list of I/O pins used by the application to play notes.
