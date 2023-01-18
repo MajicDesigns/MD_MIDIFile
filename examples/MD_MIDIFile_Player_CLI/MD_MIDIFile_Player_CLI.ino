@@ -42,7 +42,7 @@ void(*hwReset) (void) = 0;            // declare reset function @ address 0
 
 // Global Data
 bool printMidiStream = false;   // flag to print the real time midi stream
-SDFAT SD;
+SdFat SD;
 MD_MIDIFile SMF;
 
 void midiCallback(midi_event *pev)
