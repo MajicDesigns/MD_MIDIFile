@@ -452,7 +452,7 @@ http://www.stephenhobley.com/blog/2011/03/14/the-last-darned-midi-interface-ill-
 
 // ------------- Configuration Section - END
 
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
+#define ARRAY_SIZE(a) (uint32_t)(sizeof(a)/sizeof((a)[0]))
 
 #if DUMP_DATA
 #define DUMPS(s)    Serial.print(F(s))                            ///< Print a string
